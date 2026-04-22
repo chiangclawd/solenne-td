@@ -29,8 +29,8 @@ export class SettingsScene extends BaseScene {
     const r = this.ctx.renderer;
     r.beginFrame();
     r.beginScreen();
-    const vw = window.innerWidth;
-    const vh = window.innerHeight;
+    const vw = this.ctx.renderer.vw();
+    const vh = this.ctx.renderer.vh();
 
     r.drawScreenVerticalGradient(0, 0, vw, vh, '#0a1020', '#05080f');
 

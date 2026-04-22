@@ -59,8 +59,8 @@ export class DialogueBox {
     if (!this.active) return;
     const line = this.lines[this.index];
     if (!line) return;
-    const vw = window.innerWidth;
-    const vh = window.innerHeight;
+    const vw = renderer.vw();
+    const vh = renderer.vh();
 
     renderer.drawScreenRect(0, 0, vw, vh, 'rgba(0, 0, 0, 0.65)');
 

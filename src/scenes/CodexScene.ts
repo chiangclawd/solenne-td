@@ -59,8 +59,8 @@ export class CodexScene extends BaseScene {
     const r = this.ctx.renderer;
     r.beginFrame();
     r.beginScreen();
-    const vw = window.innerWidth;
-    const vh = window.innerHeight;
+    const vw = this.ctx.renderer.vw();
+    const vh = this.ctx.renderer.vh();
     r.drawScreenVerticalGradient(0, 0, vw, vh, '#0a1020', '#05080f');
 
     // Header
@@ -224,7 +224,7 @@ export class CodexScene extends BaseScene {
       }
     }
     // Simple scroll-by-tap (tap near top scrolls up, near bottom down)
-    const vh = window.innerHeight;
+    const vh = this.ctx.renderer.vh();
     if (screenY > vh * 0.65) this.scrollY += 140;
     else if (screenY < vh * 0.25) this.scrollY = Math.max(0, this.scrollY - 140);
     // Silence unused fields

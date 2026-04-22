@@ -38,8 +38,8 @@ export class MainMenuScene extends BaseScene {
     while (this.emberTimer <= 0) {
       this.emberTimer += 0.08;
       this.embers.push({
-        x: Math.random() * window.innerWidth,
-        y: window.innerHeight + 4,
+        x: Math.random() * this.ctx.renderer.vw(),
+        y: this.ctx.renderer.vh() + 4,
         vx: (Math.random() - 0.5) * 10,
         vy: -20 - Math.random() * 25,
         life: 2.5 + Math.random() * 2.5,
@@ -69,8 +69,8 @@ export class MainMenuScene extends BaseScene {
     r.drawTileBackground(this.ctx.assets.get('grass'), 0, 0, WORLD_WIDTH, WORLD_HEIGHT, TILE_SIZE);
 
     r.beginScreen();
-    const vw = window.innerWidth;
-    const vh = window.innerHeight;
+    const vw = this.ctx.renderer.vw();
+    const vh = this.ctx.renderer.vh();
 
     r.drawScreenVerticalGradient(0, 0, vw, vh, 'rgba(5,8,20,0.7)', 'rgba(5,8,20,0.95)');
     r.drawScreenRadialGradient(vw / 2, vh * 0.3, Math.max(vw, vh) * 0.7,

@@ -24,6 +24,21 @@ export class Renderer {
     this.ctx = ctx;
     this.resize();
     window.addEventListener('resize', () => this.resize());
+    // Also observe canvas size changes directly (handles CSS constraint resizes)
+    if (typeof ResizeObserver !== 'undefined') {
+      const ro = new ResizeObserver(() => this.resize());
+      ro.observe(canvas);
+    }
+  }
+
+  /** Canvas CSS width in logical px (for scene layouts). */
+  vw(): number {
+    return this.canvas.clientWidth || window.innerWidth;
+  }
+
+  /** Canvas CSS height in logical px (for scene layouts). */
+  vh(): number {
+    return this.canvas.clientHeight || window.innerHeight;
   }
 
   setShakeEnabled(on: boolean): void { this.shakeEnabled = on; }
@@ -56,12 +71,12 @@ export class Renderer {
 
   private resize(): void {
     const dpr = window.devicePixelRatio || 1;
-    const w = window.innerWidth;
-    const h = window.innerHeight;
-    this.canvas.width = Math.floor(w * dpr);
-    this.canvas.height = Math.floor(h * dpr);
-    this.canvas.style.width = `${w}px`;
-    this.canvas.style.height = `${h}px`;
+    // Use canvas CSS size (constrained by style.css) so UI stays proportional on desktop
+    const rect = this.canvas.getBoundingClientRect();
+    const w = rect.width || window.innerWidth;
+    const h = rect.height || window.innerHeight;
+    this.canvas.width = Math.max(1, Math.floor(w * dpr));
+    this.canvas.height = Math.max(1, Math.floor(h * dpr));
     this.scale = Math.min(w / WORLD_WIDTH, h / WORLD_HEIGHT) * dpr;
     this.offsetX = (this.canvas.width - WORLD_WIDTH * this.scale) / 2;
     this.offsetY = (this.canvas.height - WORLD_HEIGHT * this.scale) / 2;

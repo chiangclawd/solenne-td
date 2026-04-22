@@ -26,8 +26,8 @@ export class CreditsScene extends BaseScene {
     r.drawTileBackground(this.ctx.assets.get('grass'), 0, 0, WORLD_WIDTH, WORLD_HEIGHT, TILE_SIZE);
 
     r.beginScreen();
-    const vw = window.innerWidth;
-    const vh = window.innerHeight;
+    const vw = this.ctx.renderer.vw();
+    const vh = this.ctx.renderer.vh();
     r.drawScreenVerticalGradient(0, 0, vw, vh, 'rgba(5,8,20,0.86)', 'rgba(5,8,20,0.98)');
 
     const backW = 68, backH = 30;

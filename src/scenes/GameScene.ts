@@ -444,8 +444,8 @@ export class GameScene extends BaseScene {
     }
 
     r.beginScreen();
-    const vw = window.innerWidth;
-    const vh = window.innerHeight;
+    const vw = this.ctx.renderer.vw();
+    const vh = this.ctx.renderer.vh();
 
     const hudVisible = !this.dialogue.isActive();
     this.towerSelectorRects = [];
@@ -735,7 +735,7 @@ export class GameScene extends BaseScene {
   private renderUpgradePanel(r: import('../engine/Renderer.ts').Renderer, vw: number, _vh: number): void {
     const t = this.selectedExisting;
     if (!t) return;
-    const vh = window.innerHeight;
+    const vh = this.ctx.renderer.vh();
     const panelH = 108;
     const panelY = vh - panelH - 8;
     r.drawScreenRect(0, panelY, vw, panelH + 8, 'rgba(8, 12, 22, 0.94)');
