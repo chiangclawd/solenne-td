@@ -12,7 +12,8 @@ export const LEVEL_IDS = [
 export type LevelId = typeof LEVEL_IDS[number];
 
 export async function loadLevel(id: string): Promise<LevelData> {
-  const res = await fetch(`/levels/${id}.json`);
+  const base = import.meta.env.BASE_URL;
+  const res = await fetch(`${base}levels/${id}.json`);
   if (!res.ok) throw new Error(`Level "${id}" failed to load: HTTP ${res.status}`);
   const data = (await res.json()) as LevelData;
   validate(data);

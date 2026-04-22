@@ -1,4 +1,5 @@
-const KENNEY = '/assets/kenney/PNG/default-size/towerDefense_';
+const BASE = import.meta.env.BASE_URL;
+const KENNEY = `${BASE}assets/kenney/PNG/default-size/towerDefense_`;
 
 export const ASSET_MANIFEST = {
   grass:            `${KENNEY}tile024.png`,
