@@ -16,6 +16,12 @@ export default defineConfig({
         'icons/*.png',
         'assets/kenney/PNG/default-size/*.png',
         'assets/portraits/*.svg',
+        'assets/portraits/*.png',
+        'assets/portraits/*.webp',
+        'assets/covers/*.png',
+        'assets/covers/*.webp',
+        'assets/hero.png',
+        'assets/hero.webp',
         'levels/*.json',
       ],
       manifest: {
@@ -36,7 +42,7 @@ export default defineConfig({
         ],
       },
       workbox: {
-        globPatterns: ['**/*.{js,css,html,png,json,svg,webmanifest}'],
+        globPatterns: ['**/*.{js,css,html,png,webp,json,svg,webmanifest}'],
         maximumFileSizeToCacheInBytes: 10 * 1024 * 1024,
       },
       devOptions: {

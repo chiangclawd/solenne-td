@@ -8,18 +8,36 @@ export interface DialogueLine {
   portrait?: string;
 }
 
-const portraitCache = new Map<string, HTMLImageElement>();
+const portraitCache = new Map<string, HTMLImageElement | 'fail'>();
 
-function getPortrait(src: string): HTMLImageElement | null {
-  const cached = portraitCache.get(src);
-  if (cached) {
-    if (cached.complete && cached.naturalWidth > 0) return cached;
-    return null;
+/**
+ * Try multiple extensions in priority order (PNG > WebP > SVG).
+ * Returns the first loaded image, or null if all still loading.
+ * AI-generated PNGs drop-in override the bundled SVG placeholder.
+ */
+function getPortrait(id: string, baseUrl: string): HTMLImageElement | null {
+  const exts = ['png', 'webp', 'svg'];
+  for (const ext of exts) {
+    const src = `${baseUrl}assets/portraits/${id}.${ext}`;
+    const cached = portraitCache.get(src);
+    if (cached === 'fail') continue;
+    if (cached) {
+      if (cached.complete && cached.naturalWidth > 0) return cached;
+      continue;
+    }
+    const img = new Image();
+    img.onerror = () => { portraitCache.set(src, 'fail'); };
+    img.src = src;
+    portraitCache.set(src, img);
   }
-  const img = new Image();
-  img.onerror = () => { portraitCache.delete(src); };
-  img.src = src;
-  portraitCache.set(src, img);
+  // Return first loaded among ext priority
+  for (const ext of exts) {
+    const src = `${baseUrl}assets/portraits/${id}.${ext}`;
+    const cached = portraitCache.get(src);
+    if (cached && cached !== 'fail' && cached.complete && cached.naturalWidth > 0) {
+      return cached;
+    }
+  }
   return null;
 }
 
@@ -77,10 +95,10 @@ export class DialogueBox {
     const speakerColor = line.color ?? '#5eb8ff';
     let textOffsetX = 0;
 
-    // Optional portrait (file at <base>assets/portraits/<portrait>.svg or .png)
+    // Optional portrait — tries PNG/WebP/SVG in that priority
     if (line.portrait) {
       const base = import.meta.env.BASE_URL;
-      const img = getPortrait(`${base}assets/portraits/${line.portrait}.svg`);
+      const img = getPortrait(line.portrait, base);
       if (img) {
         const dpr = window.devicePixelRatio || 1;
         const pSize = 90;

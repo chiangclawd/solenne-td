@@ -5,6 +5,20 @@ import { SettingsScene } from './SettingsScene.ts';
 import { getStars, isUnlocked, totalStars, countCompleted } from '../storage/SaveData.ts';
 import { COLORS, TILE_SIZE, GRID_COLS, GRID_ROWS, WORLD_WIDTH, WORLD_HEIGHT } from '../config.ts';
 import { drawGrassTile, drawGoldFrame } from '../graphics/UIPainter.ts';
+
+// Lazy-load world cover banner. User may drop public/assets/covers/worldN.png.
+const coverCache = new Map<number, HTMLImageElement | 'fail'>();
+function getCover(worldId: number, base: string): HTMLImageElement | null {
+  const entry = coverCache.get(worldId);
+  if (entry === 'fail') return null;
+  if (entry) return entry.complete && entry.naturalWidth > 0 ? entry : null;
+  const img = new Image();
+  img.onerror = () => { coverCache.set(worldId, 'fail'); };
+  // Try png first (webp could also be added if desired)
+  img.src = `${base}assets/covers/world${worldId}.png`;
+  coverCache.set(worldId, img);
+  return null;
+}
 import type { LevelData } from '../game/Level.ts';
 
 interface Rect { x: number; y: number; w: number; h: number }
@@ -103,11 +117,35 @@ export class LevelSelectScene extends BaseScene {
 
     let y = panelY + 62;
     const worlds = [1, 2, 3, 4, 5];
+    const base = import.meta.env.BASE_URL;
     for (const worldIdx of worlds) {
       const w = WORLD_NAMES[worldIdx];
-      r.drawTextScreen(`${w.name}`, startX, y, w.color, 13, true);
-      r.drawTextScreen(`· ${w.sub}`, startX + r.measureTextScreen(w.name, 13, true) + 6, y + 2, COLORS.textDim, 10);
-      y += 22;
+      // Optional cover banner (loaded from public/assets/covers/worldN.png if user provides)
+      const cover = getCover(worldIdx, base);
+      if (cover) {
+        const bannerH = 54;
+        const dpr = window.devicePixelRatio || 1;
+        r.ctx.save();
+        r.ctx.beginPath();
+        r.ctx.roundRect(startX * dpr, y * dpr, rowWidth * dpr, bannerH * dpr, 6 * dpr);
+        r.ctx.clip();
+        r.ctx.drawImage(cover, startX * dpr, y * dpr, rowWidth * dpr, bannerH * dpr);
+        // Dark left-to-right fade for text contrast
+        const grad = r.ctx.createLinearGradient(startX * dpr, 0, (startX + rowWidth) * dpr, 0);
+        grad.addColorStop(0, 'rgba(5,8,20,0.85)');
+        grad.addColorStop(0.5, 'rgba(5,8,20,0.35)');
+        grad.addColorStop(1, 'rgba(5,8,20,0.1)');
+        r.ctx.fillStyle = grad;
+        r.ctx.fillRect(startX * dpr, y * dpr, rowWidth * dpr, bannerH * dpr);
+        r.ctx.restore();
+        r.drawTextScreen(w.name, startX + 10, y + 10, w.color, 16, true);
+        r.drawTextScreen(w.sub, startX + 10, y + 30, COLORS.textDim, 10);
+        y += bannerH + 8;
+      } else {
+        r.drawTextScreen(`${w.name}`, startX, y, w.color, 13, true);
+        r.drawTextScreen(`· ${w.sub}`, startX + r.measureTextScreen(w.name, 13, true) + 6, y + 2, COLORS.textDim, 10);
+        y += 22;
+      }
 
       const worldLevels = this.ctx.levels.filter((l) => l.world === worldIdx);
       for (let i = 0; i < worldLevels.length; i++) {

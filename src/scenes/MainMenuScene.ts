@@ -11,6 +11,18 @@ import { generateEndlessLevel } from '../game/WaveGenerator.ts';
 import { drawGoldFrame, drawGlossButton, drawGlowTitle, drawGrassTile } from '../graphics/UIPainter.ts';
 import { drawWorldSilhouette } from '../graphics/WorldBackground.ts';
 
+// Optional hero image at public/assets/hero.png — replaces silhouette if present
+let heroImg: HTMLImageElement | 'fail' | null = null;
+function tryHero(base: string): HTMLImageElement | null {
+  if (heroImg === 'fail') return null;
+  if (heroImg) return heroImg.complete && heroImg.naturalWidth > 0 ? heroImg : null;
+  const img = new Image();
+  img.onerror = () => { heroImg = 'fail'; };
+  img.src = `${base}assets/hero.png`;
+  heroImg = img;
+  return null;
+}
+
 interface Rect { x: number; y: number; w: number; h: number }
 interface Ember { x: number; y: number; vx: number; vy: number; life: number; maxLife: number; size: number; hue: number }
 
@@ -66,15 +78,19 @@ export class MainMenuScene extends BaseScene {
     const r = this.ctx.renderer;
     r.beginFrame();
     r.beginWorld();
-    // World 1 silhouette (frontier horizon) as dramatic backdrop
-    drawWorldSilhouette(r.ctx, 1, 42);
-    // Lower-half themed grass
-    for (let gy = Math.floor(GRID_ROWS * 0.4); gy < GRID_ROWS; gy++) {
-      for (let gx = 0; gx < GRID_COLS; gx++) {
-        drawGrassTile(r.ctx, gx * TILE_SIZE, gy * TILE_SIZE, TILE_SIZE, 'grass');
+    // Try optional hero image; fall back to procedural silhouette
+    const base = import.meta.env.BASE_URL;
+    const hero = tryHero(base);
+    if (hero) {
+      r.ctx.drawImage(hero, 0, 0, WORLD_WIDTH, WORLD_HEIGHT);
+    } else {
+      drawWorldSilhouette(r.ctx, 1, 42);
+      for (let gy = Math.floor(GRID_ROWS * 0.4); gy < GRID_ROWS; gy++) {
+        for (let gx = 0; gx < GRID_COLS; gx++) {
+          drawGrassTile(r.ctx, gx * TILE_SIZE, gy * TILE_SIZE, TILE_SIZE, 'grass');
+        }
       }
     }
-    void WORLD_WIDTH; void WORLD_HEIGHT;
 
     r.beginScreen();
     const vw = this.ctx.renderer.vw();

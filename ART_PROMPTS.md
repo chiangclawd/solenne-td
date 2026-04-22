@@ -1,141 +1,182 @@
-# 索倫 TD — AI 美術 Prompt Pack
+# 索倫 TD — AI 美術 Drop-in 手冊
 
-本文件提供 **Midjourney / Stable Diffusion / DALL·E 3** 可直接貼用的 prompt，
-讓使用者可批次生成遊戲內美術資產。所有 prompt 已調整為符合：
-- 繁中塔防世界觀（索倫王國對抗鐵潮 / 虛空要塞）
-- 遊戲既有色調：深藍夜 `#050810` + 金 `#ffd166` + 橘 `#ff9f43` + 青綠 `#6ee17a`
-- 輸出規格：建議 1024×1024（角色）、1920×1080（世界封面）
+把 AI 生成的圖片放進指定資料夾，推送到 GitHub 就會自動上線取代目前的程序繪製美術。不需要改任何程式碼。
 
 ---
 
-## 📂 放置位置
+## 📁 資料夾結構（Drop-in 位置）
 
-產出圖片後，請放到 `public/assets/portraits/`、`public/assets/covers/`、`public/assets/bosses/`。
-檔名需與下列對應（已預留整合路徑）：
-- 角色肖像：`kieran.png` / `vasya.png` / `pip.png` / `first_one.png`
-- 世界封面：`world1.png` ~ `world5.png`
-- Boss 專屬：`boss_frontier.png` / `boss_industrial.png` / `final_boss.png` / `glacial_boss.png` / `void_boss.png`
-- UI 裝飾（選）：`frame_gold.png`
-
----
-
-## 🧑 角色肖像（對話框立繪）
-
-**共通風格 suffix**（每個 prompt 結尾都貼上）：
 ```
-, painterly digital art, deep navy background, cinematic lighting, subtle gold rim light, half-body portrait, square 1:1, game character concept, front-facing, neutral expression with tension
-```
-
-### 基蘭指揮官 Kieran
-```
-Asian male commander in his early 40s, short dark hair with gray streaks, strong jawline with a stubble, wearing a navy blue military trench coat with gold-trimmed epaulettes, an antique brass compass hanging around his neck, weary determined eyes, scar across his left eyebrow, ambient smoke behind
+public/assets/
+├── hero.png              ← 主選單背景大圖（可選）
+├── portraits/
+│   ├── kieran.png        ← 基蘭指揮官（有 PNG 則覆蓋 SVG）
+│   ├── vasya.png         ← 瓦西亞中士
+│   ├── pip.png           ← 皮普工程師
+│   └── first_one.png     ← 第一個人（最終 Boss）
+└── covers/
+    ├── world1.png        ← 邊境戰役封面橫幅
+    ├── world2.png        ← 工業心臟
+    ├── world3.png        ← 首都保衛
+    ├── world4.png        ← 凍原前哨
+    └── world5.png        ← 虛空要塞
 ```
 
-### 瓦西亞中士 Vasya
-```
-Asian female sergeant in her 30s, cropped auburn hair tied back, tactical vest with leather strap and ammunition pouches, holding a short-range rifle casually over her shoulder, orange glow reflecting off her cheek, confident smirk with tired eyes, scar on her jawline, rugged but agile build
-```
-
-### 皮普工程師 Pip
-```
-Androgynous young engineer in their 20s, round wire-rim glasses catching green glow, messy platinum-blond hair, soot smudge on one cheek, wearing a leather apron over a grease-stained shirt, brass and copper tools stuffed into chest straps, holding a glowing teal-green crystal in cupped hands, curious but guarded expression, hint of otherworldly aura
-```
-
-### 第一個人 First One (Final Boss)
-```
-Ancient hooded figure that resembles Pip but aged a hundred years older, pale translucent skin, hollow violet eyes, long silver-white hair flowing unnaturally, wearing a tattered black ceremonial robe with glowing purple-teal runes, cracked porcelain mask slipping from his face, void tendrils rising behind him, cold blue-purple rim light, ominous and melancholic
-```
+**格式**：PNG（推薦）或 WebP。SVG 僅作為目前的 placeholder。
+**尺寸**：portraits 建議 `512×512`、covers 建議 `1024×256`（寬橫幅）、hero 建議 `1024×1536`（portrait 比例）。
 
 ---
 
-## 🗺 世界封面（關卡選擇頁可選大圖）
+## 🎯 優先順序（由高到低的視覺 ROI）
 
-**共通風格 suffix**：
-```
-, 16:9 landscape matte painting, atmospheric perspective, environmental storytelling, game art concept, no characters, no text
-```
+### 優先級 1 — 角色立繪（4 張，必做）
+對話框中會顯示，整個戰役出現上百次，**最值得做**。
 
-### World 1 — 邊境戰役 Frontier
-```
-A fortified medieval watchtower on the edge of vast golden grasslands at dusk, distant torch flames marking defensive positions, broken cart abandoned on a dirt road, warm sunset in the sky with a single flock of birds, green hills rolling into pastoral farmland behind
-```
+### 優先級 2 — 世界封面（5 張）
+關卡選擇頁每個世界區塊上方的橫幅，首次進入有電影感。
 
-### World 2 — 工業心臟 Industrial Heart
-```
-A massive 1920s-style steelworks factory complex at night with towering smokestacks belching orange flame into a smoke-filled sky, cooling canals reflecting red furnace glow, rusted train tracks in the foreground, oppressive industrial atmosphere with harsh contrast
-```
+### 優先級 3 — 主選單 Hero 圖（1 張）
+首頁大背景，取代目前的程序剪影。
 
-### World 3 — 首都保衛 Capital Stand
-```
-An art-deco royal capital city at night under siege, grand marble palace on a hill with spotlights cutting through smoke, the city below in chaos with street-level fires, burnt banners of a fallen golden emblem hanging from balconies, melancholic defiance
-```
+---
 
-### World 4 — 凍原前哨 Frozen Outpost
-```
-A vast frozen tundra at twilight with aurora-like cracks in the purple sky, three ancient black obelisks jutting up from blue-white ice, glowing teal energy lines tracing through the ground, distant northern lights with unnatural color shifts, crisp desolate beauty
-```
+## 🎨 Prompts（可直接貼進 ChatGPT / Midjourney / Stable Diffusion）
 
-### World 5 — 虛空要塞 Void Fortress
+### 共通風格 Suffix（建議每次附加）
 ```
-A colossal black onyx fortress rising out of dark stormy ocean, alien non-Euclidean architecture with floating platforms, purple-violet void energy pulsing between the spires, no stars visible in the twisted dark sky, occasional distant white lightning, dreamlike cosmic horror
+painterly digital art, cinematic lighting, deep navy background with subtle gold rim light, game concept art style, consistent palette: dark navy #050810, gold #ffd166, orange #ff9f43, teal #6ee17a
 ```
 
 ---
 
-## 👹 Boss 肖像（勝利畫面/對話框頂欄可選）
+### 🧑 立繪 Prompts
 
-### 世界一 Boss — 鐵潮突擊隊長
+#### `kieran.png` — 基蘭指揮官
 ```
-Armored enemy commander, dark iron helmet with a single horizontal red slit, heavy shoulder pauldrons, black tabard with a steel cog emblem, carrying a twin-bladed axe, menacing silhouette against red flame, square 1:1, game boss portrait concept
-```
-
-### 世界二 Boss — 鋼鐵公爵
-```
-Towering mechanical armored duke, full plate armor with exposed steam pipes and brass valves along the shoulders, glowing orange eye slit, oversized gauntleted fists, smoke venting from shoulder stacks, standing in a factory interior, square 1:1
+Half-body portrait, Asian male commander in his early 40s, short dark hair with gray streaks at the temples, strong jawline with stubble, thin scar across his left eyebrow. Wearing a navy-blue military trench coat with gold-trimmed epaulettes, antique brass compass hanging around his neck. Weary determined expression, facing camera slightly off-center. Moody warm backlighting, smoke ambient at the edges. Square 1:1 composition, dark background. Painterly detailed illustration.
 ```
 
-### 最終 Boss — 鐵潮之聲
+#### `vasya.png` — 瓦西亞中士
 ```
-A robed figure with a polished steel mask that shows only a single speaker grille where a mouth should be, flowing black velvet robe with crimson inner lining, hands folded revealing bronze mechanical fingers, a throne room behind him with toppled national banners, square 1:1
-```
-
-### 冰原 Boss — 極光巨獸
-```
-A massive four-legged beast of cracked blue ice with an inner core glowing teal, translucent crystalline antlers branching high above its head, clawed feet crusted in snow, vapor trailing from its mouth, standing in an aurora-lit arctic landscape, square 1:1
+Half-body portrait, Asian female sergeant in her early 30s, cropped auburn hair tied back in a short ponytail, tactical vest over dark olive uniform with ammo pouches on the chest. Scar along her right jawline. Confident smirk with tired eyes. Carrying a short-barreled rifle across her shoulder casually. Orange sunset glow on one cheek from a distant fire. Rugged but agile build. Square 1:1 composition, painterly illustration.
 ```
 
-### 虛空 Boss — 第一執政者
+#### `pip.png` — 皮普工程師
 ```
-An eldritch god-king with five porcelain masks floating around his head, long six-armed silhouette, each hand holding a different broken weapon, wearing ceremonial void robes with impossible geometry patterns, violet-and-black energy storms behind him, dreamlike horror, square 1:1
+Half-body portrait, androgynous young engineer in their early 20s, round wire-rim glasses catching a teal-green glow, messy platinum-blond hair. Wearing a leather apron over a grease-stained shirt, brass and copper engineering tools in chest straps. A dark soot smudge on one cheek. Holding a glowing teal crystalline shard in cupped hands that lights up the face from below. Curious but guarded expression, hint of otherworldly aura. Square 1:1 composition, painterly illustration.
+```
+
+#### `first_one.png` — 第一個人（Final Boss）
+```
+Half-body portrait of an ancient hooded figure who resembles Pip but aged 100 years older. Pale translucent skin with cracks running across the face. Hollow violet glowing eyes with no irises. Long silver-white hair flowing unnaturally. Wearing a tattered black ceremonial robe with dim violet-teal glowing runes stitched into the hem. A cracked porcelain mask half-sliding off his face revealing the ruined flesh beneath. Void tendrils rising behind him. Cold blue-purple rim lighting, ominous and melancholic. Painterly illustration, square 1:1.
 ```
 
 ---
 
-## 🎞 UI 裝飾（選配）
+### 🗺 世界封面 Prompts（`1024×256` 橫幅）
 
-### 金色捲軸框
+#### `world1.png` — 邊境戰役
 ```
-An ornate gold filigree rectangular frame with scrollwork flourishes at the corners, transparent centre, engraved details in burnished old gold, game UI asset, transparent PNG, top-down flat symmetrical, 1024x1024
+Wide panoramic landscape banner, fortified medieval watchtower silhouetted against a dusk sky over vast golden grasslands. Distant torches mark defensive positions. A broken cart on a dirt road foreground left. Warm sunset with a single flock of birds, green rolling hills behind the tower. 4:1 wide aspect ratio, matte painting style, no text.
 ```
 
-### 星等噴射特效
+#### `world2.png` — 工業心臟
 ```
-A burst of golden sparkles and small soft stars radiating outward from a central glow, soft cream highlights, game VFX spritesheet concept, transparent background, 1024x1024
+Wide panoramic landscape banner, 1920s steelworks complex at night with towering smokestacks belching orange flame into a smoke-choked red sky. Cooling canals reflecting furnace glow. Rusted train tracks leading toward the factory. Oppressive industrial atmosphere with harsh red-black contrast. 4:1 aspect ratio, matte painting.
+```
+
+#### `world3.png` — 首都保衛
+```
+Wide panoramic banner, art-deco royal capital city under siege at night. Grand marble palace with a central dome on a hill, spotlights cutting through smoke. The city below in chaos with street-level fires. Torn banners of a gold emblem hanging from balconies. Melancholic defiance, moody navy-purple sky. 4:1 aspect ratio, matte painting.
+```
+
+#### `world4.png` — 凍原前哨
+```
+Wide panoramic banner, vast frozen tundra at twilight. The sky has aurora-like cracks in deep purple. Three ancient black obelisks jutting up from blue-white ice. Glowing teal energy lines tracing through the ground. Distant northern lights with unnatural shifting colors. Crisp desolate beauty. 4:1 aspect ratio, matte painting.
+```
+
+#### `world5.png` — 虛空要塞
+```
+Wide panoramic banner, colossal black onyx fortress rising out of dark stormy ocean. Alien non-Euclidean architecture with floating platforms. Purple-violet void energy pulsing between the spires. No stars in the twisted dark sky. Distant white lightning. Dreamlike cosmic horror atmosphere. 4:1 aspect ratio, matte painting.
 ```
 
 ---
 
-## 使用建議
+### 🖼 主選單 Hero 圖
 
-- **Midjourney** 使用者：複製 prompt 後加 `--ar 16:9 --v 6.1` 或 `--ar 1:1 --v 6.1`
-- **Stable Diffusion / ComfyUI**：建議搭配 SDXL 模型、`cfg_scale=7`、`steps=30`
-- **DALL·E 3**：直接貼 prompt，另附「風格一致」指示即可
-- 產出後請統一壓縮為 `.webp` 或 `.png`（< 500KB / 張）以減少 bundle 體積
+#### `hero.png` — 主選單背景（portrait 1024×1536）
+```
+Vertical 2:3 portrait poster, three heroes standing in silhouette on a ridge looking toward a distant battlefield at dusk. A dark-coated commander in the center, a sergeant with rifle to his right, a young engineer with glowing teal shard to his left. Golden-orange sky with smoke plumes on the horizon behind them. Fortified watchtower silhouetted far away. Cinematic painterly game poster style, no text or logos. Dark navy foreground. Composition has dramatic negative space in the sky for title overlay.
+```
 
-## 整合方式（已在程式碼中預留）
+---
 
-1. **角色立繪** — [DialogueBox.ts](src/ui/DialogueBox.ts) 已支援在說話者名稱旁顯示 portrait 欄位，只需在 [Level.ts](src/game/Level.ts) 的 `DialogueLineData` 加 `portrait?: string` 欄位，並在對話資料引用檔名。
-2. **世界封面** — 可在 [LevelSelectScene.ts](src/scenes/LevelSelectScene.ts) 每個世界標題背景載入對應 `worldN.png`。
-3. **Boss 專屬 sprite** — 可在 [assets.ts](src/assets.ts) 替換相應敵人 key 的 URL。
+## 🛠 推薦工作流程
 
-> 建議版本：**v2.1.0** 或 **v2.2.0** 釋出含完整 AI 美術的版本。v2.0.0 保留 Kenney 純美術作為基礎版。
+### 最快路徑 — ChatGPT Plus（$20/月）+ DALL·E 3
+1. 開 ChatGPT，選 GPT-4o
+2. 貼 prompt（可加「`1024x1024`」或「`1792x1024`」尺寸指示）
+3. 右鍵點圖 → 另存新檔 → 用**上表的檔名**命名（例：`kieran.png`）
+4. 複製到對應資料夾
+
+### 開放路徑 — Midjourney（$10/月）
+1. 進 Discord MJ 伺服器
+2. `/imagine prompt:` 貼上 prompt，加 `--ar 1:1 --v 7` 或 `--ar 4:1`
+3. U1/U2/U3/U4 選喜歡的放大
+4. 下載後改名
+
+### 免費路徑 — Stable Diffusion（本機 / Replicate / Leonardo）
+1. SDXL 或 FLUX 模型
+2. cfg_scale=7, steps=30
+3. 尺寸：1024×1024（portrait）/ 1536×384（cover）
+4. 若偏戲劇感，加 negative prompt: `flat, amateur, watermark, text, blurry`
+
+---
+
+## 📦 安裝到遊戲的 3 步
+
+1. **生成圖** → 命名為上表檔名
+2. **放入資料夾**（本機）：
+   ```bash
+   # 例：放 4 張角色立繪
+   cp ~/Downloads/kieran.png public/assets/portraits/
+   cp ~/Downloads/vasya.png  public/assets/portraits/
+   cp ~/Downloads/pip.png    public/assets/portraits/
+   cp ~/Downloads/first_one.png public/assets/portraits/
+   ```
+3. **推送**：
+   ```bash
+   git add public/assets/
+   git commit -m "Art: add AI-generated character portraits"
+   git push
+   ```
+
+GitHub Actions 會自動 build 並部署到 `https://chiangclawd.github.io/solenne-td/`。約 1 分鐘內生效。
+
+---
+
+## ✅ 檢查表
+
+只要有 PNG 就會自動覆蓋目前的程序繪製 / SVG，不需改任何程式：
+
+- [ ] `kieran.png` — 對話中會自動替換 SVG placeholder
+- [ ] `vasya.png`
+- [ ] `pip.png`
+- [ ] `first_one.png`
+- [ ] `covers/world1.png` → 關卡選擇頁世界 1 上方出現橫幅
+- [ ] `covers/world2.png`
+- [ ] `covers/world3.png`
+- [ ] `covers/world4.png`
+- [ ] `covers/world5.png`
+- [ ] `hero.png` → 主選單背景取代程序剪影
+
+**檔案不存在時**：自動 fallback 到原本的程序繪製 / SVG，無 404、無錯誤。
+
+---
+
+## 💡 小提醒
+
+- **尺寸超過 10MB** 的圖片會被 workbox 拒絕快取 — 請壓縮。
+- **WebP** 體積比 PNG 小 30-50%，建議用 `squoosh.app` 轉檔。
+- 若 AI 圖風格不統一，建議**同一個 tool 一次生完**（MJ 用相同 seed / DALL-E 用相同 session）。
+- PNG 透明背景最佳；若 AI 工具不支援透明，可用 `remove.bg` 事後去背（僅 portraits 需要，covers/hero 不需要去背）。
