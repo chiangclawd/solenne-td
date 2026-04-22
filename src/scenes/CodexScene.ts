@@ -3,6 +3,7 @@ import { MainMenuScene } from './MainMenuScene.ts';
 import { TOWER_TYPES, TOWER_ORDER } from '../data/towers.ts';
 import { ENEMY_TYPES } from '../data/enemies.ts';
 import { ACHIEVEMENTS } from '../game/Achievements.ts';
+import { drawTowerIconScreen, drawEnemyIconScreen } from '../graphics/SpritePainter.ts';
 import { COLORS, TILE_SIZE } from '../config.ts';
 
 interface Rect { x: number; y: number; w: number; h: number }
@@ -141,7 +142,7 @@ export class CodexScene extends BaseScene {
     // Icon
     const iconSize = 54;
     r.drawScreenRect(x + 10, y + 10, iconSize, iconSize, 'rgba(255,255,255,0.04)');
-    r.drawSpriteScreen(this.ctx.assets.get(cfg.turretSprite), x + 13, y + 13, iconSize - 6, iconSize - 6);
+    drawTowerIconScreen(r.ctx, id, x + 13, y + 13, iconSize - 6, 0);
 
     r.drawTextScreen(cfg.name, x + 76, y + 12, '#ffd166', 14, true);
     r.drawTextScreen(TOWER_DESC[id] ?? '', x + 76, y + 32, COLORS.text, 10);
@@ -175,7 +176,7 @@ export class CodexScene extends BaseScene {
 
     const iconSize = 48;
     r.drawScreenRect(x + 10, y + 10, iconSize, iconSize, 'rgba(255,255,255,0.04)');
-    r.drawSpriteScreen(this.ctx.assets.get(cfg.sprite), x + 13, y + 13, iconSize - 6, iconSize - 6);
+    drawEnemyIconScreen(r.ctx, cfg.sprite, x + 13, y + 13, iconSize - 6);
 
     r.drawTextScreen(info.label, x + 70, y + 10, '#ffd166', 13, true);
     r.drawTextScreen(`[${info.tier}]`, x + 70 + r.measureTextScreen(info.label, 13, true) + 8, y + 11, COLORS.textDim, 10);

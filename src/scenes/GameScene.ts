@@ -18,6 +18,10 @@ import { recordCompletion, getStars } from '../storage/SaveData.ts';
 import type { SceneContext } from './SceneContext.ts';
 import type { Difficulty } from '../storage/SaveData.ts';
 import { generateEndlessWave } from '../game/WaveGenerator.ts';
+import {
+  drawTowerBase, drawTowerTurret, drawEnemy, drawProjectile,
+  drawTowerIconScreen, drawEnemyIconScreen,
+} from '../graphics/SpritePainter.ts';
 
 interface Rect { x: number; y: number; w: number; h: number }
 interface Floater { x: number; y: number; vx: number; vy: number; text: string; color: string; life: number; maxLife: number; size: number }
@@ -358,7 +362,6 @@ export class GameScene extends BaseScene {
       r.drawSprite(pathImg, tx * T + T / 2, ty * T + T / 2, T, T);
     }
 
-    const baseImg = this.ctx.assets.get('towerBase');
     for (const t of this.towers) {
       const lv = t.currentLevel();
       const isSelected = this.selectedExisting === t;
@@ -367,8 +370,8 @@ export class GameScene extends BaseScene {
         isSelected ? 'rgba(255, 220, 120, 0.42)' : 'rgba(255, 220, 120, 0.14)',
         isSelected ? 2 : 1,
       );
-      r.drawSprite(baseImg, t.x, t.y, T * 0.95, T * 0.95);
-      r.drawSprite(this.ctx.assets.get(t.config.turretSprite), t.x, t.y, T * 0.9, T * 0.9, t.turretRotation);
+      drawTowerBase(r.ctx, t.x, t.y, T * 0.95);
+      drawTowerTurret(r.ctx, t.config.id, t.x, t.y, t.turretRotation, t.level);
       // Level pips
       for (let i = 0; i <= t.level; i++) {
         r.drawCircle(t.x - 10 + i * 7, t.y + T * 0.4, 2.5, '#ffd166');
@@ -377,15 +380,10 @@ export class GameScene extends BaseScene {
 
     for (const e of this.enemies) {
       const p = e.position();
-      if (e.hitFlash > 0) {
-        r.ctx.globalAlpha = Math.min(0.7, e.hitFlash * 4);
-        r.drawCircle(p.x, p.y, e.radius + 2, '#ffffff');
-        r.ctx.globalAlpha = 1;
-      }
       if (e.healsNearby) {
         r.drawCircleOutline(p.x, p.y, e.healsNearby.radius, 'rgba(110, 235, 140, 0.25)', 1);
       }
-      r.drawSprite(this.ctx.assets.get(e.sprite), p.x, p.y, e.spriteSize, e.spriteSize, e.rotation);
+      drawEnemy(r.ctx, e.sprite, p.x, p.y, e.rotation, e.spriteSize, e.hitFlash);
       if (e.isSlowed()) {
         r.drawCircleOutline(p.x, p.y, e.radius + 3, 'rgba(110, 200, 255, 0.9)', 1.5);
       }
@@ -400,7 +398,7 @@ export class GameScene extends BaseScene {
     }
 
     for (const p of this.projectiles) {
-      r.drawSprite(this.ctx.assets.get(p.sprite), p.x, p.y, T * 0.3, T * 0.3, p.rotation);
+      drawProjectile(r.ctx, p.sprite, p.x, p.y, p.rotation);
     }
 
     for (const fx of this.effects) {
@@ -580,7 +578,7 @@ export class GameScene extends BaseScene {
       const g = groups[i];
       const ix = startX + i * itemW;
       const iy = y + (panelH - iconSize) / 2;
-      r.drawSpriteScreen(this.ctx.assets.get(g.cfg.sprite), ix, iy, iconSize, iconSize);
+      drawEnemyIconScreen(r.ctx, g.cfg.sprite, ix, iy, iconSize);
       r.drawTextScreen(`×${g.count}`, ix + iconSize + 2, iy + 8, COLORS.text, 11, true);
     }
   }
@@ -725,7 +723,7 @@ export class GameScene extends BaseScene {
       const affordable = this.state.gold >= baseCost;
       const selected = id === this.selectedTowerId;
       r.drawScreenRoundedRect(bx, by, btnSize, btnSize, 7, affordable ? '#22304a' : '#1a1a22');
-      r.drawSpriteScreen(this.ctx.assets.get(cfg.turretSprite), bx + 5, by + 3, btnSize - 10, btnSize - 16);
+      drawTowerIconScreen(r.ctx, id, bx + 5, by + 3, btnSize - 10, 0);
       r.drawTextScreenCenter(`${baseCost}`, bx + btnSize / 2, by + btnSize - 7, affordable ? '#ffd166' : '#666', 9, true);
       if (selected) r.drawScreenRoundedRectOutline(bx, by, btnSize, btnSize, 7, '#ffd166', 2);
       if (!affordable) r.drawScreenRect(bx, by, btnSize, btnSize, 'rgba(8,12,22,0.55)');

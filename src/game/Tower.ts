@@ -12,6 +12,7 @@ export interface TowerLevel {
 }
 
 export interface TowerConfig {
+  id: string;
   name: string;
   levels: readonly TowerLevel[];
   turretSprite: AssetName;

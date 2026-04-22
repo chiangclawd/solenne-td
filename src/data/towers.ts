@@ -3,7 +3,9 @@ import { TILE_SIZE } from '../config.ts';
 
 const T = TILE_SIZE;
 
-export const TOWER_TYPES: Record<string, TowerConfig> = {
+type RawTowerConfig = Omit<TowerConfig, 'id'>;
+
+const RAW_TOWERS: Record<string, RawTowerConfig> = {
   cannon: {
     name: '加農砲',
     turretSprite: 'turretCannon',
@@ -102,6 +104,10 @@ export const TOWER_TYPES: Record<string, TowerConfig> = {
     ],
   },
 };
+
+export const TOWER_TYPES: Record<string, TowerConfig> = Object.fromEntries(
+  Object.entries(RAW_TOWERS).map(([id, cfg]) => [id, { id, ...cfg }]),
+);
 
 export const TOWER_ORDER: readonly string[] = [
   'cannon', 'quickShot', 'machineGun', 'frostTower',
