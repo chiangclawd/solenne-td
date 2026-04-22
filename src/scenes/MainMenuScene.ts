@@ -9,6 +9,7 @@ import { totalStars, countCompleted } from '../storage/SaveData.ts';
 import { ACHIEVEMENTS } from '../game/Achievements.ts';
 import { generateEndlessLevel } from '../game/WaveGenerator.ts';
 import { drawGoldFrame, drawGlossButton, drawGlowTitle, drawGrassTile } from '../graphics/UIPainter.ts';
+import { drawWorldSilhouette } from '../graphics/WorldBackground.ts';
 
 interface Rect { x: number; y: number; w: number; h: number }
 interface Ember { x: number; y: number; vx: number; vy: number; life: number; maxLife: number; size: number; hue: number }
@@ -65,8 +66,10 @@ export class MainMenuScene extends BaseScene {
     const r = this.ctx.renderer;
     r.beginFrame();
     r.beginWorld();
-    // Themed grass as menu backdrop
-    for (let gy = 0; gy < GRID_ROWS; gy++) {
+    // World 1 silhouette (frontier horizon) as dramatic backdrop
+    drawWorldSilhouette(r.ctx, 1, 42);
+    // Lower-half themed grass
+    for (let gy = Math.floor(GRID_ROWS * 0.4); gy < GRID_ROWS; gy++) {
       for (let gx = 0; gx < GRID_COLS; gx++) {
         drawGrassTile(r.ctx, gx * TILE_SIZE, gy * TILE_SIZE, TILE_SIZE, 'grass');
       }

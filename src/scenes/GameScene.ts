@@ -384,13 +384,22 @@ export class GameScene extends BaseScene {
     r.beginFrame();
     r.beginWorld();
 
-    // Themed grass tiles (procedural, world-specific palette)
+    // Themed grass tiles (procedural, world-specific palette) + decorations
     const theme = themeForWorld(this.level.world);
     for (let gy = 0; gy < GRID_ROWS; gy++) {
       for (let gx = 0; gx < GRID_COLS; gx++) {
         drawGrassTile(r.ctx, gx * T, gy * T, T, theme);
       }
     }
+    // Edge vignette — subtle dark radial mask
+    const vg = r.ctx.createRadialGradient(
+      WORLD_WIDTH / 2, WORLD_HEIGHT / 2, WORLD_WIDTH * 0.3,
+      WORLD_WIDTH / 2, WORLD_HEIGHT / 2, WORLD_WIDTH * 0.7,
+    );
+    vg.addColorStop(0, 'rgba(0,0,0,0)');
+    vg.addColorStop(1, 'rgba(0,0,0,0.28)');
+    r.ctx.fillStyle = vg;
+    r.ctx.fillRect(0, 0, WORLD_WIDTH, WORLD_HEIGHT);
 
     for (const key of this.pathTiles) {
       const [txs, tys] = key.split(',');
