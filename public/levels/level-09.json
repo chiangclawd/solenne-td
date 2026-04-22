@@ -1,0 +1,85 @@
+{
+  "id": "level-09",
+  "name": "港灣運河",
+  "world": 2,
+  "flavorText": "運河上每一艘船都載滿了裝甲。",
+  "intro": [
+    { "speaker": "旁白", "text": "港灣運河。索倫最大的內陸港口，也是重工業品的出口門戶。", "color": "#9aa5b8" },
+    { "speaker": "瓦西亞中士", "text": "水道上堵了八艘運輸艇。全部是鐵潮的。", "color": "#ff9f43" },
+    { "speaker": "基蘭指揮官", "text": "他們把重裝部隊全調來了。皮普，你的分析？", "color": "#5eb8ff" },
+    { "speaker": "皮普工程師", "text": "那個礦石——我還沒完全破解。但它能把驅動效率提升三倍。指揮官，那是燃料。", "color": "#6ee17a" },
+    { "speaker": "基蘭指揮官", "text": "他們在搶燃料。守住港口，別讓一艘船離岸。", "color": "#5eb8ff" }
+  ],
+  "outroWin": [
+    { "speaker": "瓦西亞中士", "text": "港口守住了。但他們留下了什麼。", "color": "#ff9f43" },
+    { "speaker": "皮普工程師", "text": "……一張地圖。目標指向內陸的一座礦山。", "color": "#6ee17a" },
+    { "speaker": "基蘭指揮官", "text": "那就是我們的下一站。", "color": "#5eb8ff" }
+  ],
+  "outroLose": [
+    { "speaker": "基蘭指揮官", "text": "運輸艇逃了。他們要帶走的東西，我們都沒能攔下。", "color": "#5eb8ff" }
+  ],
+  "path": [
+    { "x": 4, "y": -0.5 },
+    { "x": 4, "y": 2 },
+    { "x": 1, "y": 2 },
+    { "x": 1, "y": 6 },
+    { "x": 6, "y": 6 },
+    { "x": 6, "y": 9 },
+    { "x": 3, "y": 9 },
+    { "x": 3, "y": 12 },
+    { "x": 8, "y": 12 },
+    { "x": 8, "y": 15.5 }
+  ],
+  "startingGold": 155,
+  "startingLives": 11,
+  "availableTowers": ["cannon", "quickShot", "machineGun", "frostTower", "sniper", "missileLauncher", "heavyCannon"],
+  "waves": [
+    [
+      { "delay": 0.5, "enemy": "soldier" },
+      { "delay": 0.5, "enemy": "soldier" },
+      { "delay": 0.5, "enemy": "soldier" },
+      { "delay": 0.5, "enemy": "soldier" },
+      { "delay": 0.6, "enemy": "tank" },
+      { "delay": 0.6, "enemy": "tank" },
+      { "delay": 0.6, "enemy": "tank" },
+      { "delay": 0.7, "enemy": "armored" },
+      { "delay": 0.7, "enemy": "armored" },
+      { "delay": 0.7, "enemy": "armored" },
+      { "delay": 0.7, "enemy": "armored" },
+      { "delay": 0.9, "enemy": "plane" },
+      { "delay": 0.9, "enemy": "plane" }
+    ],
+    [
+      { "delay": 0.5, "enemy": "runner" },
+      { "delay": 0.5, "enemy": "runner" },
+      { "delay": 0.5, "enemy": "runner" },
+      { "delay": 0.5, "enemy": "runner" },
+      { "delay": 0.5, "enemy": "runner" },
+      { "delay": 0.8, "enemy": "heavyTank" },
+      { "delay": 0.8, "enemy": "heavyTank" },
+      { "delay": 0.8, "enemy": "heavyTank" },
+      { "delay": 0.7, "enemy": "armored" },
+      { "delay": 0.7, "enemy": "armored" },
+      { "delay": 0.7, "enemy": "plane" },
+      { "delay": 0.7, "enemy": "plane" },
+      { "delay": 0.7, "enemy": "plane" },
+      { "delay": 1.4, "enemy": "boss" }
+    ],
+    [
+      { "delay": 0.9, "enemy": "boss" },
+      { "delay": 0.9, "enemy": "boss" },
+      { "delay": 0.5, "enemy": "scout" },
+      { "delay": 0.5, "enemy": "scout" },
+      { "delay": 0.5, "enemy": "scout" },
+      { "delay": 0.5, "enemy": "scout" },
+      { "delay": 0.5, "enemy": "scout" },
+      { "delay": 0.8, "enemy": "heavyTank" },
+      { "delay": 0.8, "enemy": "heavyTank" },
+      { "delay": 0.8, "enemy": "armored" },
+      { "delay": 0.8, "enemy": "armored" },
+      { "delay": 0.8, "enemy": "plane" },
+      { "delay": 0.8, "enemy": "plane" },
+      { "delay": 1.8, "enemy": "armoredBoss" }
+    ]
+  ]
+}

@@ -1,0 +1,83 @@
+{
+  "id": "level-20",
+  "name": "幽影迴廊",
+  "world": 5,
+  "flavorText": "燈一盞一盞熄。走廊裡的腳步聲，是我們聽不見的。",
+  "intro": [
+    { "speaker": "旁白", "text": "虛空要塞 · 外廊。黑石走廊。沒有窗，只有會呼吸的牆。", "color": "#9aa5b8" },
+    { "speaker": "瓦西亞中士", "text": "我們的燈籠打不到遠。", "color": "#ff9f43" },
+    { "speaker": "皮普工程師", "text": "用聖光塔——它打到的東西會浮現。", "color": "#6ee17a" },
+    { "speaker": "基蘭指揮官", "text": "你怎麼知道？", "color": "#5eb8ff" },
+    { "speaker": "皮普工程師", "text": "……我記得這裡。每一個轉角。", "color": "#6ee17a" },
+    { "speaker": "瓦西亞中士", "text": "皮普先走。我們跟緊。", "color": "#ff9f43" }
+  ],
+  "outroWin": [
+    { "speaker": "皮普工程師", "text": "前面是主廳。他在那裡等我們。", "color": "#6ee17a" },
+    { "speaker": "基蘭指揮官", "text": "他是誰？", "color": "#5eb8ff" },
+    { "speaker": "皮普工程師", "text": "……他們叫他「第一個人」。", "color": "#6ee17a" }
+  ],
+  "outroLose": [
+    { "speaker": "瓦西亞中士", "text": "我們被幽影衝散了。", "color": "#ff9f43" }
+  ],
+  "path": [
+    { "x": 2, "y": -0.5 },
+    { "x": 2, "y": 4 },
+    { "x": 7, "y": 4 },
+    { "x": 7, "y": 7 },
+    { "x": 3, "y": 7 },
+    { "x": 3, "y": 11 },
+    { "x": 8, "y": 11 },
+    { "x": 8, "y": 14 },
+    { "x": 1, "y": 14 },
+    { "x": 1, "y": 15.5 }
+  ],
+  "startingGold": 215,
+  "startingLives": 10,
+  "availableTowers": ["quickShot", "machineGun", "frostTower", "sniper", "missileLauncher", "heavyCannon", "tesla", "lightTower"],
+  "waves": [
+    [
+      { "delay": 0.35, "enemy": "wraith" },
+      { "delay": 0.35, "enemy": "wraith" },
+      { "delay": 0.35, "enemy": "wraith" },
+      { "delay": 0.35, "enemy": "wraith" },
+      { "delay": 0.35, "enemy": "wraith" },
+      { "delay": 0.35, "enemy": "wraith" },
+      { "delay": 0.7, "enemy": "armored" },
+      { "delay": 0.7, "enemy": "armored" },
+      { "delay": 0.7, "enemy": "armored" },
+      { "delay": 0.8, "enemy": "plane" },
+      { "delay": 0.8, "enemy": "plane" }
+    ],
+    [
+      { "delay": 0.9, "enemy": "splitter" },
+      { "delay": 0.9, "enemy": "splitter" },
+      { "delay": 0.9, "enemy": "splitter" },
+      { "delay": 0.5, "enemy": "wraith" },
+      { "delay": 0.5, "enemy": "wraith" },
+      { "delay": 0.5, "enemy": "wraith" },
+      { "delay": 0.7, "enemy": "heavyTank" },
+      { "delay": 0.7, "enemy": "heavyTank" },
+      { "delay": 0.7, "enemy": "plane" },
+      { "delay": 0.7, "enemy": "plane" },
+      { "delay": 0.7, "enemy": "plane" },
+      { "delay": 1.5, "enemy": "boss" }
+    ],
+    [
+      { "delay": 1.0, "enemy": "armoredBoss" },
+      { "delay": 0.8, "enemy": "splitter" },
+      { "delay": 0.8, "enemy": "splitter" },
+      { "delay": 0.8, "enemy": "splitter" },
+      { "delay": 0.8, "enemy": "splitter" },
+      { "delay": 0.4, "enemy": "wraith" },
+      { "delay": 0.4, "enemy": "wraith" },
+      { "delay": 0.4, "enemy": "wraith" },
+      { "delay": 0.4, "enemy": "wraith" },
+      { "delay": 0.7, "enemy": "heavyTank" },
+      { "delay": 0.7, "enemy": "heavyTank" },
+      { "delay": 0.7, "enemy": "plane" },
+      { "delay": 0.7, "enemy": "plane" },
+      { "delay": 0.7, "enemy": "plane" },
+      { "delay": 2.0, "enemy": "finalBoss" }
+    ]
+  ]
+}

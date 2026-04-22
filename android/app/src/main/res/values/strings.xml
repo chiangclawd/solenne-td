@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Solenne TD</string>
+    <string name="title_activity_main">Solenne TD</string>
+    <string name="package_name">com.solenne.td</string>
+    <string name="custom_url_scheme">com.solenne.td</string>
+</resources>

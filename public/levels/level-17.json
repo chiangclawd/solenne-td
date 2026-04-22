@@ -1,0 +1,87 @@
+{
+  "id": "level-17",
+  "name": "極光裂口",
+  "world": 4,
+  "flavorText": "天上有三道極光，可是天是深紫的。",
+  "intro": [
+    { "speaker": "旁白", "text": "極光裂口。天空中有一道巨大的橫向裂痕——光從裡面滲出來。", "color": "#9aa5b8" },
+    { "speaker": "皮普工程師", "text": "那不是極光。那是……空間的裂痕。什麼東西穿過來了。", "color": "#6ee17a" },
+    { "speaker": "基蘭指揮官", "text": "穿過來？從哪裡？", "color": "#5eb8ff" },
+    { "speaker": "皮普工程師", "text": "不知道。但鐵潮從裂口另一邊來。索陽石不是我們世界的。", "color": "#6ee17a" },
+    { "speaker": "瓦西亞中士", "text": "意思是——我們不是在打一個國家。", "color": "#ff9f43" },
+    { "speaker": "基蘭指揮官", "text": "關掉裂口。不論那是什麼，別讓它變大。", "color": "#5eb8ff" }
+  ],
+  "outroWin": [
+    { "speaker": "皮普工程師", "text": "裂口閉合。但能量讀值……還是上升。", "color": "#6ee17a" },
+    { "speaker": "瓦西亞中士", "text": "還有下一道。我能感覺到。", "color": "#ff9f43" }
+  ],
+  "outroLose": [
+    { "speaker": "皮普工程師", "text": "裂口擴大了。它要把整個北境吸進去。", "color": "#6ee17a" }
+  ],
+  "path": [
+    { "x": -0.5, "y": 2 },
+    { "x": 6, "y": 2 },
+    { "x": 6, "y": 5 },
+    { "x": 2, "y": 5 },
+    { "x": 2, "y": 8 },
+    { "x": 8, "y": 8 },
+    { "x": 8, "y": 11 },
+    { "x": 4, "y": 11 },
+    { "x": 4, "y": 14 },
+    { "x": 9, "y": 14 },
+    { "x": 9, "y": 15.5 }
+  ],
+  "startingGold": 195,
+  "startingLives": 10,
+  "availableTowers": ["cannon", "quickShot", "machineGun", "frostTower", "sniper", "missileLauncher", "heavyCannon", "tesla"],
+  "waves": [
+    [
+      { "delay": 0.4, "enemy": "frostRaider" },
+      { "delay": 0.4, "enemy": "frostRaider" },
+      { "delay": 0.4, "enemy": "frostRaider" },
+      { "delay": 0.4, "enemy": "frostRaider" },
+      { "delay": 0.4, "enemy": "frostRaider" },
+      { "delay": 0.4, "enemy": "frostRaider" },
+      { "delay": 0.7, "enemy": "iceBeast" },
+      { "delay": 0.7, "enemy": "iceBeast" },
+      { "delay": 0.7, "enemy": "iceBeast" },
+      { "delay": 0.8, "enemy": "armored" },
+      { "delay": 0.8, "enemy": "armored" },
+      { "delay": 0.8, "enemy": "plane" },
+      { "delay": 0.8, "enemy": "plane" }
+    ],
+    [
+      { "delay": 0.7, "enemy": "iceBeast" },
+      { "delay": 0.7, "enemy": "iceBeast" },
+      { "delay": 0.7, "enemy": "iceBeast" },
+      { "delay": 0.7, "enemy": "iceBeast" },
+      { "delay": 0.6, "enemy": "heavyTank" },
+      { "delay": 0.6, "enemy": "heavyTank" },
+      { "delay": 0.6, "enemy": "heavyTank" },
+      { "delay": 0.6, "enemy": "heavyTank" },
+      { "delay": 0.7, "enemy": "plane" },
+      { "delay": 0.7, "enemy": "plane" },
+      { "delay": 0.7, "enemy": "plane" },
+      { "delay": 1.4, "enemy": "boss" },
+      { "delay": 1.4, "enemy": "boss" }
+    ],
+    [
+      { "delay": 1.0, "enemy": "glacialBoss" },
+      { "delay": 0.5, "enemy": "frostRaider" },
+      { "delay": 0.5, "enemy": "frostRaider" },
+      { "delay": 0.5, "enemy": "frostRaider" },
+      { "delay": 0.5, "enemy": "frostRaider" },
+      { "delay": 0.5, "enemy": "frostRaider" },
+      { "delay": 0.8, "enemy": "iceBeast" },
+      { "delay": 0.8, "enemy": "iceBeast" },
+      { "delay": 0.8, "enemy": "iceBeast" },
+      { "delay": 0.6, "enemy": "heavyTank" },
+      { "delay": 0.6, "enemy": "heavyTank" },
+      { "delay": 0.7, "enemy": "plane" },
+      { "delay": 0.7, "enemy": "plane" },
+      { "delay": 0.7, "enemy": "plane" },
+      { "delay": 0.7, "enemy": "plane" },
+      { "delay": 2.0, "enemy": "glacialBoss" }
+    ]
+  ]
+}

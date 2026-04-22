@@ -1,0 +1,86 @@
+{
+  "id": "level-08",
+  "name": "南境煉油廠",
+  "world": 2,
+  "flavorText": "皮普的手在發抖——他發現了某樣不該存在的東西。",
+  "intro": [
+    { "speaker": "旁白", "text": "南境煉油廠。煙囪沉默，但地底深處仍有低鳴。", "color": "#9aa5b8" },
+    { "speaker": "皮普工程師", "text": "指揮官……我剖開了那架飛機的核心。裡面有一塊礦石，還在發光。", "color": "#6ee17a" },
+    { "speaker": "基蘭指揮官", "text": "礦石？", "color": "#5eb8ff" },
+    { "speaker": "皮普工程師", "text": "不是鐵。不是銅。它自己會動——像在呼吸。我從沒見過。", "color": "#6ee17a" },
+    { "speaker": "瓦西亞中士", "text": "所以鐵潮不是來打仗的。他們是來開礦的。", "color": "#ff9f43" },
+    { "speaker": "基蘭指揮官", "text": "守住煉油廠。別讓他們把東西運走。", "color": "#5eb8ff" }
+  ],
+  "outroWin": [
+    { "speaker": "皮普工程師", "text": "我拿到樣本了！只要給我一晚，我會查出這是什麼！", "color": "#6ee17a" },
+    { "speaker": "基蘭指揮官", "text": "一晚。然後我們往港口走。", "color": "#5eb8ff" }
+  ],
+  "outroLose": [
+    { "speaker": "皮普工程師", "text": "樣本沒了……他們全部運走了……", "color": "#6ee17a" }
+  ],
+  "path": [
+    { "x": -0.5, "y": 2 },
+    { "x": 5, "y": 2 },
+    { "x": 5, "y": 6 },
+    { "x": 2, "y": 6 },
+    { "x": 2, "y": 10 },
+    { "x": 7, "y": 10 },
+    { "x": 7, "y": 4 },
+    { "x": 9, "y": 4 },
+    { "x": 9, "y": 13 },
+    { "x": 3, "y": 13 },
+    { "x": 3, "y": 15.5 }
+  ],
+  "startingGold": 165,
+  "startingLives": 12,
+  "availableTowers": ["cannon", "quickShot", "machineGun", "frostTower", "sniper", "missileLauncher", "heavyCannon"],
+  "waves": [
+    [
+      { "delay": 0.5, "enemy": "soldier" },
+      { "delay": 0.5, "enemy": "soldier" },
+      { "delay": 0.5, "enemy": "soldier" },
+      { "delay": 0.5, "enemy": "soldier" },
+      { "delay": 0.5, "enemy": "runner" },
+      { "delay": 0.5, "enemy": "runner" },
+      { "delay": 0.5, "enemy": "runner" },
+      { "delay": 0.5, "enemy": "runner" },
+      { "delay": 0.8, "enemy": "plane" },
+      { "delay": 0.8, "enemy": "plane" },
+      { "delay": 0.8, "enemy": "tank" },
+      { "delay": 0.8, "enemy": "tank" },
+      { "delay": 0.8, "enemy": "armored" },
+      { "delay": 0.8, "enemy": "armored" }
+    ],
+    [
+      { "delay": 0.4, "enemy": "scout" },
+      { "delay": 0.4, "enemy": "scout" },
+      { "delay": 0.4, "enemy": "scout" },
+      { "delay": 0.4, "enemy": "scout" },
+      { "delay": 0.4, "enemy": "scout" },
+      { "delay": 0.4, "enemy": "scout" },
+      { "delay": 0.7, "enemy": "armored" },
+      { "delay": 0.7, "enemy": "armored" },
+      { "delay": 0.7, "enemy": "armored" },
+      { "delay": 0.9, "enemy": "heavyTank" },
+      { "delay": 0.9, "enemy": "heavyTank" },
+      { "delay": 0.7, "enemy": "plane" },
+      { "delay": 0.7, "enemy": "plane" },
+      { "delay": 1.4, "enemy": "boss" }
+    ],
+    [
+      { "delay": 0.9, "enemy": "boss" },
+      { "delay": 0.5, "enemy": "runner" },
+      { "delay": 0.5, "enemy": "runner" },
+      { "delay": 0.5, "enemy": "runner" },
+      { "delay": 0.5, "enemy": "runner" },
+      { "delay": 0.6, "enemy": "plane" },
+      { "delay": 0.6, "enemy": "plane" },
+      { "delay": 0.6, "enemy": "plane" },
+      { "delay": 0.8, "enemy": "heavyTank" },
+      { "delay": 0.8, "enemy": "heavyTank" },
+      { "delay": 0.8, "enemy": "armored" },
+      { "delay": 0.8, "enemy": "armored" },
+      { "delay": 1.8, "enemy": "armoredBoss" }
+    ]
+  ]
+}

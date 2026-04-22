@@ -1,0 +1,97 @@
+{
+  "id": "level-10",
+  "name": "索陽石礦坑",
+  "world": 2,
+  "flavorText": "這就是他們來的理由。這就是索陽石。",
+  "intro": [
+    { "speaker": "旁白", "text": "索陽石礦坑。此地不在任何官方地圖上。但它存在——而且正在被掏空。", "color": "#9aa5b8" },
+    { "speaker": "皮普工程師", "text": "我弄清楚了！這礦石叫索陽石。一克就能驅動一架飛機飛三天。", "color": "#6ee17a" },
+    { "speaker": "瓦西亞中士", "text": "那鐵潮為什麼知道？這地方我都沒聽說過。", "color": "#ff9f43" },
+    { "speaker": "皮普工程師", "text": "……因為有人告訴他們。而且給了開採權。", "color": "#6ee17a" },
+    { "speaker": "基蘭指揮官", "text": "是誰？", "color": "#5eb8ff" },
+    { "speaker": "皮普工程師", "text": "我不知道。但文件上有索倫的印璽。", "color": "#6ee17a" },
+    { "speaker": "基蘭指揮官", "text": "守住礦坑。他們會盡全力奪回來。", "color": "#5eb8ff" }
+  ],
+  "outroWin": [
+    { "speaker": "瓦西亞中士", "text": "礦坑封了。但這場仗還沒完。", "color": "#ff9f43" },
+    { "speaker": "基蘭指揮官", "text": "皮普，查清那份文件上的印璽。回首都。", "color": "#5eb8ff" },
+    { "speaker": "皮普工程師", "text": "是，指揮官。我怕我們會找到不願意相信的答案。", "color": "#6ee17a" }
+  ],
+  "outroLose": [
+    { "speaker": "基蘭指揮官", "text": "索陽石全部落入他們手中。索倫的時間不多了。", "color": "#5eb8ff" }
+  ],
+  "path": [
+    { "x": -0.5, "y": 3 },
+    { "x": 3, "y": 3 },
+    { "x": 3, "y": 7 },
+    { "x": 8, "y": 7 },
+    { "x": 8, "y": 2 },
+    { "x": 6, "y": 2 },
+    { "x": 6, "y": 5 },
+    { "x": 1, "y": 5 },
+    { "x": 1, "y": 11 },
+    { "x": 9, "y": 11 },
+    { "x": 9, "y": 14 },
+    { "x": 2, "y": 14 },
+    { "x": 2, "y": 15.5 }
+  ],
+  "startingGold": 175,
+  "startingLives": 11,
+  "availableTowers": ["cannon", "quickShot", "machineGun", "frostTower", "sniper", "missileLauncher", "heavyCannon"],
+  "waves": [
+    [
+      { "delay": 0.45, "enemy": "scout" },
+      { "delay": 0.45, "enemy": "scout" },
+      { "delay": 0.45, "enemy": "scout" },
+      { "delay": 0.45, "enemy": "scout" },
+      { "delay": 0.5, "enemy": "runner" },
+      { "delay": 0.5, "enemy": "runner" },
+      { "delay": 0.5, "enemy": "runner" },
+      { "delay": 0.5, "enemy": "runner" },
+      { "delay": 0.7, "enemy": "tank" },
+      { "delay": 0.7, "enemy": "tank" },
+      { "delay": 0.7, "enemy": "armored" },
+      { "delay": 0.7, "enemy": "armored" },
+      { "delay": 0.9, "enemy": "plane" },
+      { "delay": 0.9, "enemy": "plane" },
+      { "delay": 0.9, "enemy": "plane" },
+      { "delay": 1.3, "enemy": "boss" }
+    ],
+    [
+      { "delay": 0.5, "enemy": "soldier" },
+      { "delay": 0.5, "enemy": "soldier" },
+      { "delay": 0.5, "enemy": "soldier" },
+      { "delay": 0.5, "enemy": "soldier" },
+      { "delay": 0.5, "enemy": "soldier" },
+      { "delay": 0.7, "enemy": "armored" },
+      { "delay": 0.7, "enemy": "armored" },
+      { "delay": 0.7, "enemy": "armored" },
+      { "delay": 0.7, "enemy": "armored" },
+      { "delay": 0.9, "enemy": "heavyTank" },
+      { "delay": 0.9, "enemy": "heavyTank" },
+      { "delay": 0.9, "enemy": "heavyTank" },
+      { "delay": 0.7, "enemy": "plane" },
+      { "delay": 0.7, "enemy": "plane" },
+      { "delay": 0.7, "enemy": "plane" },
+      { "delay": 1.4, "enemy": "boss" },
+      { "delay": 1.4, "enemy": "boss" }
+    ],
+    [
+      { "delay": 1.0, "enemy": "armoredBoss" },
+      { "delay": 0.4, "enemy": "runner" },
+      { "delay": 0.4, "enemy": "runner" },
+      { "delay": 0.4, "enemy": "runner" },
+      { "delay": 0.4, "enemy": "runner" },
+      { "delay": 0.4, "enemy": "runner" },
+      { "delay": 0.4, "enemy": "runner" },
+      { "delay": 0.8, "enemy": "heavyTank" },
+      { "delay": 0.8, "enemy": "heavyTank" },
+      { "delay": 0.8, "enemy": "heavyTank" },
+      { "delay": 0.7, "enemy": "plane" },
+      { "delay": 0.7, "enemy": "plane" },
+      { "delay": 0.7, "enemy": "plane" },
+      { "delay": 1.3, "enemy": "boss" },
+      { "delay": 2.0, "enemy": "heavyTank" }
+    ]
+  ]
+}

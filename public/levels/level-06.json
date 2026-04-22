@@ -1,0 +1,79 @@
+{
+  "id": "level-06",
+  "name": "鍛鐵城郊",
+  "world": 2,
+  "flavorText": "他們不搶糧，也不搶人。他們搶工廠。",
+  "intro": [
+    { "speaker": "旁白", "text": "鍛鐵城郊。索倫的工業心臟。天空是紅的，但不是因為太陽。", "color": "#9aa5b8" },
+    { "speaker": "皮普工程師", "text": "指揮官，城民已經撤離。鐵潮直接開進了鑄造廠區。", "color": "#6ee17a" },
+    { "speaker": "基蘭指揮官", "text": "為什麼是工廠？為什麼不是軍營，不是糧倉？", "color": "#5eb8ff" },
+    { "speaker": "瓦西亞中士", "text": "我打了二十年仗，沒看過有人攻城是為了搶高爐的。", "color": "#ff9f43" },
+    { "speaker": "皮普工程師", "text": "他們在找某樣東西……佈防吧，待會兒分析。", "color": "#6ee17a" }
+  ],
+  "outroWin": [
+    { "speaker": "基蘭指揮官", "text": "工廠保住了。但他們帶走了三車原料。", "color": "#5eb8ff" },
+    { "speaker": "皮普工程師", "text": "我會查。一定有線索。", "color": "#6ee17a" }
+  ],
+  "outroLose": [
+    { "speaker": "皮普工程師", "text": "高爐……被他們拆走了核心。", "color": "#6ee17a" }
+  ],
+  "path": [
+    { "x": -0.5, "y": 4 },
+    { "x": 4, "y": 4 },
+    { "x": 4, "y": 1 },
+    { "x": 8, "y": 1 },
+    { "x": 8, "y": 7 },
+    { "x": 1, "y": 7 },
+    { "x": 1, "y": 11 },
+    { "x": 6, "y": 11 },
+    { "x": 6, "y": 15.5 }
+  ],
+  "startingGold": 160,
+  "startingLives": 12,
+  "availableTowers": ["cannon", "quickShot", "machineGun", "frostTower", "sniper", "missileLauncher"],
+  "waves": [
+    [
+      { "delay": 0.5, "enemy": "scout" },
+      { "delay": 0.5, "enemy": "scout" },
+      { "delay": 0.5, "enemy": "scout" },
+      { "delay": 0.5, "enemy": "scout" },
+      { "delay": 0.6, "enemy": "soldier" },
+      { "delay": 0.6, "enemy": "soldier" },
+      { "delay": 0.6, "enemy": "soldier" },
+      { "delay": 0.6, "enemy": "runner" },
+      { "delay": 0.6, "enemy": "runner" },
+      { "delay": 0.6, "enemy": "runner" },
+      { "delay": 0.8, "enemy": "tank" },
+      { "delay": 0.8, "enemy": "tank" }
+    ],
+    [
+      { "delay": 0.5, "enemy": "runner" },
+      { "delay": 0.5, "enemy": "runner" },
+      { "delay": 0.5, "enemy": "runner" },
+      { "delay": 0.5, "enemy": "runner" },
+      { "delay": 0.5, "enemy": "runner" },
+      { "delay": 0.7, "enemy": "tank" },
+      { "delay": 0.7, "enemy": "tank" },
+      { "delay": 0.7, "enemy": "tank" },
+      { "delay": 0.8, "enemy": "armored" },
+      { "delay": 0.8, "enemy": "armored" },
+      { "delay": 0.8, "enemy": "armored" },
+      { "delay": 0.8, "enemy": "armored" },
+      { "delay": 1.4, "enemy": "boss" }
+    ],
+    [
+      { "delay": 0.4, "enemy": "scout" },
+      { "delay": 0.4, "enemy": "scout" },
+      { "delay": 0.4, "enemy": "scout" },
+      { "delay": 0.4, "enemy": "scout" },
+      { "delay": 0.4, "enemy": "scout" },
+      { "delay": 0.4, "enemy": "scout" },
+      { "delay": 0.7, "enemy": "heavyTank" },
+      { "delay": 0.7, "enemy": "heavyTank" },
+      { "delay": 0.7, "enemy": "armored" },
+      { "delay": 0.7, "enemy": "armored" },
+      { "delay": 1.2, "enemy": "boss" },
+      { "delay": 1.6, "enemy": "armoredBoss" }
+    ]
+  ]
+}

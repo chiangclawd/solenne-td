@@ -1,0 +1,78 @@
+{
+  "id": "level-05",
+  "name": "灰岩山道",
+  "world": 1,
+  "flavorText": "山隘的風很冷。勝利也是。",
+  "intro": [
+    { "speaker": "旁白", "text": "灰岩山道。首都之前的最後一道天然屏障。", "color": "#9aa5b8" },
+    { "speaker": "基蘭指揮官", "text": "山道窄。他們會被迫拉成縱隊。這是我們僅有的優勢。", "color": "#5eb8ff" },
+    { "speaker": "皮普工程師", "text": "我把狙擊塔圖紙改了。這裡射程值得翻倍。", "color": "#6ee17a" },
+    { "speaker": "鐵潮之聲", "text": "【雜訊】……你們的王國……已經被交易……我們只是在收帳……", "color": "#ff6b6b" },
+    { "speaker": "瓦西亞中士", "text": "他又在胡扯。集中精神。", "color": "#ff9f43" }
+  ],
+  "outroWin": [
+    { "speaker": "基蘭指揮官", "text": "山道守住了。但我們損失太重。皮普，傳令——全軍撤回首都區。", "color": "#5eb8ff" },
+    { "speaker": "皮普工程師", "text": "是，指揮官。可是……鐵潮為什麼繞過首都，往工業城去了？", "color": "#6ee17a" },
+    { "speaker": "基蘭指揮官", "text": "那就是我們要追上去的地方。", "color": "#5eb8ff" }
+  ],
+  "outroLose": [
+    { "speaker": "瓦西亞中士", "text": "山道破了。首都無險可守了。", "color": "#ff9f43" }
+  ],
+  "path": [
+    { "x": 2, "y": -0.5 },
+    { "x": 2, "y": 3 },
+    { "x": 8, "y": 3 },
+    { "x": 8, "y": 6 },
+    { "x": 4, "y": 6 },
+    { "x": 4, "y": 10 },
+    { "x": 9, "y": 10 },
+    { "x": 9, "y": 13 },
+    { "x": 1, "y": 13 },
+    { "x": 1, "y": 15.5 }
+  ],
+  "startingGold": 180,
+  "startingLives": 11,
+  "availableTowers": ["cannon", "quickShot", "machineGun", "frostTower", "sniper"],
+  "waves": [
+    [
+      { "delay": 0.55, "enemy": "soldier" },
+      { "delay": 0.55, "enemy": "soldier" },
+      { "delay": 0.55, "enemy": "soldier" },
+      { "delay": 0.55, "enemy": "soldier" },
+      { "delay": 0.55, "enemy": "runner" },
+      { "delay": 0.55, "enemy": "runner" },
+      { "delay": 0.55, "enemy": "runner" },
+      { "delay": 0.8, "enemy": "tank" },
+      { "delay": 0.8, "enemy": "tank" },
+      { "delay": 0.8, "enemy": "tank" },
+      { "delay": 0.8, "enemy": "armored" }
+    ],
+    [
+      { "delay": 0.5, "enemy": "scout" },
+      { "delay": 0.5, "enemy": "scout" },
+      { "delay": 0.5, "enemy": "scout" },
+      { "delay": 0.5, "enemy": "scout" },
+      { "delay": 0.5, "enemy": "scout" },
+      { "delay": 0.5, "enemy": "scout" },
+      { "delay": 0.7, "enemy": "armored" },
+      { "delay": 0.7, "enemy": "armored" },
+      { "delay": 0.7, "enemy": "armored" },
+      { "delay": 0.9, "enemy": "heavyTank" },
+      { "delay": 0.9, "enemy": "heavyTank" },
+      { "delay": 1.5, "enemy": "boss" }
+    ],
+    [
+      { "delay": 0.9, "enemy": "boss" },
+      { "delay": 0.5, "enemy": "runner" },
+      { "delay": 0.5, "enemy": "runner" },
+      { "delay": 0.5, "enemy": "runner" },
+      { "delay": 0.5, "enemy": "runner" },
+      { "delay": 0.5, "enemy": "runner" },
+      { "delay": 0.7, "enemy": "armored" },
+      { "delay": 0.7, "enemy": "armored" },
+      { "delay": 0.7, "enemy": "heavyTank" },
+      { "delay": 0.7, "enemy": "heavyTank" },
+      { "delay": 1.8, "enemy": "armoredBoss" }
+    ]
+  ]
+}

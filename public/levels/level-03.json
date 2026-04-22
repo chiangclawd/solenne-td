@@ -1,0 +1,92 @@
+{
+  "id": "level-03",
+  "name": "最後的閘門",
+  "world": 1,
+  "flavorText": "首都最後一道閘門。不守，就全無。",
+  "intro": [
+    { "speaker": "旁白", "text": "最後一道閘門。後面就是首都。", "color": "#9aa5b8" },
+    { "speaker": "基蘭指揮官", "text": "每一座塔都用上。這裡守不住，就什麼都沒了。", "color": "#5eb8ff" },
+    { "speaker": "瓦西亞中士", "text": "指揮官，鐵潮的精銳在最前面。我看到黑旗了。", "color": "#ff9f43" },
+    { "speaker": "鐵潮之聲", "text": "指揮官，你們的總理已經歸順我方。投降——可活。", "color": "#ff6b6b" },
+    { "speaker": "基蘭指揮官", "text": "謊言。全部開火。", "color": "#5eb8ff" }
+  ],
+  "outroWin": [
+    { "speaker": "皮普工程師", "text": "他們……撤了。全部都撤了。鐵潮被擊破了！", "color": "#6ee17a" },
+    { "speaker": "基蘭指揮官", "text": "那索倫就還活著。我們也是。", "color": "#5eb8ff" },
+    { "speaker": "旁白", "text": "目前為止，威脅已經過去。但在東方某處，新的引擎仍在運轉……", "color": "#9aa5b8" }
+  ],
+  "outroLose": [
+    { "speaker": "旁白", "text": "閘門倒下。索倫銘記基蘭指揮官——那位對抗鐵潮守了三週的人。", "color": "#9aa5b8" },
+    { "speaker": "基蘭指揮官", "text": "……", "color": "#5eb8ff" }
+  ],
+  "path": [
+    { "x": 5, "y": -0.5 },
+    { "x": 5, "y": 2 },
+    { "x": 1, "y": 2 },
+    { "x": 1, "y": 5 },
+    { "x": 4, "y": 5 },
+    { "x": 4, "y": 8 },
+    { "x": 8, "y": 8 },
+    { "x": 8, "y": 4 },
+    { "x": 9, "y": 4 },
+    { "x": 9, "y": 12 },
+    { "x": 2, "y": 12 },
+    { "x": 2, "y": 14 },
+    { "x": 9, "y": 14 },
+    { "x": 9, "y": 15.5 }
+  ],
+  "startingGold": 200,
+  "startingLives": 8,
+  "availableTowers": ["cannon", "quickShot", "machineGun", "frostTower", "sniper", "missileLauncher", "heavyCannon"],
+  "waves": [
+    [
+      { "delay": 0.55, "enemy": "scout" },
+      { "delay": 0.55, "enemy": "scout" },
+      { "delay": 0.55, "enemy": "scout" },
+      { "delay": 0.55, "enemy": "scout" },
+      { "delay": 0.55, "enemy": "scout" },
+      { "delay": 0.6, "enemy": "soldier" },
+      { "delay": 0.6, "enemy": "soldier" },
+      { "delay": 0.6, "enemy": "soldier" },
+      { "delay": 0.6, "enemy": "runner" },
+      { "delay": 0.6, "enemy": "runner" },
+      { "delay": 0.6, "enemy": "runner" }
+    ],
+    [
+      { "delay": 0.8, "enemy": "armored" },
+      { "delay": 0.8, "enemy": "armored" },
+      { "delay": 0.8, "enemy": "armored" },
+      { "delay": 0.8, "enemy": "armored" },
+      { "delay": 0.8, "enemy": "heavyTank" },
+      { "delay": 0.8, "enemy": "heavyTank" },
+      { "delay": 0.5, "enemy": "scout" },
+      { "delay": 0.5, "enemy": "scout" },
+      { "delay": 0.5, "enemy": "scout" },
+      { "delay": 0.5, "enemy": "scout" },
+      { "delay": 0.5, "enemy": "scout" },
+      { "delay": 0.5, "enemy": "scout" },
+      { "delay": 1.5, "enemy": "boss" },
+      { "delay": 1.5, "enemy": "boss" }
+    ],
+    [
+      { "delay": 1.0, "enemy": "armoredBoss" },
+      { "delay": 0.4, "enemy": "soldier" },
+      { "delay": 0.4, "enemy": "soldier" },
+      { "delay": 0.4, "enemy": "soldier" },
+      { "delay": 0.4, "enemy": "soldier" },
+      { "delay": 0.4, "enemy": "soldier" },
+      { "delay": 0.4, "enemy": "soldier" },
+      { "delay": 0.4, "enemy": "soldier" },
+      { "delay": 0.4, "enemy": "soldier" },
+      { "delay": 1.2, "enemy": "boss" },
+      { "delay": 0.4, "enemy": "runner" },
+      { "delay": 0.4, "enemy": "runner" },
+      { "delay": 0.4, "enemy": "runner" },
+      { "delay": 0.4, "enemy": "runner" },
+      { "delay": 0.4, "enemy": "runner" },
+      { "delay": 1.5, "enemy": "heavyTank" },
+      { "delay": 1.5, "enemy": "heavyTank" },
+      { "delay": 3.0, "enemy": "finalBoss" }
+    ]
+  ]
+}

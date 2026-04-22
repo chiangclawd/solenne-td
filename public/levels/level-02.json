@@ -1,0 +1,77 @@
+{
+  "id": "level-02",
+  "name": "沙漠穿越",
+  "world": 1,
+  "flavorText": "沙丘之間的奇襲。試探你的耐力。",
+  "intro": [
+    { "speaker": "基蘭指揮官", "text": "草原哨站失守。現在是沙漠。這次我們有狙擊塔了。", "color": "#5eb8ff" },
+    { "speaker": "瓦西亞中士", "text": "沙丘通道。他們一波一波來——先是偵察兵，然後是重裝。", "color": "#ff9f43" },
+    { "speaker": "皮普工程師", "text": "指揮官，情報說他們帶了我們沒見過的東西。", "color": "#6ee17a" },
+    { "speaker": "鐵潮之聲", "text": "【雜訊】……你們的城牆會倒……你們的孩子……會與我們一同前進……", "color": "#ff6b6b" },
+    { "speaker": "基蘭指揮官", "text": "別理他們。塔準備好。", "color": "#5eb8ff" }
+  ],
+  "outroWin": [
+    { "speaker": "皮普工程師", "text": "他們退了！連重裝都退了！", "color": "#6ee17a" },
+    { "speaker": "瓦西亞中士", "text": "別高興太早，小子。這只是試探。", "color": "#ff9f43" }
+  ],
+  "outroLose": [
+    { "speaker": "基蘭指揮官", "text": "沙丘失守。向總部回報。", "color": "#5eb8ff" }
+  ],
+  "path": [
+    { "x": -0.5, "y": 2 },
+    { "x": 8, "y": 2 },
+    { "x": 8, "y": 5 },
+    { "x": 2, "y": 5 },
+    { "x": 2, "y": 8 },
+    { "x": 8, "y": 8 },
+    { "x": 8, "y": 11 },
+    { "x": 2, "y": 11 },
+    { "x": 2, "y": 13 },
+    { "x": 10.5, "y": 13 }
+  ],
+  "startingGold": 180,
+  "startingLives": 10,
+  "availableTowers": ["cannon", "quickShot", "machineGun", "frostTower", "sniper", "missileLauncher"],
+  "waves": [
+    [
+      { "delay": 0.6, "enemy": "soldier" },
+      { "delay": 0.6, "enemy": "soldier" },
+      { "delay": 0.6, "enemy": "soldier" },
+      { "delay": 0.6, "enemy": "runner" },
+      { "delay": 0.6, "enemy": "runner" },
+      { "delay": 0.6, "enemy": "runner" },
+      { "delay": 0.6, "enemy": "runner" },
+      { "delay": 0.8, "enemy": "tank" },
+      { "delay": 0.8, "enemy": "tank" }
+    ],
+    [
+      { "delay": 0.5, "enemy": "scout" },
+      { "delay": 0.5, "enemy": "scout" },
+      { "delay": 0.5, "enemy": "scout" },
+      { "delay": 0.5, "enemy": "scout" },
+      { "delay": 0.5, "enemy": "scout" },
+      { "delay": 0.5, "enemy": "scout" },
+      { "delay": 0.5, "enemy": "scout" },
+      { "delay": 0.5, "enemy": "scout" },
+      { "delay": 0.7, "enemy": "armored" },
+      { "delay": 0.7, "enemy": "armored" },
+      { "delay": 0.7, "enemy": "armored" },
+      { "delay": 1.5, "enemy": "boss" }
+    ],
+    [
+      { "delay": 0.7, "enemy": "boss" },
+      { "delay": 0.5, "enemy": "soldier" },
+      { "delay": 0.5, "enemy": "soldier" },
+      { "delay": 0.5, "enemy": "soldier" },
+      { "delay": 0.5, "enemy": "soldier" },
+      { "delay": 0.5, "enemy": "soldier" },
+      { "delay": 0.5, "enemy": "soldier" },
+      { "delay": 0.5, "enemy": "soldier" },
+      { "delay": 0.5, "enemy": "soldier" },
+      { "delay": 1.0, "enemy": "armored" },
+      { "delay": 1.0, "enemy": "heavyTank" },
+      { "delay": 1.0, "enemy": "armored" },
+      { "delay": 1.8, "enemy": "armoredBoss" }
+    ]
+  ]
+}

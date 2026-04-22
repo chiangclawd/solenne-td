@@ -1,0 +1,90 @@
+{
+  "id": "level-22",
+  "name": "分裂祭壇",
+  "world": 5,
+  "flavorText": "祭壇上有 13 塊石頭。打碎一塊，會生出兩塊。",
+  "intro": [
+    { "speaker": "旁白", "text": "虛空祭壇。中央黑色圓盤上刻著看不懂的文字。", "color": "#9aa5b8" },
+    { "speaker": "皮普工程師", "text": "這是……複製儀式。他們把自己拆成兩半、四半，然後補完。", "color": "#6ee17a" },
+    { "speaker": "基蘭指揮官", "text": "怎麼停下來？", "color": "#5eb8ff" },
+    { "speaker": "皮普工程師", "text": "只能打爛祭壇。但守它的——也會複製。", "color": "#6ee17a" },
+    { "speaker": "瓦西亞中士", "text": "那就拚了。反正我只要還有一個我，就能打。", "color": "#ff9f43" }
+  ],
+  "outroWin": [
+    { "speaker": "皮普工程師", "text": "祭壇碎了。但能量沒停——他們在要塞深處還有第二座。", "color": "#6ee17a" },
+    { "speaker": "基蘭指揮官", "text": "往內走。到最裡面。", "color": "#5eb8ff" }
+  ],
+  "outroLose": [
+    { "speaker": "瓦西亞中士", "text": "越殺越多……我們撐不下去。", "color": "#ff9f43" }
+  ],
+  "path": [
+    { "x": 5, "y": -0.5 },
+    { "x": 5, "y": 2 },
+    { "x": 2, "y": 2 },
+    { "x": 2, "y": 5 },
+    { "x": 8, "y": 5 },
+    { "x": 8, "y": 8 },
+    { "x": 4, "y": 8 },
+    { "x": 4, "y": 11 },
+    { "x": 9, "y": 11 },
+    { "x": 9, "y": 13 },
+    { "x": 2, "y": 13 },
+    { "x": 2, "y": 15.5 }
+  ],
+  "startingGold": 230,
+  "startingLives": 10,
+  "availableTowers": ["quickShot", "machineGun", "frostTower", "sniper", "missileLauncher", "heavyCannon", "tesla", "lightTower"],
+  "waves": [
+    [
+      { "delay": 0.7, "enemy": "splitter" },
+      { "delay": 0.7, "enemy": "splitter" },
+      { "delay": 0.7, "enemy": "splitter" },
+      { "delay": 0.7, "enemy": "splitter" },
+      { "delay": 0.4, "enemy": "wraith" },
+      { "delay": 0.4, "enemy": "wraith" },
+      { "delay": 0.4, "enemy": "wraith" },
+      { "delay": 0.6, "enemy": "armored" },
+      { "delay": 0.6, "enemy": "armored" },
+      { "delay": 0.8, "enemy": "plane" },
+      { "delay": 0.8, "enemy": "plane" }
+    ],
+    [
+      { "delay": 0.6, "enemy": "splitter" },
+      { "delay": 0.6, "enemy": "splitter" },
+      { "delay": 0.6, "enemy": "splitter" },
+      { "delay": 0.6, "enemy": "splitter" },
+      { "delay": 0.6, "enemy": "splitter" },
+      { "delay": 0.7, "enemy": "healer" },
+      { "delay": 0.7, "enemy": "healer" },
+      { "delay": 0.5, "enemy": "wraith" },
+      { "delay": 0.5, "enemy": "wraith" },
+      { "delay": 0.7, "enemy": "heavyTank" },
+      { "delay": 0.7, "enemy": "heavyTank" },
+      { "delay": 0.7, "enemy": "plane" },
+      { "delay": 0.7, "enemy": "plane" },
+      { "delay": 0.7, "enemy": "plane" },
+      { "delay": 1.5, "enemy": "armoredBoss" }
+    ],
+    [
+      { "delay": 1.0, "enemy": "voidBoss" },
+      { "delay": 0.6, "enemy": "splitter" },
+      { "delay": 0.6, "enemy": "splitter" },
+      { "delay": 0.6, "enemy": "splitter" },
+      { "delay": 0.6, "enemy": "splitter" },
+      { "delay": 0.6, "enemy": "splitter" },
+      { "delay": 0.7, "enemy": "healer" },
+      { "delay": 0.7, "enemy": "healer" },
+      { "delay": 0.7, "enemy": "healer" },
+      { "delay": 0.4, "enemy": "wraith" },
+      { "delay": 0.4, "enemy": "wraith" },
+      { "delay": 0.4, "enemy": "wraith" },
+      { "delay": 0.4, "enemy": "wraith" },
+      { "delay": 0.6, "enemy": "heavyTank" },
+      { "delay": 0.6, "enemy": "heavyTank" },
+      { "delay": 0.6, "enemy": "plane" },
+      { "delay": 0.6, "enemy": "plane" },
+      { "delay": 0.6, "enemy": "plane" },
+      { "delay": 2.5, "enemy": "finalBoss" }
+    ]
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "name": "solenne-td",
+  "private": true,
+  "version": "2.0.0",
+  "description": "索倫的最後防線 · 23-level TS + Canvas tower defense",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "sync": "npm run build && cap sync",
+    "ios:open": "npm run sync && cap open ios",
+    "android:open": "npm run sync && cap open android",
+    "ios:run": "npm run sync && cap run ios",
+    "android:run": "npm run sync && cap run android"
+  },
+  "devDependencies": {
+    "@capacitor/android": "^8.3.1",
+    "@capacitor/cli": "^8.3.1",
+    "@capacitor/core": "^8.3.1",
+    "@capacitor/ios": "^8.3.1",
+    "typescript": "~6.0.2",
+    "vite": "^8.0.9",
+    "vite-plugin-pwa": "^1.2.0",
+    "workbox-window": "^7.4.0"
+  }
+}

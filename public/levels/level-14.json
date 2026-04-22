@@ -1,0 +1,73 @@
+{
+  "id": "level-14",
+  "name": "凍原邊緣",
+  "world": 4,
+  "flavorText": "追擊鐵潮殘部到北境盡頭。風像刀，史料上叫它「亡者之息」。",
+  "intro": [
+    { "speaker": "旁白", "text": "凍原邊緣。索倫地圖的最後一條等高線，之後只剩空白。", "color": "#9aa5b8" },
+    { "speaker": "基蘭指揮官", "text": "總理已歸案，但鐵潮殘部往北撤。我們不能讓他們在這裡重整。", "color": "#5eb8ff" },
+    { "speaker": "皮普工程師", "text": "指揮官，我在殘骸裡又找到一塊索陽石——不過這塊是被封在冰裡的。", "color": "#6ee17a" },
+    { "speaker": "皮普工程師", "text": "這不是他們採出來的。這塊在地下躺了幾千年。", "color": "#6ee17a" },
+    { "speaker": "瓦西亞中士", "text": "那我們更要守住。不能讓他們挖。", "color": "#ff9f43" },
+    { "speaker": "基蘭指揮官", "text": "佈防。特斯拉塔已經調來——電流在低溫下傳得更遠。", "color": "#5eb8ff" }
+  ],
+  "outroWin": [
+    { "speaker": "瓦西亞中士", "text": "殘部北撤。他們在冰原深處有東西。", "color": "#ff9f43" },
+    { "speaker": "基蘭指揮官", "text": "皮普，繼續分析。我們跟上去。", "color": "#5eb8ff" }
+  ],
+  "outroLose": [
+    { "speaker": "瓦西亞中士", "text": "邊境失守。我們會在凍原深處重逢他們——以更糟的姿勢。", "color": "#ff9f43" }
+  ],
+  "path": [
+    { "x": -0.5, "y": 4 },
+    { "x": 4, "y": 4 },
+    { "x": 4, "y": 8 },
+    { "x": 8, "y": 8 },
+    { "x": 8, "y": 12 },
+    { "x": 2, "y": 12 },
+    { "x": 2, "y": 15.5 }
+  ],
+  "startingGold": 190,
+  "startingLives": 12,
+  "availableTowers": ["cannon", "quickShot", "machineGun", "frostTower", "sniper", "missileLauncher", "heavyCannon", "tesla"],
+  "waves": [
+    [
+      { "delay": 0.6, "enemy": "scout" },
+      { "delay": 0.6, "enemy": "scout" },
+      { "delay": 0.6, "enemy": "frostRaider" },
+      { "delay": 0.6, "enemy": "frostRaider" },
+      { "delay": 0.6, "enemy": "frostRaider" },
+      { "delay": 0.6, "enemy": "frostRaider" },
+      { "delay": 0.8, "enemy": "tank" },
+      { "delay": 0.8, "enemy": "tank" },
+      { "delay": 0.8, "enemy": "tank" }
+    ],
+    [
+      { "delay": 0.5, "enemy": "frostRaider" },
+      { "delay": 0.5, "enemy": "frostRaider" },
+      { "delay": 0.5, "enemy": "frostRaider" },
+      { "delay": 0.5, "enemy": "frostRaider" },
+      { "delay": 0.7, "enemy": "iceBeast" },
+      { "delay": 0.7, "enemy": "iceBeast" },
+      { "delay": 0.7, "enemy": "armored" },
+      { "delay": 0.7, "enemy": "armored" },
+      { "delay": 0.9, "enemy": "plane" },
+      { "delay": 0.9, "enemy": "plane" },
+      { "delay": 1.4, "enemy": "boss" }
+    ],
+    [
+      { "delay": 1.0, "enemy": "boss" },
+      { "delay": 0.5, "enemy": "frostRaider" },
+      { "delay": 0.5, "enemy": "frostRaider" },
+      { "delay": 0.5, "enemy": "frostRaider" },
+      { "delay": 0.5, "enemy": "frostRaider" },
+      { "delay": 0.5, "enemy": "frostRaider" },
+      { "delay": 0.8, "enemy": "iceBeast" },
+      { "delay": 0.8, "enemy": "iceBeast" },
+      { "delay": 0.8, "enemy": "iceBeast" },
+      { "delay": 0.7, "enemy": "heavyTank" },
+      { "delay": 0.7, "enemy": "heavyTank" },
+      { "delay": 2.0, "enemy": "glacialBoss" }
+    ]
+  ]
+}
