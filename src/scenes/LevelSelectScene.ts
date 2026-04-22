@@ -3,7 +3,8 @@ import { MainMenuScene } from './MainMenuScene.ts';
 import { GameScene } from './GameScene.ts';
 import { SettingsScene } from './SettingsScene.ts';
 import { getStars, isUnlocked, totalStars, countCompleted } from '../storage/SaveData.ts';
-import { COLORS, TILE_SIZE, WORLD_WIDTH, WORLD_HEIGHT } from '../config.ts';
+import { COLORS, TILE_SIZE, GRID_COLS, GRID_ROWS, WORLD_WIDTH, WORLD_HEIGHT } from '../config.ts';
+import { drawGrassTile, drawGoldFrame } from '../graphics/UIPainter.ts';
 import type { LevelData } from '../game/Level.ts';
 
 interface Rect { x: number; y: number; w: number; h: number }
@@ -46,7 +47,12 @@ export class LevelSelectScene extends BaseScene {
     const r = this.ctx.renderer;
     r.beginFrame();
     r.beginWorld();
-    r.drawTileBackground(this.ctx.assets.get('grass'), 0, 0, WORLD_WIDTH, WORLD_HEIGHT, TILE_SIZE);
+    for (let gy = 0; gy < GRID_ROWS; gy++) {
+      for (let gx = 0; gx < GRID_COLS; gx++) {
+        drawGrassTile(r.ctx, gx * TILE_SIZE, gy * TILE_SIZE, TILE_SIZE, 'grass');
+      }
+    }
+    void WORLD_WIDTH; void WORLD_HEIGHT;
 
     r.beginScreen();
     const vw = this.ctx.renderer.vw();
@@ -118,9 +124,9 @@ export class LevelSelectScene extends BaseScene {
         const bg = unlocked ? (stars > 0 ? '#24354a' : '#1b2a42') : '#0f141e';
         r.drawScreenRoundedRect(cx, cy, cardW, cardH, 8, bg);
         if (unlocked && stars === 3) {
-          const pulse = 0.6 + Math.sin(this.elapsed * 2 + i) * 0.4;
-          r.ctx.globalAlpha = pulse * 0.7;
-          r.drawScreenRoundedRectOutline(cx, cy, cardW, cardH, 8, '#ffd166', 1);
+          const pulse = 0.5 + Math.sin(this.elapsed * 2 + i) * 0.4;
+          r.ctx.globalAlpha = pulse;
+          drawGoldFrame(r.ctx, cx, cy, cardW, cardH, 8, 1);
           r.ctx.globalAlpha = 1;
         }
 

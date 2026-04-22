@@ -4,10 +4,11 @@ import { SettingsScene } from './SettingsScene.ts';
 import { CodexScene } from './CodexScene.ts';
 import { CreditsScene } from './CreditsScene.ts';
 import { GameScene } from './GameScene.ts';
-import { COLORS, TILE_SIZE, WORLD_WIDTH, WORLD_HEIGHT } from '../config.ts';
+import { COLORS, TILE_SIZE, WORLD_WIDTH, WORLD_HEIGHT, GRID_COLS, GRID_ROWS } from '../config.ts';
 import { totalStars, countCompleted } from '../storage/SaveData.ts';
 import { ACHIEVEMENTS } from '../game/Achievements.ts';
 import { generateEndlessLevel } from '../game/WaveGenerator.ts';
+import { drawGoldFrame, drawGlossButton, drawGlowTitle, drawGrassTile } from '../graphics/UIPainter.ts';
 
 interface Rect { x: number; y: number; w: number; h: number }
 interface Ember { x: number; y: number; vx: number; vy: number; life: number; maxLife: number; size: number; hue: number }
@@ -25,7 +26,6 @@ export class MainMenuScene extends BaseScene {
   private elapsed = 0;
   private embers: Ember[] = [];
   private emberTimer = 0;
-  private titleGlow = 0;
 
   override onEnter(): void {
     this.ctx.playBgm('menu');
@@ -58,7 +58,6 @@ export class MainMenuScene extends BaseScene {
       if (e.life <= 0) this.embers.splice(i, 1);
     }
 
-    this.titleGlow = 0.5 + Math.sin(this.elapsed * 1.6) * 0.3;
     this.ctx.renderer.updateShake(dt);
   }
 
@@ -66,15 +65,21 @@ export class MainMenuScene extends BaseScene {
     const r = this.ctx.renderer;
     r.beginFrame();
     r.beginWorld();
-    r.drawTileBackground(this.ctx.assets.get('grass'), 0, 0, WORLD_WIDTH, WORLD_HEIGHT, TILE_SIZE);
+    // Themed grass as menu backdrop
+    for (let gy = 0; gy < GRID_ROWS; gy++) {
+      for (let gx = 0; gx < GRID_COLS; gx++) {
+        drawGrassTile(r.ctx, gx * TILE_SIZE, gy * TILE_SIZE, TILE_SIZE, 'grass');
+      }
+    }
+    void WORLD_WIDTH; void WORLD_HEIGHT;
 
     r.beginScreen();
     const vw = this.ctx.renderer.vw();
     const vh = this.ctx.renderer.vh();
 
-    r.drawScreenVerticalGradient(0, 0, vw, vh, 'rgba(5,8,20,0.7)', 'rgba(5,8,20,0.95)');
-    r.drawScreenRadialGradient(vw / 2, vh * 0.3, Math.max(vw, vh) * 0.7,
-      'rgba(255, 159, 67, 0.12)', 'rgba(5,8,20,0)');
+    r.drawScreenVerticalGradient(0, 0, vw, vh, 'rgba(5,8,20,0.72)', 'rgba(5,8,20,0.96)');
+    r.drawScreenRadialGradient(vw / 2, vh * 0.25, Math.max(vw, vh) * 0.7,
+      'rgba(255, 159, 67, 0.18)', 'rgba(5,8,20,0)');
 
     // Embers
     for (const e of this.embers) {
@@ -84,16 +89,12 @@ export class MainMenuScene extends BaseScene {
     }
     r.ctx.globalAlpha = 1;
 
-    // Title
+    // Title with glow
     const titleY = vh * 0.22;
     const scale = 1 + Math.sin(this.elapsed * 1.6) * 0.02;
     const titleSize = Math.round(38 * scale);
-    r.ctx.globalAlpha = 0.45 + this.titleGlow * 0.3;
-    r.drawTextScreenCenter('索倫的最後防線', vw / 2, titleY + 2, '#ff9f43', titleSize + 2, true);
-    r.ctx.globalAlpha = 1;
-    r.drawTextScreenCenter('索倫的最後防線', vw / 2, titleY, '#ffd166', titleSize, true);
+    drawGlowTitle(r.ctx, '索倫的最後防線', vw / 2, titleY, titleSize);
     r.drawTextScreenCenter('SOLENNE · LAST LINE', vw / 2, titleY + 42, COLORS.textDim, 12, true);
-
     r.drawTextScreenCenter('當鐵潮湧來，只剩一道防線。', vw / 2, titleY + 78, '#cbd2de', 14);
 
     // Progress strip
@@ -120,9 +121,12 @@ export class MainMenuScene extends BaseScene {
 
     const mkBtn = (label: string, sub: string | null, y: number, primary = false): Rect => {
       const rect: Rect = { x: cx, y, w: bw, h: bh };
-      r.drawScreenRoundedRect(cx + 2, y + 3, bw, bh, 10, 'rgba(0,0,0,0.4)');
-      r.drawScreenRoundedRect(cx, y, bw, bh, 10, primary ? '#2c8cc7' : '#22304a');
-      if (primary) r.drawScreenRoundedRectOutline(cx, y, bw, bh, 10, '#5eb8ff', 1);
+      if (primary) {
+        drawGlossButton(r.ctx, cx, y, bw, bh, 10, '#2c8cc7', '#5eb8ff');
+        drawGoldFrame(r.ctx, cx, y, bw, bh, 10, 1, 'rgba(255, 215, 102, 0.5)');
+      } else {
+        drawGlossButton(r.ctx, cx, y, bw, bh, 10, '#22304a', '#3a4a66');
+      }
       if (sub) {
         r.drawTextScreenCenter(label, cx + bw / 2, y + bh / 2 - 7, '#fff', 15, true);
         r.drawTextScreenCenter(sub, cx + bw / 2, y + bh / 2 + 9, primary ? '#c6e8ff' : COLORS.textDim, 10);

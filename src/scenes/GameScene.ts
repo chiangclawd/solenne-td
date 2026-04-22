@@ -23,6 +23,7 @@ import {
   drawTowerIconScreen, drawEnemyIconScreen,
 } from '../graphics/SpritePainter.ts';
 import { ParticleSystem } from '../graphics/Particles.ts';
+import { drawGrassTile, drawPathTile, themeForWorld } from '../graphics/UIPainter.ts';
 
 interface Rect { x: number; y: number; w: number; h: number }
 interface Floater { x: number; y: number; vx: number; vy: number; text: string; color: string; life: number; maxLife: number; size: number }
@@ -383,15 +384,20 @@ export class GameScene extends BaseScene {
     r.beginFrame();
     r.beginWorld();
 
-    r.drawTileBackground(this.ctx.assets.get('grass'), 0, 0, WORLD_WIDTH, WORLD_HEIGHT, T);
+    // Themed grass tiles (procedural, world-specific palette)
+    const theme = themeForWorld(this.level.world);
+    for (let gy = 0; gy < GRID_ROWS; gy++) {
+      for (let gx = 0; gx < GRID_COLS; gx++) {
+        drawGrassTile(r.ctx, gx * T, gy * T, T, theme);
+      }
+    }
 
-    const pathImg = this.ctx.assets.get('path');
     for (const key of this.pathTiles) {
       const [txs, tys] = key.split(',');
       const tx = Number(txs);
       const ty = Number(tys);
       if (tx < 0 || tx >= GRID_COLS || ty < 0 || ty >= GRID_ROWS) continue;
-      r.drawSprite(pathImg, tx * T + T / 2, ty * T + T / 2, T, T);
+      drawPathTile(r.ctx, tx * T, ty * T, T, theme);
     }
 
     for (const t of this.towers) {
