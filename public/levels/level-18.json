@@ -4,93 +4,335 @@
   "world": 4,
   "flavorText": "北境最深處。冰下埋著一座城——比索倫更早、更古。",
   "intro": [
-    { "speaker": "旁白", "text": "冰原核心。一座黑色尖塔從冰下升起。它不是建的，它是長出來的。", "color": "#9aa5b8" },
-    { "speaker": "皮普工程師", "text": "這座塔……跟我的儀器同頻。它在叫我們。", "color": "#6ee17a" },
-    { "speaker": "瓦西亞中士", "text": "基蘭，皮普整個人都在發抖。", "color": "#ff9f43" },
-    { "speaker": "皮普工程師", "text": "我沒事。它只是……有點熟悉。像我聽過這個聲音——在夢裡。", "color": "#6ee17a" },
-    { "speaker": "基蘭指揮官", "text": "皮普，守在我身邊。不要看那座塔太久。", "color": "#5eb8ff" },
-    { "speaker": "鐵潮之聲", "text": "指揮官。你的工程師和我們來自同一個地方。", "color": "#ff6b6b" },
-    { "speaker": "基蘭指揮官", "text": "開火。", "color": "#5eb8ff" }
+    {
+      "speaker": "旁白",
+      "text": "冰原核心。一座黑色尖塔從冰下升起。它不是建的，它是長出來的。",
+      "color": "#9aa5b8"
+    },
+    {
+      "speaker": "皮普工程師",
+      "text": "這座塔……跟我的儀器同頻。它在叫我們。",
+      "color": "#6ee17a",
+      "portrait": "pip"
+    },
+    {
+      "speaker": "瓦西亞中士",
+      "text": "基蘭，皮普整個人都在發抖。",
+      "color": "#ff9f43",
+      "portrait": "vasya"
+    },
+    {
+      "speaker": "皮普工程師",
+      "text": "我沒事。它只是……有點熟悉。像我聽過這個聲音——在夢裡。",
+      "color": "#6ee17a",
+      "portrait": "pip"
+    },
+    {
+      "speaker": "基蘭指揮官",
+      "text": "皮普，守在我身邊。不要看那座塔太久。",
+      "color": "#5eb8ff",
+      "portrait": "kieran"
+    },
+    {
+      "speaker": "鐵潮之聲",
+      "text": "指揮官。你的工程師和我們來自同一個地方。",
+      "color": "#ff6b6b"
+    },
+    {
+      "speaker": "基蘭指揮官",
+      "text": "開火。",
+      "color": "#5eb8ff",
+      "portrait": "kieran"
+    }
   ],
   "outroWin": [
-    { "speaker": "皮普工程師", "text": "……基蘭。那個聲音說的是真的。", "color": "#6ee17a" },
-    { "speaker": "皮普工程師", "text": "我——我不是索倫人。我不記得我從哪裡來。只記得我在冰裡睡過。", "color": "#6ee17a" },
-    { "speaker": "基蘭指揮官", "text": "你是我們的工程師。其他事以後再說。往南——虛空要塞。", "color": "#5eb8ff" }
+    {
+      "speaker": "皮普工程師",
+      "text": "……基蘭。那個聲音說的是真的。",
+      "color": "#6ee17a",
+      "portrait": "pip"
+    },
+    {
+      "speaker": "皮普工程師",
+      "text": "我——我不是索倫人。我不記得我從哪裡來。只記得我在冰裡睡過。",
+      "color": "#6ee17a",
+      "portrait": "pip"
+    },
+    {
+      "speaker": "基蘭指揮官",
+      "text": "你是我們的工程師。其他事以後再說。往南——虛空要塞。",
+      "color": "#5eb8ff",
+      "portrait": "kieran"
+    }
   ],
   "outroLose": [
-    { "speaker": "皮普工程師", "text": "塔還在長。它會一直長到觸及天空。", "color": "#6ee17a" }
+    {
+      "speaker": "皮普工程師",
+      "text": "塔還在長。它會一直長到觸及天空。",
+      "color": "#6ee17a",
+      "portrait": "pip"
+    }
   ],
   "path": [
-    { "x": 5, "y": -0.5 },
-    { "x": 5, "y": 2 },
-    { "x": 1, "y": 2 },
-    { "x": 1, "y": 5 },
-    { "x": 8, "y": 5 },
-    { "x": 8, "y": 8 },
-    { "x": 2, "y": 8 },
-    { "x": 2, "y": 11 },
-    { "x": 9, "y": 11 },
-    { "x": 9, "y": 13 },
-    { "x": 3, "y": 13 },
-    { "x": 3, "y": 15.5 }
+    {
+      "x": 5,
+      "y": -0.5
+    },
+    {
+      "x": 5,
+      "y": 2
+    },
+    {
+      "x": 1,
+      "y": 2
+    },
+    {
+      "x": 1,
+      "y": 5
+    },
+    {
+      "x": 8,
+      "y": 5
+    },
+    {
+      "x": 8,
+      "y": 8
+    },
+    {
+      "x": 2,
+      "y": 8
+    },
+    {
+      "x": 2,
+      "y": 11
+    },
+    {
+      "x": 9,
+      "y": 11
+    },
+    {
+      "x": 9,
+      "y": 13
+    },
+    {
+      "x": 3,
+      "y": 13
+    },
+    {
+      "x": 3,
+      "y": 15.5
+    }
   ],
   "startingGold": 210,
   "startingLives": 10,
-  "availableTowers": ["cannon", "quickShot", "machineGun", "frostTower", "sniper", "missileLauncher", "heavyCannon", "tesla"],
+  "availableTowers": [
+    "cannon",
+    "quickShot",
+    "machineGun",
+    "frostTower",
+    "sniper",
+    "missileLauncher",
+    "heavyCannon",
+    "tesla"
+  ],
   "waves": [
     [
-      { "delay": 0.4, "enemy": "frostRaider" },
-      { "delay": 0.4, "enemy": "frostRaider" },
-      { "delay": 0.4, "enemy": "frostRaider" },
-      { "delay": 0.4, "enemy": "frostRaider" },
-      { "delay": 0.5, "enemy": "iceBeast" },
-      { "delay": 0.5, "enemy": "iceBeast" },
-      { "delay": 0.5, "enemy": "iceBeast" },
-      { "delay": 0.5, "enemy": "iceBeast" },
-      { "delay": 0.7, "enemy": "heavyTank" },
-      { "delay": 0.7, "enemy": "heavyTank" },
-      { "delay": 0.7, "enemy": "plane" },
-      { "delay": 0.7, "enemy": "plane" },
-      { "delay": 1.3, "enemy": "boss" }
+      {
+        "delay": 0.4,
+        "enemy": "frostRaider"
+      },
+      {
+        "delay": 0.4,
+        "enemy": "frostRaider"
+      },
+      {
+        "delay": 0.4,
+        "enemy": "frostRaider"
+      },
+      {
+        "delay": 0.4,
+        "enemy": "frostRaider"
+      },
+      {
+        "delay": 0.5,
+        "enemy": "iceBeast"
+      },
+      {
+        "delay": 0.5,
+        "enemy": "iceBeast"
+      },
+      {
+        "delay": 0.5,
+        "enemy": "iceBeast"
+      },
+      {
+        "delay": 0.5,
+        "enemy": "iceBeast"
+      },
+      {
+        "delay": 0.7,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 0.7,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 0.7,
+        "enemy": "plane"
+      },
+      {
+        "delay": 0.7,
+        "enemy": "plane"
+      },
+      {
+        "delay": 1.3,
+        "enemy": "boss"
+      }
     ],
     [
-      { "delay": 0.4, "enemy": "runner" },
-      { "delay": 0.4, "enemy": "runner" },
-      { "delay": 0.4, "enemy": "runner" },
-      { "delay": 0.4, "enemy": "runner" },
-      { "delay": 0.4, "enemy": "runner" },
-      { "delay": 0.4, "enemy": "runner" },
-      { "delay": 0.6, "enemy": "iceBeast" },
-      { "delay": 0.6, "enemy": "iceBeast" },
-      { "delay": 0.6, "enemy": "iceBeast" },
-      { "delay": 0.6, "enemy": "heavyTank" },
-      { "delay": 0.6, "enemy": "heavyTank" },
-      { "delay": 0.6, "enemy": "heavyTank" },
-      { "delay": 0.7, "enemy": "plane" },
-      { "delay": 0.7, "enemy": "plane" },
-      { "delay": 0.7, "enemy": "plane" },
-      { "delay": 0.7, "enemy": "plane" },
-      { "delay": 1.5, "enemy": "glacialBoss" }
+      {
+        "delay": 0.4,
+        "enemy": "runner"
+      },
+      {
+        "delay": 0.4,
+        "enemy": "runner"
+      },
+      {
+        "delay": 0.4,
+        "enemy": "runner"
+      },
+      {
+        "delay": 0.4,
+        "enemy": "runner"
+      },
+      {
+        "delay": 0.4,
+        "enemy": "runner"
+      },
+      {
+        "delay": 0.4,
+        "enemy": "runner"
+      },
+      {
+        "delay": 0.6,
+        "enemy": "iceBeast"
+      },
+      {
+        "delay": 0.6,
+        "enemy": "iceBeast"
+      },
+      {
+        "delay": 0.6,
+        "enemy": "iceBeast"
+      },
+      {
+        "delay": 0.6,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 0.6,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 0.6,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 0.7,
+        "enemy": "plane"
+      },
+      {
+        "delay": 0.7,
+        "enemy": "plane"
+      },
+      {
+        "delay": 0.7,
+        "enemy": "plane"
+      },
+      {
+        "delay": 0.7,
+        "enemy": "plane"
+      },
+      {
+        "delay": 1.5,
+        "enemy": "glacialBoss"
+      }
     ],
     [
-      { "delay": 1.0, "enemy": "glacialBoss" },
-      { "delay": 1.2, "enemy": "armoredBoss" },
-      { "delay": 0.4, "enemy": "frostRaider" },
-      { "delay": 0.4, "enemy": "frostRaider" },
-      { "delay": 0.4, "enemy": "frostRaider" },
-      { "delay": 0.4, "enemy": "frostRaider" },
-      { "delay": 0.4, "enemy": "frostRaider" },
-      { "delay": 0.4, "enemy": "frostRaider" },
-      { "delay": 0.6, "enemy": "iceBeast" },
-      { "delay": 0.6, "enemy": "iceBeast" },
-      { "delay": 0.6, "enemy": "iceBeast" },
-      { "delay": 0.6, "enemy": "heavyTank" },
-      { "delay": 0.6, "enemy": "heavyTank" },
-      { "delay": 0.6, "enemy": "plane" },
-      { "delay": 0.6, "enemy": "plane" },
-      { "delay": 0.6, "enemy": "plane" },
-      { "delay": 0.6, "enemy": "plane" },
-      { "delay": 2.5, "enemy": "finalBoss" }
+      {
+        "delay": 1,
+        "enemy": "glacialBoss"
+      },
+      {
+        "delay": 1.2,
+        "enemy": "armoredBoss"
+      },
+      {
+        "delay": 0.4,
+        "enemy": "frostRaider"
+      },
+      {
+        "delay": 0.4,
+        "enemy": "frostRaider"
+      },
+      {
+        "delay": 0.4,
+        "enemy": "frostRaider"
+      },
+      {
+        "delay": 0.4,
+        "enemy": "frostRaider"
+      },
+      {
+        "delay": 0.4,
+        "enemy": "frostRaider"
+      },
+      {
+        "delay": 0.4,
+        "enemy": "frostRaider"
+      },
+      {
+        "delay": 0.6,
+        "enemy": "iceBeast"
+      },
+      {
+        "delay": 0.6,
+        "enemy": "iceBeast"
+      },
+      {
+        "delay": 0.6,
+        "enemy": "iceBeast"
+      },
+      {
+        "delay": 0.6,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 0.6,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 0.6,
+        "enemy": "plane"
+      },
+      {
+        "delay": 0.6,
+        "enemy": "plane"
+      },
+      {
+        "delay": 0.6,
+        "enemy": "plane"
+      },
+      {
+        "delay": 0.6,
+        "enemy": "plane"
+      },
+      {
+        "delay": 2.5,
+        "enemy": "finalBoss"
+      }
     ]
   ]
 }

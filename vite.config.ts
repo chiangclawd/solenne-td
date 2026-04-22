@@ -15,6 +15,7 @@ export default defineConfig({
         'icon.svg',
         'icons/*.png',
         'assets/kenney/PNG/default-size/*.png',
+        'assets/portraits/*.svg',
         'levels/*.json',
       ],
       manifest: {

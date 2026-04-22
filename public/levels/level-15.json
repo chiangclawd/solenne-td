@@ -4,77 +4,266 @@
   "world": 4,
   "flavorText": "地底有迴聲。皮普說那不是冰的。",
   "intro": [
-    { "speaker": "旁白", "text": "冰裂谷地。冰層下有聲音——像金屬敲擊，像呼吸。", "color": "#9aa5b8" },
-    { "speaker": "皮普工程師", "text": "基蘭，這下面有東西。我的儀器測到能量讀值——比索陽石強十倍。", "color": "#6ee17a" },
-    { "speaker": "基蘭指揮官", "text": "是鐵潮留下的？", "color": "#5eb8ff" },
-    { "speaker": "皮普工程師", "text": "……不是鐵潮的。更古老。", "color": "#6ee17a" },
-    { "speaker": "瓦西亞中士", "text": "先別想那個。他們來了。", "color": "#ff9f43" }
+    {
+      "speaker": "旁白",
+      "text": "冰裂谷地。冰層下有聲音——像金屬敲擊，像呼吸。",
+      "color": "#9aa5b8"
+    },
+    {
+      "speaker": "皮普工程師",
+      "text": "基蘭，這下面有東西。我的儀器測到能量讀值——比索陽石強十倍。",
+      "color": "#6ee17a",
+      "portrait": "pip"
+    },
+    {
+      "speaker": "基蘭指揮官",
+      "text": "是鐵潮留下的？",
+      "color": "#5eb8ff",
+      "portrait": "kieran"
+    },
+    {
+      "speaker": "皮普工程師",
+      "text": "……不是鐵潮的。更古老。",
+      "color": "#6ee17a",
+      "portrait": "pip"
+    },
+    {
+      "speaker": "瓦西亞中士",
+      "text": "先別想那個。他們來了。",
+      "color": "#ff9f43",
+      "portrait": "vasya"
+    }
   ],
   "outroWin": [
-    { "speaker": "皮普工程師", "text": "讀值還在升。那東西在醒。", "color": "#6ee17a" },
-    { "speaker": "基蘭指揮官", "text": "繼續前進。我們得知道那是什麼。", "color": "#5eb8ff" }
+    {
+      "speaker": "皮普工程師",
+      "text": "讀值還在升。那東西在醒。",
+      "color": "#6ee17a",
+      "portrait": "pip"
+    },
+    {
+      "speaker": "基蘭指揮官",
+      "text": "繼續前進。我們得知道那是什麼。",
+      "color": "#5eb8ff",
+      "portrait": "kieran"
+    }
   ],
   "outroLose": [
-    { "speaker": "皮普工程師", "text": "我們沒到裂谷中心……讀值還在變強。", "color": "#6ee17a" }
+    {
+      "speaker": "皮普工程師",
+      "text": "我們沒到裂谷中心……讀值還在變強。",
+      "color": "#6ee17a",
+      "portrait": "pip"
+    }
   ],
   "path": [
-    { "x": 5, "y": -0.5 },
-    { "x": 5, "y": 3 },
-    { "x": 1, "y": 3 },
-    { "x": 1, "y": 6 },
-    { "x": 7, "y": 6 },
-    { "x": 7, "y": 10 },
-    { "x": 3, "y": 10 },
-    { "x": 3, "y": 13 },
-    { "x": 9, "y": 13 },
-    { "x": 9, "y": 15.5 }
+    {
+      "x": 5,
+      "y": -0.5
+    },
+    {
+      "x": 5,
+      "y": 3
+    },
+    {
+      "x": 1,
+      "y": 3
+    },
+    {
+      "x": 1,
+      "y": 6
+    },
+    {
+      "x": 7,
+      "y": 6
+    },
+    {
+      "x": 7,
+      "y": 10
+    },
+    {
+      "x": 3,
+      "y": 10
+    },
+    {
+      "x": 3,
+      "y": 13
+    },
+    {
+      "x": 9,
+      "y": 13
+    },
+    {
+      "x": 9,
+      "y": 15.5
+    }
   ],
   "startingGold": 185,
   "startingLives": 11,
-  "availableTowers": ["cannon", "quickShot", "machineGun", "frostTower", "sniper", "missileLauncher", "heavyCannon", "tesla"],
+  "availableTowers": [
+    "cannon",
+    "quickShot",
+    "machineGun",
+    "frostTower",
+    "sniper",
+    "missileLauncher",
+    "heavyCannon",
+    "tesla"
+  ],
   "waves": [
     [
-      { "delay": 0.45, "enemy": "frostRaider" },
-      { "delay": 0.45, "enemy": "frostRaider" },
-      { "delay": 0.45, "enemy": "frostRaider" },
-      { "delay": 0.45, "enemy": "frostRaider" },
-      { "delay": 0.45, "enemy": "frostRaider" },
-      { "delay": 0.7, "enemy": "iceBeast" },
-      { "delay": 0.7, "enemy": "iceBeast" },
-      { "delay": 0.7, "enemy": "plane" },
-      { "delay": 0.7, "enemy": "plane" }
+      {
+        "delay": 0.45,
+        "enemy": "frostRaider"
+      },
+      {
+        "delay": 0.45,
+        "enemy": "frostRaider"
+      },
+      {
+        "delay": 0.45,
+        "enemy": "frostRaider"
+      },
+      {
+        "delay": 0.45,
+        "enemy": "frostRaider"
+      },
+      {
+        "delay": 0.45,
+        "enemy": "frostRaider"
+      },
+      {
+        "delay": 0.7,
+        "enemy": "iceBeast"
+      },
+      {
+        "delay": 0.7,
+        "enemy": "iceBeast"
+      },
+      {
+        "delay": 0.7,
+        "enemy": "plane"
+      },
+      {
+        "delay": 0.7,
+        "enemy": "plane"
+      }
     ],
     [
-      { "delay": 0.5, "enemy": "runner" },
-      { "delay": 0.5, "enemy": "runner" },
-      { "delay": 0.5, "enemy": "runner" },
-      { "delay": 0.5, "enemy": "runner" },
-      { "delay": 0.6, "enemy": "iceBeast" },
-      { "delay": 0.6, "enemy": "iceBeast" },
-      { "delay": 0.6, "enemy": "iceBeast" },
-      { "delay": 0.8, "enemy": "armored" },
-      { "delay": 0.8, "enemy": "armored" },
-      { "delay": 0.7, "enemy": "plane" },
-      { "delay": 0.7, "enemy": "plane" },
-      { "delay": 0.7, "enemy": "plane" },
-      { "delay": 1.4, "enemy": "boss" }
+      {
+        "delay": 0.5,
+        "enemy": "runner"
+      },
+      {
+        "delay": 0.5,
+        "enemy": "runner"
+      },
+      {
+        "delay": 0.5,
+        "enemy": "runner"
+      },
+      {
+        "delay": 0.5,
+        "enemy": "runner"
+      },
+      {
+        "delay": 0.6,
+        "enemy": "iceBeast"
+      },
+      {
+        "delay": 0.6,
+        "enemy": "iceBeast"
+      },
+      {
+        "delay": 0.6,
+        "enemy": "iceBeast"
+      },
+      {
+        "delay": 0.8,
+        "enemy": "armored"
+      },
+      {
+        "delay": 0.8,
+        "enemy": "armored"
+      },
+      {
+        "delay": 0.7,
+        "enemy": "plane"
+      },
+      {
+        "delay": 0.7,
+        "enemy": "plane"
+      },
+      {
+        "delay": 0.7,
+        "enemy": "plane"
+      },
+      {
+        "delay": 1.4,
+        "enemy": "boss"
+      }
     ],
     [
-      { "delay": 1.0, "enemy": "glacialBoss" },
-      { "delay": 0.4, "enemy": "frostRaider" },
-      { "delay": 0.4, "enemy": "frostRaider" },
-      { "delay": 0.4, "enemy": "frostRaider" },
-      { "delay": 0.4, "enemy": "frostRaider" },
-      { "delay": 0.4, "enemy": "frostRaider" },
-      { "delay": 0.4, "enemy": "frostRaider" },
-      { "delay": 0.7, "enemy": "iceBeast" },
-      { "delay": 0.7, "enemy": "iceBeast" },
-      { "delay": 0.7, "enemy": "heavyTank" },
-      { "delay": 0.7, "enemy": "heavyTank" },
-      { "delay": 0.7, "enemy": "plane" },
-      { "delay": 0.7, "enemy": "plane" },
-      { "delay": 0.7, "enemy": "plane" },
-      { "delay": 1.8, "enemy": "armoredBoss" }
+      {
+        "delay": 1,
+        "enemy": "glacialBoss"
+      },
+      {
+        "delay": 0.4,
+        "enemy": "frostRaider"
+      },
+      {
+        "delay": 0.4,
+        "enemy": "frostRaider"
+      },
+      {
+        "delay": 0.4,
+        "enemy": "frostRaider"
+      },
+      {
+        "delay": 0.4,
+        "enemy": "frostRaider"
+      },
+      {
+        "delay": 0.4,
+        "enemy": "frostRaider"
+      },
+      {
+        "delay": 0.4,
+        "enemy": "frostRaider"
+      },
+      {
+        "delay": 0.7,
+        "enemy": "iceBeast"
+      },
+      {
+        "delay": 0.7,
+        "enemy": "iceBeast"
+      },
+      {
+        "delay": 0.7,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 0.7,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 0.7,
+        "enemy": "plane"
+      },
+      {
+        "delay": 0.7,
+        "enemy": "plane"
+      },
+      {
+        "delay": 0.7,
+        "enemy": "plane"
+      },
+      {
+        "delay": 1.8,
+        "enemy": "armoredBoss"
+      }
     ]
   ]
 }

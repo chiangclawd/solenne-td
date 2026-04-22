@@ -4,76 +4,267 @@
   "world": 5,
   "flavorText": "皮普抓著基蘭的袖子不放。他認得這個地方。",
   "intro": [
-    { "speaker": "旁白", "text": "南境沿海。一座黑色堡壘從海裡浮起——它不在任何地圖上。", "color": "#9aa5b8" },
-    { "speaker": "皮普工程師", "text": "基蘭……我認得這座堡壘。我就是從這裡來的。", "color": "#6ee17a" },
-    { "speaker": "瓦西亞中士", "text": "所以你是他們的？", "color": "#ff9f43" },
-    { "speaker": "皮普工程師", "text": "不是。我逃出來的。我不記得細節——只記得我要阻止他們。", "color": "#6ee17a" },
-    { "speaker": "基蘭指揮官", "text": "那就幫我們進去。佈防。守住外牆。", "color": "#5eb8ff" },
-    { "speaker": "鐵潮之聲", "text": "皮普。回家。", "color": "#ff6b6b" },
-    { "speaker": "皮普工程師", "text": "……這不是家。開火，指揮官。", "color": "#6ee17a" }
+    {
+      "speaker": "旁白",
+      "text": "南境沿海。一座黑色堡壘從海裡浮起——它不在任何地圖上。",
+      "color": "#9aa5b8"
+    },
+    {
+      "speaker": "皮普工程師",
+      "text": "基蘭……我認得這座堡壘。我就是從這裡來的。",
+      "color": "#6ee17a",
+      "portrait": "pip"
+    },
+    {
+      "speaker": "瓦西亞中士",
+      "text": "所以你是他們的？",
+      "color": "#ff9f43",
+      "portrait": "vasya"
+    },
+    {
+      "speaker": "皮普工程師",
+      "text": "不是。我逃出來的。我不記得細節——只記得我要阻止他們。",
+      "color": "#6ee17a",
+      "portrait": "pip"
+    },
+    {
+      "speaker": "基蘭指揮官",
+      "text": "那就幫我們進去。佈防。守住外牆。",
+      "color": "#5eb8ff",
+      "portrait": "kieran"
+    },
+    {
+      "speaker": "鐵潮之聲",
+      "text": "皮普。回家。",
+      "color": "#ff6b6b"
+    },
+    {
+      "speaker": "皮普工程師",
+      "text": "……這不是家。開火，指揮官。",
+      "color": "#6ee17a",
+      "portrait": "pip"
+    }
   ],
   "outroWin": [
-    { "speaker": "皮普工程師", "text": "外牆倒了。裡面的守衛更強。", "color": "#6ee17a" },
-    { "speaker": "基蘭指揮官", "text": "我們繼續。你要面對那個地方嗎？", "color": "#5eb8ff" },
-    { "speaker": "皮普工程師", "text": "我必須。", "color": "#6ee17a" }
+    {
+      "speaker": "皮普工程師",
+      "text": "外牆倒了。裡面的守衛更強。",
+      "color": "#6ee17a",
+      "portrait": "pip"
+    },
+    {
+      "speaker": "基蘭指揮官",
+      "text": "我們繼續。你要面對那個地方嗎？",
+      "color": "#5eb8ff",
+      "portrait": "kieran"
+    },
+    {
+      "speaker": "皮普工程師",
+      "text": "我必須。",
+      "color": "#6ee17a",
+      "portrait": "pip"
+    }
   ],
   "outroLose": [
-    { "speaker": "瓦西亞中士", "text": "皮普倒了。他說——他先走一步。", "color": "#ff9f43" }
+    {
+      "speaker": "瓦西亞中士",
+      "text": "皮普倒了。他說——他先走一步。",
+      "color": "#ff9f43",
+      "portrait": "vasya"
+    }
   ],
   "path": [
-    { "x": -0.5, "y": 6 },
-    { "x": 4, "y": 6 },
-    { "x": 4, "y": 2 },
-    { "x": 8, "y": 2 },
-    { "x": 8, "y": 9 },
-    { "x": 2, "y": 9 },
-    { "x": 2, "y": 13 },
-    { "x": 9, "y": 13 },
-    { "x": 9, "y": 15.5 }
+    {
+      "x": -0.5,
+      "y": 6
+    },
+    {
+      "x": 4,
+      "y": 6
+    },
+    {
+      "x": 4,
+      "y": 2
+    },
+    {
+      "x": 8,
+      "y": 2
+    },
+    {
+      "x": 8,
+      "y": 9
+    },
+    {
+      "x": 2,
+      "y": 9
+    },
+    {
+      "x": 2,
+      "y": 13
+    },
+    {
+      "x": 9,
+      "y": 13
+    },
+    {
+      "x": 9,
+      "y": 15.5
+    }
   ],
   "startingGold": 210,
   "startingLives": 11,
-  "availableTowers": ["quickShot", "machineGun", "frostTower", "sniper", "missileLauncher", "heavyCannon", "tesla", "lightTower"],
+  "availableTowers": [
+    "quickShot",
+    "machineGun",
+    "frostTower",
+    "sniper",
+    "missileLauncher",
+    "heavyCannon",
+    "tesla",
+    "lightTower"
+  ],
   "waves": [
     [
-      { "delay": 0.45, "enemy": "wraith" },
-      { "delay": 0.45, "enemy": "wraith" },
-      { "delay": 0.45, "enemy": "wraith" },
-      { "delay": 0.45, "enemy": "wraith" },
-      { "delay": 0.6, "enemy": "runner" },
-      { "delay": 0.6, "enemy": "runner" },
-      { "delay": 0.6, "enemy": "runner" },
-      { "delay": 0.7, "enemy": "armored" },
-      { "delay": 0.7, "enemy": "armored" }
+      {
+        "delay": 0.45,
+        "enemy": "wraith"
+      },
+      {
+        "delay": 0.45,
+        "enemy": "wraith"
+      },
+      {
+        "delay": 0.45,
+        "enemy": "wraith"
+      },
+      {
+        "delay": 0.45,
+        "enemy": "wraith"
+      },
+      {
+        "delay": 0.6,
+        "enemy": "runner"
+      },
+      {
+        "delay": 0.6,
+        "enemy": "runner"
+      },
+      {
+        "delay": 0.6,
+        "enemy": "runner"
+      },
+      {
+        "delay": 0.7,
+        "enemy": "armored"
+      },
+      {
+        "delay": 0.7,
+        "enemy": "armored"
+      }
     ],
     [
-      { "delay": 0.4, "enemy": "wraith" },
-      { "delay": 0.4, "enemy": "wraith" },
-      { "delay": 0.4, "enemy": "wraith" },
-      { "delay": 0.4, "enemy": "wraith" },
-      { "delay": 0.4, "enemy": "wraith" },
-      { "delay": 0.8, "enemy": "splitter" },
-      { "delay": 0.8, "enemy": "splitter" },
-      { "delay": 0.7, "enemy": "heavyTank" },
-      { "delay": 0.7, "enemy": "heavyTank" },
-      { "delay": 0.7, "enemy": "plane" },
-      { "delay": 0.7, "enemy": "plane" },
-      { "delay": 1.5, "enemy": "boss" }
+      {
+        "delay": 0.4,
+        "enemy": "wraith"
+      },
+      {
+        "delay": 0.4,
+        "enemy": "wraith"
+      },
+      {
+        "delay": 0.4,
+        "enemy": "wraith"
+      },
+      {
+        "delay": 0.4,
+        "enemy": "wraith"
+      },
+      {
+        "delay": 0.4,
+        "enemy": "wraith"
+      },
+      {
+        "delay": 0.8,
+        "enemy": "splitter"
+      },
+      {
+        "delay": 0.8,
+        "enemy": "splitter"
+      },
+      {
+        "delay": 0.7,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 0.7,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 0.7,
+        "enemy": "plane"
+      },
+      {
+        "delay": 0.7,
+        "enemy": "plane"
+      },
+      {
+        "delay": 1.5,
+        "enemy": "boss"
+      }
     ],
     [
-      { "delay": 1.0, "enemy": "splitter" },
-      { "delay": 1.0, "enemy": "splitter" },
-      { "delay": 1.0, "enemy": "splitter" },
-      { "delay": 0.45, "enemy": "wraith" },
-      { "delay": 0.45, "enemy": "wraith" },
-      { "delay": 0.45, "enemy": "wraith" },
-      { "delay": 0.45, "enemy": "wraith" },
-      { "delay": 0.7, "enemy": "heavyTank" },
-      { "delay": 0.7, "enemy": "heavyTank" },
-      { "delay": 0.7, "enemy": "plane" },
-      { "delay": 0.7, "enemy": "plane" },
-      { "delay": 0.7, "enemy": "plane" },
-      { "delay": 2.0, "enemy": "armoredBoss" }
+      {
+        "delay": 1,
+        "enemy": "splitter"
+      },
+      {
+        "delay": 1,
+        "enemy": "splitter"
+      },
+      {
+        "delay": 1,
+        "enemy": "splitter"
+      },
+      {
+        "delay": 0.45,
+        "enemy": "wraith"
+      },
+      {
+        "delay": 0.45,
+        "enemy": "wraith"
+      },
+      {
+        "delay": 0.45,
+        "enemy": "wraith"
+      },
+      {
+        "delay": 0.45,
+        "enemy": "wraith"
+      },
+      {
+        "delay": 0.7,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 0.7,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 0.7,
+        "enemy": "plane"
+      },
+      {
+        "delay": 0.7,
+        "enemy": "plane"
+      },
+      {
+        "delay": 0.7,
+        "enemy": "plane"
+      },
+      {
+        "delay": 2,
+        "enemy": "armoredBoss"
+      }
     ]
   ]
 }

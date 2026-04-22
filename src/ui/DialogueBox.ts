@@ -77,10 +77,10 @@ export class DialogueBox {
     const speakerColor = line.color ?? '#5eb8ff';
     let textOffsetX = 0;
 
-    // Optional portrait (file at <base>assets/portraits/<portrait>.png)
+    // Optional portrait (file at <base>assets/portraits/<portrait>.svg or .png)
     if (line.portrait) {
       const base = import.meta.env.BASE_URL;
-      const img = getPortrait(`${base}assets/portraits/${line.portrait}.png`);
+      const img = getPortrait(`${base}assets/portraits/${line.portrait}.svg`);
       if (img) {
         const dpr = window.devicePixelRatio || 1;
         const pSize = 90;

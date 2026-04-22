@@ -4,81 +4,280 @@
   "world": 5,
   "flavorText": "庭院中央有醫者——她們袍子像我們的白。但她們治的是敵人。",
   "intro": [
-    { "speaker": "旁白", "text": "要塞內庭。白袍的身影在傷患之間移動——她們不治我方。", "color": "#9aa5b8" },
-    { "speaker": "瓦西亞中士", "text": "她們在把敵人治好。我用狙擊塔打她們——結果死的是我自己人。", "color": "#ff9f43" },
-    { "speaker": "皮普工程師", "text": "她們先死。優先狙掉治療者，再清其他。", "color": "#6ee17a" },
-    { "speaker": "基蘭指揮官", "text": "理解。優先目標：白袍。", "color": "#5eb8ff" }
+    {
+      "speaker": "旁白",
+      "text": "要塞內庭。白袍的身影在傷患之間移動——她們不治我方。",
+      "color": "#9aa5b8"
+    },
+    {
+      "speaker": "瓦西亞中士",
+      "text": "她們在把敵人治好。我用狙擊塔打她們——結果死的是我自己人。",
+      "color": "#ff9f43",
+      "portrait": "vasya"
+    },
+    {
+      "speaker": "皮普工程師",
+      "text": "她們先死。優先狙掉治療者，再清其他。",
+      "color": "#6ee17a",
+      "portrait": "pip"
+    },
+    {
+      "speaker": "基蘭指揮官",
+      "text": "理解。優先目標：白袍。",
+      "color": "#5eb8ff",
+      "portrait": "kieran"
+    }
   ],
   "outroWin": [
-    { "speaker": "瓦西亞中士", "text": "白袍倒了。傷兵自己掙扎爬起來，然後倒下。", "color": "#ff9f43" },
-    { "speaker": "皮普工程師", "text": "這就是虛空要塞——他們連治療都是武器。", "color": "#6ee17a" }
+    {
+      "speaker": "瓦西亞中士",
+      "text": "白袍倒了。傷兵自己掙扎爬起來，然後倒下。",
+      "color": "#ff9f43",
+      "portrait": "vasya"
+    },
+    {
+      "speaker": "皮普工程師",
+      "text": "這就是虛空要塞——他們連治療都是武器。",
+      "color": "#6ee17a",
+      "portrait": "pip"
+    }
   ],
   "outroLose": [
-    { "speaker": "基蘭指揮官", "text": "我們被治療流打潰。退。", "color": "#5eb8ff" }
+    {
+      "speaker": "基蘭指揮官",
+      "text": "我們被治療流打潰。退。",
+      "color": "#5eb8ff",
+      "portrait": "kieran"
+    }
   ],
   "path": [
-    { "x": -0.5, "y": 3 },
-    { "x": 3, "y": 3 },
-    { "x": 3, "y": 6 },
-    { "x": 7, "y": 6 },
-    { "x": 7, "y": 3 },
-    { "x": 9, "y": 3 },
-    { "x": 9, "y": 10 },
-    { "x": 1, "y": 10 },
-    { "x": 1, "y": 13 },
-    { "x": 9, "y": 13 },
-    { "x": 9, "y": 15.5 }
+    {
+      "x": -0.5,
+      "y": 3
+    },
+    {
+      "x": 3,
+      "y": 3
+    },
+    {
+      "x": 3,
+      "y": 6
+    },
+    {
+      "x": 7,
+      "y": 6
+    },
+    {
+      "x": 7,
+      "y": 3
+    },
+    {
+      "x": 9,
+      "y": 3
+    },
+    {
+      "x": 9,
+      "y": 10
+    },
+    {
+      "x": 1,
+      "y": 10
+    },
+    {
+      "x": 1,
+      "y": 13
+    },
+    {
+      "x": 9,
+      "y": 13
+    },
+    {
+      "x": 9,
+      "y": 15.5
+    }
   ],
   "startingGold": 220,
   "startingLives": 10,
-  "availableTowers": ["quickShot", "machineGun", "frostTower", "sniper", "missileLauncher", "heavyCannon", "tesla", "lightTower"],
+  "availableTowers": [
+    "quickShot",
+    "machineGun",
+    "frostTower",
+    "sniper",
+    "missileLauncher",
+    "heavyCannon",
+    "tesla",
+    "lightTower"
+  ],
   "waves": [
     [
-      { "delay": 0.5, "enemy": "healer" },
-      { "delay": 0.4, "enemy": "runner" },
-      { "delay": 0.4, "enemy": "runner" },
-      { "delay": 0.4, "enemy": "runner" },
-      { "delay": 0.4, "enemy": "runner" },
-      { "delay": 0.4, "enemy": "wraith" },
-      { "delay": 0.4, "enemy": "wraith" },
-      { "delay": 0.4, "enemy": "wraith" },
-      { "delay": 0.7, "enemy": "armored" },
-      { "delay": 0.7, "enemy": "armored" }
+      {
+        "delay": 0.5,
+        "enemy": "healer"
+      },
+      {
+        "delay": 0.4,
+        "enemy": "runner"
+      },
+      {
+        "delay": 0.4,
+        "enemy": "runner"
+      },
+      {
+        "delay": 0.4,
+        "enemy": "runner"
+      },
+      {
+        "delay": 0.4,
+        "enemy": "runner"
+      },
+      {
+        "delay": 0.4,
+        "enemy": "wraith"
+      },
+      {
+        "delay": 0.4,
+        "enemy": "wraith"
+      },
+      {
+        "delay": 0.4,
+        "enemy": "wraith"
+      },
+      {
+        "delay": 0.7,
+        "enemy": "armored"
+      },
+      {
+        "delay": 0.7,
+        "enemy": "armored"
+      }
     ],
     [
-      { "delay": 0.7, "enemy": "healer" },
-      { "delay": 0.7, "enemy": "healer" },
-      { "delay": 0.4, "enemy": "wraith" },
-      { "delay": 0.4, "enemy": "wraith" },
-      { "delay": 0.4, "enemy": "wraith" },
-      { "delay": 0.7, "enemy": "splitter" },
-      { "delay": 0.7, "enemy": "splitter" },
-      { "delay": 0.7, "enemy": "armored" },
-      { "delay": 0.7, "enemy": "armored" },
-      { "delay": 0.7, "enemy": "heavyTank" },
-      { "delay": 0.7, "enemy": "heavyTank" },
-      { "delay": 0.7, "enemy": "plane" },
-      { "delay": 0.7, "enemy": "plane" },
-      { "delay": 1.4, "enemy": "boss" }
+      {
+        "delay": 0.7,
+        "enemy": "healer"
+      },
+      {
+        "delay": 0.7,
+        "enemy": "healer"
+      },
+      {
+        "delay": 0.4,
+        "enemy": "wraith"
+      },
+      {
+        "delay": 0.4,
+        "enemy": "wraith"
+      },
+      {
+        "delay": 0.4,
+        "enemy": "wraith"
+      },
+      {
+        "delay": 0.7,
+        "enemy": "splitter"
+      },
+      {
+        "delay": 0.7,
+        "enemy": "splitter"
+      },
+      {
+        "delay": 0.7,
+        "enemy": "armored"
+      },
+      {
+        "delay": 0.7,
+        "enemy": "armored"
+      },
+      {
+        "delay": 0.7,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 0.7,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 0.7,
+        "enemy": "plane"
+      },
+      {
+        "delay": 0.7,
+        "enemy": "plane"
+      },
+      {
+        "delay": 1.4,
+        "enemy": "boss"
+      }
     ],
     [
-      { "delay": 0.8, "enemy": "healer" },
-      { "delay": 0.8, "enemy": "healer" },
-      { "delay": 0.8, "enemy": "healer" },
-      { "delay": 1.0, "enemy": "armoredBoss" },
-      { "delay": 0.4, "enemy": "wraith" },
-      { "delay": 0.4, "enemy": "wraith" },
-      { "delay": 0.4, "enemy": "wraith" },
-      { "delay": 0.4, "enemy": "wraith" },
-      { "delay": 0.8, "enemy": "splitter" },
-      { "delay": 0.8, "enemy": "splitter" },
-      { "delay": 0.7, "enemy": "heavyTank" },
-      { "delay": 0.7, "enemy": "heavyTank" },
-      { "delay": 0.7, "enemy": "heavyTank" },
-      { "delay": 0.7, "enemy": "plane" },
-      { "delay": 0.7, "enemy": "plane" },
-      { "delay": 0.7, "enemy": "plane" },
-      { "delay": 2.0, "enemy": "voidBoss" }
+      {
+        "delay": 0.8,
+        "enemy": "healer"
+      },
+      {
+        "delay": 0.8,
+        "enemy": "healer"
+      },
+      {
+        "delay": 0.8,
+        "enemy": "healer"
+      },
+      {
+        "delay": 1,
+        "enemy": "armoredBoss"
+      },
+      {
+        "delay": 0.4,
+        "enemy": "wraith"
+      },
+      {
+        "delay": 0.4,
+        "enemy": "wraith"
+      },
+      {
+        "delay": 0.4,
+        "enemy": "wraith"
+      },
+      {
+        "delay": 0.4,
+        "enemy": "wraith"
+      },
+      {
+        "delay": 0.8,
+        "enemy": "splitter"
+      },
+      {
+        "delay": 0.8,
+        "enemy": "splitter"
+      },
+      {
+        "delay": 0.7,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 0.7,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 0.7,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 0.7,
+        "enemy": "plane"
+      },
+      {
+        "delay": 0.7,
+        "enemy": "plane"
+      },
+      {
+        "delay": 0.7,
+        "enemy": "plane"
+      },
+      {
+        "delay": 2,
+        "enemy": "voidBoss"
+      }
     ]
   ]
 }

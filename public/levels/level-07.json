@@ -4,77 +4,265 @@
   "world": 2,
   "flavorText": "調度場上空，翅膀在煤煙中掠過。",
   "intro": [
-    { "speaker": "旁白", "text": "中央調度場。通往三座工業城的鐵軌在此交會。", "color": "#9aa5b8" },
-    { "speaker": "瓦西亞中士", "text": "他們的運輸車在搬礦石。但那不是鐵——光太亮了。", "color": "#ff9f43" },
-    { "speaker": "皮普工程師", "text": "指揮官，抬頭！天上有東西！", "color": "#6ee17a" },
-    { "speaker": "基蘭指揮官", "text": "飛機？鐵潮什麼時候有了飛機？", "color": "#5eb8ff" },
-    { "speaker": "鐵潮之聲", "text": "【雜訊】……你們給我們的禮物……已經開始運轉……", "color": "#ff6b6b" },
-    { "speaker": "皮普工程師", "text": "飛彈塔！我現在就蓋！", "color": "#6ee17a" }
+    {
+      "speaker": "旁白",
+      "text": "中央調度場。通往三座工業城的鐵軌在此交會。",
+      "color": "#9aa5b8"
+    },
+    {
+      "speaker": "瓦西亞中士",
+      "text": "他們的運輸車在搬礦石。但那不是鐵——光太亮了。",
+      "color": "#ff9f43",
+      "portrait": "vasya"
+    },
+    {
+      "speaker": "皮普工程師",
+      "text": "指揮官，抬頭！天上有東西！",
+      "color": "#6ee17a",
+      "portrait": "pip"
+    },
+    {
+      "speaker": "基蘭指揮官",
+      "text": "飛機？鐵潮什麼時候有了飛機？",
+      "color": "#5eb8ff",
+      "portrait": "kieran"
+    },
+    {
+      "speaker": "鐵潮之聲",
+      "text": "【雜訊】……你們給我們的禮物……已經開始運轉……",
+      "color": "#ff6b6b"
+    },
+    {
+      "speaker": "皮普工程師",
+      "text": "飛彈塔！我現在就蓋！",
+      "color": "#6ee17a",
+      "portrait": "pip"
+    }
   ],
   "outroWin": [
-    { "speaker": "皮普工程師", "text": "打下來了！我去把殘骸拖回來研究！", "color": "#6ee17a" },
-    { "speaker": "基蘭指揮官", "text": "小心點，皮普。別被什麼染上。", "color": "#5eb8ff" }
+    {
+      "speaker": "皮普工程師",
+      "text": "打下來了！我去把殘骸拖回來研究！",
+      "color": "#6ee17a",
+      "portrait": "pip"
+    },
+    {
+      "speaker": "基蘭指揮官",
+      "text": "小心點，皮普。別被什麼染上。",
+      "color": "#5eb8ff",
+      "portrait": "kieran"
+    }
   ],
   "outroLose": [
-    { "speaker": "基蘭指揮官", "text": "調度場失守。他們的運輸隊暢通無阻了。", "color": "#5eb8ff" }
+    {
+      "speaker": "基蘭指揮官",
+      "text": "調度場失守。他們的運輸隊暢通無阻了。",
+      "color": "#5eb8ff",
+      "portrait": "kieran"
+    }
   ],
   "path": [
-    { "x": 1, "y": -0.5 },
-    { "x": 1, "y": 4 },
-    { "x": 9, "y": 4 },
-    { "x": 9, "y": 8 },
-    { "x": 1, "y": 8 },
-    { "x": 1, "y": 12 },
-    { "x": 9, "y": 12 },
-    { "x": 9, "y": 15.5 }
+    {
+      "x": 1,
+      "y": -0.5
+    },
+    {
+      "x": 1,
+      "y": 4
+    },
+    {
+      "x": 9,
+      "y": 4
+    },
+    {
+      "x": 9,
+      "y": 8
+    },
+    {
+      "x": 1,
+      "y": 8
+    },
+    {
+      "x": 1,
+      "y": 12
+    },
+    {
+      "x": 9,
+      "y": 12
+    },
+    {
+      "x": 9,
+      "y": 15.5
+    }
   ],
   "startingGold": 150,
   "startingLives": 11,
-  "availableTowers": ["cannon", "quickShot", "machineGun", "frostTower", "sniper", "missileLauncher"],
+  "availableTowers": [
+    "cannon",
+    "quickShot",
+    "machineGun",
+    "frostTower",
+    "sniper",
+    "missileLauncher"
+  ],
   "waves": [
     [
-      { "delay": 0.5, "enemy": "runner" },
-      { "delay": 0.5, "enemy": "runner" },
-      { "delay": 0.5, "enemy": "runner" },
-      { "delay": 0.5, "enemy": "runner" },
-      { "delay": 0.5, "enemy": "soldier" },
-      { "delay": 0.5, "enemy": "soldier" },
-      { "delay": 0.5, "enemy": "soldier" },
-      { "delay": 0.5, "enemy": "soldier" },
-      { "delay": 0.9, "enemy": "plane" },
-      { "delay": 0.9, "enemy": "plane" },
-      { "delay": 0.8, "enemy": "tank" },
-      { "delay": 0.8, "enemy": "tank" },
-      { "delay": 0.8, "enemy": "armored" }
+      {
+        "delay": 0.5,
+        "enemy": "runner"
+      },
+      {
+        "delay": 0.5,
+        "enemy": "runner"
+      },
+      {
+        "delay": 0.5,
+        "enemy": "runner"
+      },
+      {
+        "delay": 0.5,
+        "enemy": "runner"
+      },
+      {
+        "delay": 0.5,
+        "enemy": "soldier"
+      },
+      {
+        "delay": 0.5,
+        "enemy": "soldier"
+      },
+      {
+        "delay": 0.5,
+        "enemy": "soldier"
+      },
+      {
+        "delay": 0.5,
+        "enemy": "soldier"
+      },
+      {
+        "delay": 0.9,
+        "enemy": "plane"
+      },
+      {
+        "delay": 0.9,
+        "enemy": "plane"
+      },
+      {
+        "delay": 0.8,
+        "enemy": "tank"
+      },
+      {
+        "delay": 0.8,
+        "enemy": "tank"
+      },
+      {
+        "delay": 0.8,
+        "enemy": "armored"
+      }
     ],
     [
-      { "delay": 0.5, "enemy": "scout" },
-      { "delay": 0.5, "enemy": "scout" },
-      { "delay": 0.5, "enemy": "scout" },
-      { "delay": 0.5, "enemy": "scout" },
-      { "delay": 0.8, "enemy": "plane" },
-      { "delay": 0.8, "enemy": "plane" },
-      { "delay": 0.8, "enemy": "plane" },
-      { "delay": 0.8, "enemy": "plane" },
-      { "delay": 0.7, "enemy": "armored" },
-      { "delay": 0.7, "enemy": "armored" },
-      { "delay": 0.7, "enemy": "armored" },
-      { "delay": 1.3, "enemy": "boss" }
+      {
+        "delay": 0.5,
+        "enemy": "scout"
+      },
+      {
+        "delay": 0.5,
+        "enemy": "scout"
+      },
+      {
+        "delay": 0.5,
+        "enemy": "scout"
+      },
+      {
+        "delay": 0.5,
+        "enemy": "scout"
+      },
+      {
+        "delay": 0.8,
+        "enemy": "plane"
+      },
+      {
+        "delay": 0.8,
+        "enemy": "plane"
+      },
+      {
+        "delay": 0.8,
+        "enemy": "plane"
+      },
+      {
+        "delay": 0.8,
+        "enemy": "plane"
+      },
+      {
+        "delay": 0.7,
+        "enemy": "armored"
+      },
+      {
+        "delay": 0.7,
+        "enemy": "armored"
+      },
+      {
+        "delay": 0.7,
+        "enemy": "armored"
+      },
+      {
+        "delay": 1.3,
+        "enemy": "boss"
+      }
     ],
     [
-      { "delay": 0.6, "enemy": "plane" },
-      { "delay": 0.6, "enemy": "plane" },
-      { "delay": 0.6, "enemy": "plane" },
-      { "delay": 0.6, "enemy": "plane" },
-      { "delay": 0.6, "enemy": "plane" },
-      { "delay": 0.4, "enemy": "runner" },
-      { "delay": 0.4, "enemy": "runner" },
-      { "delay": 0.4, "enemy": "runner" },
-      { "delay": 0.4, "enemy": "runner" },
-      { "delay": 0.8, "enemy": "heavyTank" },
-      { "delay": 0.8, "enemy": "heavyTank" },
-      { "delay": 0.8, "enemy": "armored" },
-      { "delay": 1.6, "enemy": "armoredBoss" }
+      {
+        "delay": 0.6,
+        "enemy": "plane"
+      },
+      {
+        "delay": 0.6,
+        "enemy": "plane"
+      },
+      {
+        "delay": 0.6,
+        "enemy": "plane"
+      },
+      {
+        "delay": 0.6,
+        "enemy": "plane"
+      },
+      {
+        "delay": 0.6,
+        "enemy": "plane"
+      },
+      {
+        "delay": 0.4,
+        "enemy": "runner"
+      },
+      {
+        "delay": 0.4,
+        "enemy": "runner"
+      },
+      {
+        "delay": 0.4,
+        "enemy": "runner"
+      },
+      {
+        "delay": 0.4,
+        "enemy": "runner"
+      },
+      {
+        "delay": 0.8,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 0.8,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 0.8,
+        "enemy": "armored"
+      },
+      {
+        "delay": 1.6,
+        "enemy": "armoredBoss"
+      }
     ]
   ]
 }
