@@ -22,6 +22,7 @@ import {
   drawTowerBase, drawTowerTurret, drawEnemy, drawProjectile,
   drawTowerIconScreen, drawEnemyIconScreen,
 } from '../graphics/SpritePainter.ts';
+import { ParticleSystem } from '../graphics/Particles.ts';
 
 interface Rect { x: number; y: number; w: number; h: number }
 interface Floater { x: number; y: number; vx: number; vy: number; text: string; color: string; life: number; maxLife: number; size: number }
@@ -60,6 +61,7 @@ export class GameScene extends BaseScene {
   private readonly occupiedTiles = new Set<string>();
   private readonly floaters: Floater[] = [];
   private readonly pendingSpawns: { config: EnemyConfig; progress: number; delay: number }[] = [];
+  private readonly particles = new ParticleSystem();
   private readonly dialogue = new DialogueBox();
   private readonly difficulty: Difficulty;
   private readonly diffMod: typeof DIFF_MOD[Difficulty];
@@ -143,6 +145,7 @@ export class GameScene extends BaseScene {
     this.pendingSpawns.length = 0;
     this.occupiedTiles.clear();
     this.floaters.length = 0;
+    this.particles.clear();
     this.selectedTowerId = this.availableTowers[0];
     this.selectedExisting = null;
     this.paused = false;
@@ -245,13 +248,40 @@ export class GameScene extends BaseScene {
         }
       }
       for (const e of this.enemies) e.update(dt, this.enemies);
+      const projectilesBefore = this.projectiles.length;
       for (const t of this.towers) t.update(dt, this.enemies, this.projectiles, this.chainSegments);
+      // Muzzle flash for any tower that fired
+      for (let i = projectilesBefore; i < this.projectiles.length; i++) {
+        const p = this.projectiles[i];
+        // Find tower by proximity (first tower within 1.5 tiles is source)
+        let best: typeof this.towers[number] | null = null;
+        let bestD = Infinity;
+        for (const t of this.towers) {
+          const d = Math.hypot(t.x - p.x, t.y - p.y);
+          if (d < bestD) { bestD = d; best = t; }
+        }
+        if (best && bestD < T * 1.5) {
+          this.particles.muzzleFlash(best.x, best.y, best.turretRotation);
+        }
+      }
       const effectsBefore = this.effects.length;
-      for (const p of this.projectiles) p.update(dt, this.enemies, this.effects);
+      for (const p of this.projectiles) {
+        p.update(dt, this.enemies, this.effects);
+        // Missile trail particles (orange projectile)
+        if (p.sprite === 'projectileMissile' && p.alive && Math.random() < 0.55) {
+          this.particles.missileTrail(p.x, p.y);
+        }
+      }
       for (let i = effectsBefore; i < this.effects.length; i++) {
         const fx = this.effects[i];
-        if (fx.color === '#ff9f43') { this.ctx.audio.explosion(); this.ctx.renderer.shake(0.3, 5); }
-        else if (fx.color === '#6ec8ff') this.ctx.audio.frost();
+        if (fx.color === '#ff9f43') {
+          this.ctx.audio.explosion();
+          this.ctx.renderer.shake(0.3, 5);
+          this.particles.explosion(fx.x, fx.y, Math.min(1.5, fx.radius / 40));
+        } else if (fx.color === '#6ec8ff') {
+          this.ctx.audio.frost();
+          this.particles.frostBurst(fx.x, fx.y);
+        }
       }
 
       for (let i = this.enemies.length - 1; i >= 0; i--) {
@@ -270,6 +300,7 @@ export class GameScene extends BaseScene {
             this.ctx.save.stats.totalGoldEarned += e.reward;
             this.spawnFloater(p.x, p.y, `+${e.reward}`, '#ffd166');
             this.ctx.audio.enemyDie();
+            this.particles.enemyDeath(p.x, p.y);
             // Trigger onDeath spawns
             for (const s of e.onDeathSpawn) {
               const cfg = ENEMY_TYPES[s.type];
@@ -344,6 +375,7 @@ export class GameScene extends BaseScene {
       this.chainSegments[i].life -= dt;
       if (this.chainSegments[i].life <= 0) this.chainSegments.splice(i, 1);
     }
+    this.particles.update(dt);
   }
 
   override render(): void {
@@ -400,6 +432,9 @@ export class GameScene extends BaseScene {
     for (const p of this.projectiles) {
       drawProjectile(r.ctx, p.sprite, p.x, p.y, p.rotation);
     }
+
+    // Particles (world space, on top of projectiles)
+    this.particles.render(r.ctx);
 
     for (const fx of this.effects) {
       const t = 1 - fx.life / fx.maxLife;
