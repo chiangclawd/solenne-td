@@ -23,8 +23,10 @@ import {
   drawTowerIconScreen, drawEnemyIconScreen,
 } from '../graphics/SpritePainter.ts';
 import { ParticleSystem } from '../graphics/Particles.ts';
+import { ScreenParticleSystem } from '../graphics/ScreenParticles.ts';
 import { drawGrassTile, drawPathTile, themeForWorld } from '../graphics/UIPainter.ts';
 import { makeBanner, showBanner, updateBanner, renderBanner } from '../graphics/WaveBanner.ts';
+import { Weather } from '../graphics/Weather.ts';
 
 interface Rect { x: number; y: number; w: number; h: number }
 interface Floater { x: number; y: number; vx: number; vy: number; text: string; color: string; life: number; maxLife: number; size: number }
@@ -64,7 +66,9 @@ export class GameScene extends BaseScene {
   private readonly floaters: Floater[] = [];
   private readonly pendingSpawns: { config: EnemyConfig; progress: number; delay: number }[] = [];
   private readonly particles = new ParticleSystem();
+  private readonly screenParticles = new ScreenParticleSystem();
   private readonly banner = makeBanner();
+  private readonly weather: Weather;
   private bossEntranceFlash = 0;
   private bossSeen = new Set<string>();
   private goldPulse = 0;      // seconds remaining of gold-change pulse
@@ -82,6 +86,7 @@ export class GameScene extends BaseScene {
   private paused = false;
   private speedIdx = 0;
   private elapsed = 0;
+  private hoverTile: { x: number; y: number } | null = null;
 
   // Transient UI rects
   private nextWaveBtn: Rect | null = null;
@@ -116,6 +121,7 @@ export class GameScene extends BaseScene {
     this.selectedTowerId = this.availableTowers[0];
     this.state = new GameState(level.startingGold, level.startingLives);
     this.waveMgr = new WaveManager(this.waves, this.path);
+    this.weather = new Weather(level.world);
   }
 
   private buildWave(wave: import('../game/Level.ts').WaveData): Wave {
@@ -146,6 +152,18 @@ export class GameScene extends BaseScene {
     this.ctx.setSpeed(1);
   }
 
+  override onHover(_sx: number, _sy: number, worldX: number, worldY: number): void {
+    const tx = Math.floor(worldX / T);
+    const ty = Math.floor(worldY / T);
+    if (tx < 0 || tx >= GRID_COLS || ty < 0 || ty >= GRID_ROWS) {
+      this.hoverTile = null;
+    } else {
+      this.hoverTile = { x: tx, y: ty };
+    }
+  }
+
+  override onHoverEnd(): void { this.hoverTile = null; }
+
   private resetLevel(): void {
     this.state.reset();
     this.enemies.length = 0;
@@ -157,6 +175,7 @@ export class GameScene extends BaseScene {
     this.occupiedTiles.clear();
     this.floaters.length = 0;
     this.particles.clear();
+    this.screenParticles.clear();
     this.selectedTowerId = this.availableTowers[0];
     this.selectedExisting = null;
     this.paused = false;
@@ -346,6 +365,23 @@ export class GameScene extends BaseScene {
         }
       }
 
+      // Emit damage floaters for enemies hit this tick (while still alive)
+      for (const e of this.enemies) {
+        if (e.alive && e.damageTakenThisTick > 0) {
+          const p = e.position();
+          const dmg = Math.round(e.damageTakenThisTick);
+          // Tier colors by magnitude (relative to enemy HP max)
+          const ratio = e.damageTakenThisTick / e.hpMax;
+          let color: string, size: number;
+          if (ratio >= 0.5) { color = '#ff6b6b'; size = 18; }    // crit
+          else if (ratio >= 0.2) { color = '#ff9f43'; size = 15; } // big
+          else if (ratio >= 0.05) { color = '#ffd166'; size = 13; } // medium
+          else { color = '#e4e9f0'; size = 11; }                   // chip
+          this.spawnFloater(p.x + (Math.random() - 0.5) * 6, p.y - e.radius, `-${dmg}`, color, size);
+        }
+        e.damageTakenThisTick = 0;
+      }
+
       for (let i = this.enemies.length - 1; i >= 0; i--) {
         const e = this.enemies[i];
         // Remove only after death fade completes
@@ -369,6 +405,11 @@ export class GameScene extends BaseScene {
             this.spawnFloater(p.x, p.y, `+${e.reward}`, '#ffd166');
             this.ctx.audio.enemyDie();
             this.particles.enemyDeath(p.x, p.y);
+            // Gold coins fly to HUD
+            const screenPos = this.ctx.renderer.worldToScreenCss(p.x, p.y);
+            // HUD gold text is at approximately (35, 20) CSS px from canvas top-left
+            const coinCount = e.reward >= 40 ? 5 : e.reward >= 20 ? 4 : 3;
+            this.screenParticles.spawnCoins(screenPos.x, screenPos.y, 35, 22, coinCount);
             // Trigger onDeath spawns
             for (const s of e.onDeathSpawn) {
               const cfg = ENEMY_TYPES[s.type];
@@ -443,6 +484,8 @@ export class GameScene extends BaseScene {
       if (this.chainSegments[i].life <= 0) this.chainSegments.splice(i, 1);
     }
     this.particles.update(dt);
+    this.screenParticles.update(dt);
+    this.weather.update(dt);
   }
 
   override render(): void {
@@ -499,16 +542,56 @@ export class GameScene extends BaseScene {
     for (const t of this.towers) {
       const lv = t.currentLevel();
       const isSelected = this.selectedExisting === t;
-      r.drawCircleOutline(
-        t.x, t.y, lv.range,
-        isSelected ? 'rgba(255, 220, 120, 0.42)' : 'rgba(255, 220, 120, 0.14)',
-        isSelected ? 2 : 1,
-      );
+      if (isSelected) {
+        // Breathing range ring: inner fixed + outer pulsing
+        const pulse = 0.5 + Math.sin(this.elapsed * 3) * 0.5;
+        r.ctx.save();
+        r.ctx.globalAlpha = 0.6;
+        r.drawCircleOutline(t.x, t.y, lv.range, '#ffd166', 2);
+        r.ctx.globalAlpha = 0.25 * pulse;
+        r.drawCircleOutline(t.x, t.y, lv.range + 4 + pulse * 6, '#ffd166', 2);
+        r.ctx.restore();
+        // Faint fill
+        r.ctx.save();
+        r.ctx.globalAlpha = 0.06;
+        r.drawCircle(t.x, t.y, lv.range, '#ffd166');
+        r.ctx.restore();
+      } else {
+        r.drawCircleOutline(t.x, t.y, lv.range, 'rgba(255, 220, 120, 0.14)', 1);
+      }
       drawTowerBase(r.ctx, t.x, t.y, T * 0.95);
       drawTowerTurret(r.ctx, t.config.id, t.x, t.y, t.turretRotation, t.level, t.fireAnim, t.buildAnim);
       // Level pips
       for (let i = 0; i <= t.level; i++) {
         r.drawCircle(t.x - 10 + i * 7, t.y + T * 0.4, 2.5, '#ffd166');
+      }
+    }
+
+    // Placement ghost — hovering a tile with tower selected
+    if (this.hoverTile && !this.selectedExisting && this.state.status !== 'won' && this.state.status !== 'lost') {
+      const { x: tx, y: ty } = this.hoverTile;
+      const key = `${tx},${ty}`;
+      const cfg = TOWER_TYPES[this.selectedTowerId];
+      const onPath = this.pathTiles.has(key);
+      const occupied = this.occupiedTiles.has(key);
+      const canAfford = cfg ? this.state.gold >= cfg.levels[0].cost : false;
+      const validSpot = !onPath && !occupied && canAfford;
+      const cx = tx * T + T / 2;
+      const cy = ty * T + T / 2;
+      const color = validSpot ? 'rgba(110, 235, 140, 0.35)' : 'rgba(255, 80, 80, 0.3)';
+      r.drawRect(tx * T, ty * T, T, T, color);
+      const edge = validSpot ? '#6ee17a' : '#ff6b6b';
+      r.drawRect(tx * T, ty * T, T, 2, edge);
+      r.drawRect(tx * T, (ty + 1) * T - 2, T, 2, edge);
+      r.drawRect(tx * T, ty * T, 2, T, edge);
+      r.drawRect((tx + 1) * T - 2, ty * T, 2, T, edge);
+      if (validSpot && cfg) {
+        r.ctx.save();
+        r.ctx.globalAlpha = 0.5;
+        drawTowerBase(r.ctx, cx, cy, T * 0.95);
+        drawTowerTurret(r.ctx, cfg.id, cx, cy, 0, 0, 0, 0);
+        r.ctx.restore();
+        r.drawCircleOutline(cx, cy, cfg.levels[0].range, 'rgba(110, 235, 140, 0.5)', 1.5);
       }
     }
 
@@ -539,6 +622,8 @@ export class GameScene extends BaseScene {
 
     // Particles (world space, on top of projectiles)
     this.particles.render(r.ctx);
+    // Weather (ambient, rendered above entities for ember/mist immersion)
+    this.weather.render(r.ctx);
 
     for (const fx of this.effects) {
       const t = 1 - fx.life / fx.maxLife;
@@ -551,25 +636,51 @@ export class GameScene extends BaseScene {
       r.ctx.globalAlpha = 1;
     }
 
-    // Chain lightning segments
+    // Chain lightning segments — multi-node jagged + glow core + end sparks
     for (const seg of this.chainSegments) {
       const alpha = seg.life / seg.maxLife;
+      const dx = seg.x2 - seg.x1;
+      const dy = seg.y2 - seg.y1;
+      const len = Math.hypot(dx, dy);
+      const perp = { x: -dy / len, y: dx / len };
+      // Pre-compute 5-node jagged path
+      const nodes: { x: number; y: number }[] = [{ x: seg.x1, y: seg.y1 }];
+      for (let s = 1; s < 5; s++) {
+        const t = s / 5;
+        const jx = seg.x1 + dx * t + perp.x * (Math.random() - 0.5) * 14;
+        const jy = seg.y1 + dy * t + perp.y * (Math.random() - 0.5) * 14;
+        nodes.push({ x: jx, y: jy });
+      }
+      nodes.push({ x: seg.x2, y: seg.y2 });
+
       r.ctx.save();
-      r.ctx.globalAlpha = alpha;
-      r.ctx.strokeStyle = '#9ecbff';
-      r.ctx.lineWidth = 2;
+      // Outer glow (blue halo)
+      r.ctx.globalCompositeOperation = 'lighter';
+      r.ctx.globalAlpha = alpha * 0.35;
+      r.ctx.strokeStyle = '#6ec8ff';
+      r.ctx.lineWidth = 7;
+      r.ctx.lineCap = 'round';
       r.ctx.beginPath();
-      r.ctx.moveTo(seg.x1, seg.y1);
-      // Jagged midpoint for lightning feel
-      const mx = (seg.x1 + seg.x2) / 2 + (Math.random() - 0.5) * 10;
-      const my = (seg.y1 + seg.y2) / 2 + (Math.random() - 0.5) * 10;
-      r.ctx.lineTo(mx, my);
-      r.ctx.lineTo(seg.x2, seg.y2);
+      r.ctx.moveTo(nodes[0].x, nodes[0].y);
+      for (let i = 1; i < nodes.length; i++) r.ctx.lineTo(nodes[i].x, nodes[i].y);
       r.ctx.stroke();
-      r.ctx.globalAlpha = alpha * 0.4;
+      // Main bolt
+      r.ctx.globalAlpha = alpha;
+      r.ctx.strokeStyle = '#c8e8ff';
+      r.ctx.lineWidth = 3;
+      r.ctx.stroke();
+      // White core
       r.ctx.strokeStyle = '#ffffff';
-      r.ctx.lineWidth = 4;
+      r.ctx.lineWidth = 1.2;
       r.ctx.stroke();
+      // Endpoint sparks
+      for (const pt of [nodes[0], nodes[nodes.length - 1]]) {
+        r.ctx.globalAlpha = alpha * 0.9;
+        r.ctx.fillStyle = '#ffffff';
+        r.ctx.beginPath();
+        r.ctx.arc(pt.x, pt.y, 3, 0, Math.PI * 2);
+        r.ctx.fill();
+      }
       r.ctx.restore();
     }
 
@@ -659,6 +770,9 @@ export class GameScene extends BaseScene {
 
     // End overlay
     if (this.state.status === 'won' || this.state.status === 'lost') this.renderEndOverlay(r, vw, vh);
+
+    // Screen-space homing coins (render above HUD so they land on the counter)
+    this.screenParticles.render(r.ctx);
 
     // Star rain (on top of everything)
     if (this.starRain.length > 0) {

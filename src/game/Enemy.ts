@@ -50,6 +50,8 @@ export class Enemy {
   deathKind: 'killed' | 'leaked' | null;
   /** Whether GameScene has already paid out gold/deducted life for this death. */
   processed: boolean;
+  /** Damage accumulated this frame; GameScene reads & resets per tick for floaters. */
+  damageTakenThisTick: number;
   private slowRemaining: number;
   private slowFactor: number;
   private healTimer: number;
@@ -75,6 +77,7 @@ export class Enemy {
     this.deathAnim = 0;
     this.deathKind = null;
     this.processed = false;
+    this.damageTakenThisTick = 0;
     this.slowRemaining = 0;
     this.slowFactor = 1;
     this.healTimer = 0;
@@ -84,6 +87,7 @@ export class Enemy {
     const effective = amount * (1 - this.damageResist);
     this.hp -= effective;
     this.hitFlash = 0.12;
+    this.damageTakenThisTick += effective;
     if (this.hp <= 0 && this.alive) {
       this.alive = false;
       this.deathKind = 'killed';

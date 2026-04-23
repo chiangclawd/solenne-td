@@ -49,10 +49,15 @@ export class Tower {
     this.level = 0;
     this.totalInvested = config.levels[0].cost;
     this.cooldown = 0;
-    this.turretRotation = 0;
+    // Stagger initial rotation so multiple towers don't all look alike
+    this.turretRotation = Math.random() * Math.PI * 2;
     this.fireAnim = 0;
-    this.buildAnim = 1; // starts at 1, decays to 0 (1 = fresh, 0 = stable)
+    this.buildAnim = 1;
+    this.idleScanPhase = Math.random() * Math.PI * 2;
   }
+
+  /** Drifts when no target is in range, purely visual flavor. */
+  private idleScanPhase: number;
 
   currentLevel(): TowerLevel {
     return this.config.levels[this.level];
@@ -101,6 +106,16 @@ export class Tower {
         bestProgress = e.progress;
         target = e;
       }
+    }
+
+    if (!target) {
+      // Idle: slowly rotate the turret (scanning)
+      this.idleScanPhase += dt * 0.4;
+      const targetIdle = Math.sin(this.idleScanPhase) * 0.7;
+      // Smoothly drift rotation toward idle angle
+      const delta = targetIdle - this.turretRotation;
+      this.turretRotation += delta * dt * 1.5;
+      return;
     }
 
     if (target) {

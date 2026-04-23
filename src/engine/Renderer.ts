@@ -69,6 +69,15 @@ export class Renderer {
     };
   }
 
+  /** Convert world (x, y) to canvas-relative CSS px (top-left origin). */
+  worldToScreenCss(wx: number, wy: number): WorldPoint {
+    const dpr = window.devicePixelRatio || 1;
+    return {
+      x: (wx * this.scale + this.offsetX) / dpr,
+      y: (wy * this.scale + this.offsetY) / dpr,
+    };
+  }
+
   private resize(): void {
     const dpr = window.devicePixelRatio || 1;
     // Use canvas CSS size (constrained by style.css) so UI stays proportional on desktop

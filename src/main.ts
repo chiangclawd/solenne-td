@@ -37,8 +37,17 @@ async function main(): Promise<void> {
     update: (dt) => {
       sceneManager.current?.update(dt);
       achievements.update(dt);
+      sceneManager.updateTransition(dt);
     },
-    render: () => sceneManager.current?.render(),
+    render: () => {
+      sceneManager.current?.render();
+      // Fade overlay
+      const a = sceneManager.fadeAlpha();
+      if (a > 0) {
+        renderer.beginScreen();
+        renderer.drawScreenRect(0, 0, renderer.vw(), renderer.vh(), `rgba(5, 8, 20, ${a})`);
+      }
+    },
   });
 
   const applyAudioSettings = (): void => {
@@ -84,6 +93,10 @@ async function main(): Promise<void> {
       audio.playBgm('menu');
     }
     sceneManager.current?.onTap(ev.screenX, ev.screenY, ev.world.x, ev.world.y);
+  });
+  input.onHover((ev) => {
+    if (!ev) { sceneManager.current?.onHoverEnd?.(); return; }
+    sceneManager.current?.onHover?.(ev.screenX, ev.screenY, ev.world.x, ev.world.y);
   });
 
   loop.start();

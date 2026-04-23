@@ -7,24 +7,38 @@ export interface TapEvent {
 }
 
 export type TapHandler = (ev: TapEvent) => void;
+export type HoverHandler = (ev: TapEvent | null) => void;
 
 export class InputHandler {
-  private readonly handlers: TapHandler[] = [];
+  private readonly tapHandlers: TapHandler[] = [];
+  private readonly hoverHandlers: HoverHandler[] = [];
   private readonly renderer: Renderer;
 
   constructor(renderer: Renderer) {
     this.renderer = renderer;
     renderer.canvas.addEventListener('pointerdown', (ev) => {
       ev.preventDefault();
-      const rect = this.renderer.canvas.getBoundingClientRect();
-      const screenX = ev.clientX - rect.left;
-      const screenY = ev.clientY - rect.top;
-      const world = this.renderer.screenToWorld(ev.clientX, ev.clientY);
-      for (const h of this.handlers) h({ screenX, screenY, world });
+      const e = this.makeEvent(ev.clientX, ev.clientY);
+      for (const h of this.tapHandlers) h(e);
+    });
+    renderer.canvas.addEventListener('pointermove', (ev) => {
+      const e = this.makeEvent(ev.clientX, ev.clientY);
+      for (const h of this.hoverHandlers) h(e);
+    });
+    renderer.canvas.addEventListener('pointerleave', () => {
+      for (const h of this.hoverHandlers) h(null);
     });
   }
 
-  onTap(handler: TapHandler): void {
-    this.handlers.push(handler);
+  private makeEvent(cx: number, cy: number): TapEvent {
+    const rect = this.renderer.canvas.getBoundingClientRect();
+    return {
+      screenX: cx - rect.left,
+      screenY: cy - rect.top,
+      world: this.renderer.screenToWorld(cx, cy),
+    };
   }
+
+  onTap(handler: TapHandler): void { this.tapHandlers.push(handler); }
+  onHover(handler: HoverHandler): void { this.hoverHandlers.push(handler); }
 }
