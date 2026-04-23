@@ -19,6 +19,8 @@ import type { SceneContext } from './SceneContext.ts';
 import type { Difficulty } from '../storage/SaveData.ts';
 import { generateEndlessWave } from '../game/WaveGenerator.ts';
 import { upgradeValue } from '../game/MetaUpgrades.ts';
+import { isTowerUnlocked, unlockTriggeredBy } from '../game/TowerUnlocks.ts';
+import type { TowerUnlock } from '../game/TowerUnlocks.ts';
 import {
   drawTowerBase, drawTowerTurret, drawEnemy, drawProjectile,
   drawTowerIconScreen, drawEnemyIconScreen,
@@ -102,6 +104,8 @@ export class GameScene extends BaseScene {
   private hoverTile: { x: number; y: number } | null = null;
   /** True when current touch started on a tower-selector button; lets pointerup place on tile. */
   private dragFromSelector = false;
+  /** If this win triggered a tower unlock, stored here to show on end overlay. */
+  private unlockedTower: TowerUnlock | null = null;
 
   // Transient UI rects
   private nextWaveBtn: Rect | null = null;
@@ -145,8 +149,13 @@ export class GameScene extends BaseScene {
       this.waves.push(this.buildWave(generateEndlessWave(1)));
     }
     const allow = new Set(level.availableTowers);
-    this.availableTowers = TOWER_ORDER.filter((id) => allow.has(id));
-    if (this.availableTowers.length === 0) throw new Error('No available towers');
+    this.availableTowers = TOWER_ORDER
+      .filter((id) => allow.has(id))
+      .filter((id) => isTowerUnlocked(ctx.save, id));
+    if (this.availableTowers.length === 0) {
+      // Safety fallback — ensure at least starter towers are available
+      this.availableTowers = TOWER_ORDER.filter((id) => ['cannon', 'quickShot', 'machineGun', 'frostTower'].includes(id));
+    }
     this.selectedTowerId = this.availableTowers[0];
     const boostedGold = level.startingGold + this.metaMod.startGold;
     const boostedLives = level.startingLives + this.metaMod.startLives;
@@ -284,7 +293,13 @@ export class GameScene extends BaseScene {
     const ratio = this.state.lives / this.level.startingLives;
     const stars = ratio >= 1 ? 3 : ratio >= 0.5 ? 2 : 1;
     this.spawnStarRain(60 + stars * 20);
+    const wasAlreadyCompleted = this.ctx.save.levelProgress[this.level.id]?.completed === true;
     recordCompletion(this.ctx.save, this.level.id, stars, this.difficulty);
+    // First-time unlock detection
+    if (!wasAlreadyCompleted) {
+      const newUnlock = unlockTriggeredBy(this.level.id);
+      if (newUnlock) this.unlockedTower = newUnlock;
+    }
     this.ctx.save.stats.totalWavesSurvived += this.waveMgr.totalWaves();
     this.ctx.persistSave();
 
@@ -1064,9 +1079,33 @@ export class GameScene extends BaseScene {
       r.drawTextScreenCenter('基地失守。撤退。', vw / 2, vh / 2 - 48, COLORS.textDim, 14);
     }
 
+    // Unlock banner (between stats and buttons)
+    let unlockBannerH = 0;
+    if (isWin && this.unlockedTower) {
+      unlockBannerH = 82;
+      const ubX = 24;
+      const ubY = vh / 2 + 10;
+      const ubW = vw - 48;
+      // Pulsing gold border
+      const pulse = 0.6 + Math.sin(this.elapsed * 4) * 0.4;
+      r.ctx.save();
+      r.ctx.globalAlpha = pulse;
+      r.drawScreenRoundedRect(ubX, ubY, ubW, unlockBannerH, 10, '#3a2818');
+      r.drawScreenRoundedRectOutline(ubX, ubY, ubW, unlockBannerH, 10, '#ffd166', 2);
+      r.ctx.restore();
+      // Left-side tower icon
+      const iconSize = 50;
+      r.drawScreenRect(ubX + 8, ubY + (unlockBannerH - iconSize) / 2, iconSize, iconSize, 'rgba(255,255,255,0.05)');
+      drawTowerIconScreen(r.ctx, this.unlockedTower.towerId, ubX + 8, ubY + (unlockBannerH - iconSize) / 2, iconSize, 0);
+      // Text
+      r.drawTextScreen('🎁 新塔解鎖', ubX + iconSize + 20, ubY + 12, '#ffd166', 12, true);
+      r.drawTextScreen(this.unlockedTower.towerName, ubX + iconSize + 20, ubY + 28, '#fff', 18, true);
+      r.drawTextScreen(this.unlockedTower.tagline, ubX + iconSize + 20, ubY + 56, COLORS.textDim, 11);
+    }
+
     const bw = 240, bh = 46, gap = 10;
     const cx = (vw - bw) / 2;
-    let y = vh / 2 + 26;
+    let y = vh / 2 + 26 + unlockBannerH + (unlockBannerH > 0 ? 8 : 0);
 
     const nextLevel = isWin ? this.nextLevelOrNull() : null;
     if (nextLevel) {

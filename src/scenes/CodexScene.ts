@@ -4,6 +4,7 @@ import { TOWER_TYPES, TOWER_ORDER } from '../data/towers.ts';
 import { ENEMY_TYPES } from '../data/enemies.ts';
 import { ACHIEVEMENTS } from '../game/Achievements.ts';
 import { drawTowerIconScreen, drawEnemyIconScreen } from '../graphics/SpritePainter.ts';
+import { isTowerUnlocked, unlockHint } from '../game/TowerUnlocks.ts';
 import { COLORS, TILE_SIZE } from '../config.ts';
 
 interface Rect { x: number; y: number; w: number; h: number }
@@ -135,31 +136,65 @@ export class CodexScene extends BaseScene {
     x: number, y: number, w: number,
     id: string, cfg: import('../game/Tower.ts').TowerConfig,
   ): number {
+    const unlocked = isTowerUnlocked(this.ctx.save, id);
     const cardH = 124;
-    r.drawScreenRoundedRect(x, y, w, cardH, 8, 'rgba(14,22,40,0.9)');
-    r.drawScreenRoundedRectOutline(x, y, w, cardH, 8, '#22304a', 1);
+    r.drawScreenRoundedRect(x, y, w, cardH, 8, unlocked ? 'rgba(14,22,40,0.9)' : 'rgba(14,22,40,0.6)');
+    r.drawScreenRoundedRectOutline(x, y, w, cardH, 8, unlocked ? '#22304a' : '#3a2a1e', 1);
 
-    // Icon
     const iconSize = 54;
     r.drawScreenRect(x + 10, y + 10, iconSize, iconSize, 'rgba(255,255,255,0.04)');
-    drawTowerIconScreen(r.ctx, id, x + 13, y + 13, iconSize - 6, 0);
+    if (unlocked) {
+      drawTowerIconScreen(r.ctx, id, x + 13, y + 13, iconSize - 6, 0);
+    } else {
+      // Locked silhouette
+      r.ctx.save();
+      r.ctx.globalAlpha = 0.3;
+      drawTowerIconScreen(r.ctx, id, x + 13, y + 13, iconSize - 6, 0);
+      r.ctx.restore();
+      r.drawTextScreenCenter('🔒', x + 10 + iconSize / 2, y + 10 + iconSize / 2, '#ffd166', 22, true);
+    }
 
-    r.drawTextScreen(cfg.name, x + 76, y + 12, '#ffd166', 14, true);
-    r.drawTextScreen(TOWER_DESC[id] ?? '', x + 76, y + 32, COLORS.text, 10);
-    const base = cfg.levels[0];
-    const max = cfg.levels[cfg.levels.length - 1];
-    r.drawTextScreen(
-      `Lv1: ${base.cost}g · DMG ${base.damage} · RNG ${(base.range / T).toFixed(1)}t · ${base.fireRate.toFixed(1)}/s`,
-      x + 12, y + 72, COLORS.textDim, 10,
-    );
-    r.drawTextScreen(
-      `Lv3: ${max.cost}g · DMG ${max.damage} · RNG ${(max.range / T).toFixed(1)}t · ${max.fireRate.toFixed(1)}/s`,
-      x + 12, y + 90, '#ffd166', 10,
-    );
-    const tags: string[] = [];
-    if (cfg.splashRadius) tags.push('AOE 濺射');
-    if (cfg.slowDuration) tags.push(`減速 ${Math.round((1 - (cfg.slowFactor ?? 1)) * 100)}%`);
-    if (tags.length) r.drawTextScreen(tags.join(' · '), x + 12, y + 108, '#6ec8ff', 9, true);
+    const titleColor = unlocked ? '#ffd166' : '#7a6548';
+    r.drawTextScreen(cfg.name, x + 76, y + 12, titleColor, 14, true);
+    if (unlocked) {
+      r.drawTextScreen(TOWER_DESC[id] ?? '', x + 76, y + 32, COLORS.text, 10);
+      const base = cfg.levels[0];
+      const max = cfg.levels[cfg.levels.length - 1];
+      r.drawTextScreen(
+        `Lv1: ${base.cost}g · DMG ${base.damage} · RNG ${(base.range / T).toFixed(1)}t · ${base.fireRate.toFixed(1)}/s`,
+        x + 12, y + 72, COLORS.textDim, 10,
+      );
+      r.drawTextScreen(
+        `Lv3: ${max.cost}g · DMG ${max.damage} · RNG ${(max.range / T).toFixed(1)}t · ${max.fireRate.toFixed(1)}/s`,
+        x + 12, y + 90, '#ffd166', 10,
+      );
+      const tags: string[] = [];
+      if (cfg.splashRadius) tags.push('AOE 濺射');
+      if (cfg.slowDuration) tags.push(`減速 ${Math.round((1 - (cfg.slowFactor ?? 1)) * 100)}%`);
+      if (tags.length) r.drawTextScreen(tags.join(' · '), x + 12, y + 108, '#6ec8ff', 9, true);
+    } else {
+      // Locked: show unlock hint instead of stats
+      r.drawTextScreen('未解鎖', x + 76, y + 32, '#ff9f43', 11, true);
+      const hint = unlockHint(id, this.ctx.levels);
+      // Word-wrap the hint within card width
+      const maxW = w - 86;
+      const words = hint.split('');
+      let line = '';
+      const lines: string[] = [];
+      for (const ch of words) {
+        const test = line + ch;
+        if (r.measureTextScreen(test, 10) > maxW) {
+          lines.push(line);
+          line = ch;
+        } else {
+          line = test;
+        }
+      }
+      if (line) lines.push(line);
+      lines.slice(0, 3).forEach((l, i) => {
+        r.drawTextScreen(l, x + 76, y + 52 + i * 14, COLORS.textDim, 10);
+      });
+    }
 
     return y + cardH + 10;
   }
