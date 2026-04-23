@@ -1,6 +1,5 @@
 import type { Path } from './Path.ts';
 import type { WorldPoint } from '../engine/Renderer.ts';
-import type { AssetName } from '../assets.ts';
 
 export interface OnDeathSpawn {
   type: string;
@@ -19,7 +18,8 @@ export interface EnemyConfig {
   speed: number;
   radius: number;
   reward: number;
-  sprite: AssetName;
+  /** Visual kind passed to SpritePainter.drawEnemy — no longer tied to AssetName. */
+  sprite: string;
   spriteSize: number;
   damageResist?: number;
   onDeathSpawn?: readonly OnDeathSpawn[];
@@ -33,7 +33,7 @@ export class Enemy {
   readonly baseSpeed: number;
   readonly radius: number;
   readonly reward: number;
-  readonly sprite: AssetName;
+  readonly sprite: string;
   readonly spriteSize: number;
   readonly damageResist: number;
   readonly onDeathSpawn: readonly OnDeathSpawn[];

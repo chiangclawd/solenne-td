@@ -1039,14 +1039,24 @@ export function drawEnemy(
   }
 
   switch (type) {
+    case 'enemyScout': paintScout(ctx, size); break;
     case 'enemySoldier': paintSoldier(ctx, size); break;
+    case 'enemyRunner': paintRunner(ctx, size); break;
     case 'enemyTank': paintTank(ctx, size); break;
+    case 'enemyArmored': paintArmored(ctx, size); break;
+    case 'enemyHeavyTank': paintHeavyTank(ctx, size); break;
     case 'enemyPlane': paintPlane(ctx, size); break;
     case 'enemyBoss': paintBoss(ctx, size); break;
-    case 'enemyIce': paintIce(ctx, size); break;
+    case 'enemyArmoredBoss': paintArmoredBoss(ctx, size); break;
+    case 'enemyFinalBoss': paintFinalBoss(ctx, size); break;
+    case 'enemyIce':
+    case 'enemyIceBeast': paintIceBeast(ctx, size); break;
+    case 'enemyFrostRaider': paintFrostRaider(ctx, size); break;
+    case 'enemyGlacialBoss': paintGlacialBoss(ctx, size); break;
     case 'enemyWraith': paintWraith(ctx, size); break;
     case 'enemySplitter': paintSplitter(ctx, size); break;
     case 'enemyHealer': paintHealer(ctx, size); break;
+    case 'enemyVoidBoss': paintVoidBoss(ctx, size); break;
     default: paintSoldier(ctx, size);
   }
 
@@ -1181,31 +1191,62 @@ function paintBoss(ctx: Ctx, size: number): void {
   ctx.fill();
 }
 
-function paintIce(ctx: Ctx, size: number): void {
+function paintIceBeast(ctx: Ctx, size: number): void {
   const s = size / 40;
-  // Crystalline body
-  const g = ctx.createRadialGradient(-3 * s, -3 * s, 2, 0, 0, 13 * s);
-  g.addColorStop(0, '#e0f8ff');
-  g.addColorStop(1, '#2a6890');
-  ctx.fillStyle = g;
+  // Shadow under beast
+  ctx.fillStyle = 'rgba(0, 0, 30, 0.35)';
   ctx.beginPath();
-  // Hexagonal ice shape
-  for (let i = 0; i < 6; i++) {
-    const a = (Math.PI * 2 * i) / 6;
-    const x = Math.cos(a) * 13 * s;
-    const y = Math.sin(a) * 13 * s;
-    if (i === 0) ctx.moveTo(x, y);
-    else ctx.lineTo(x, y);
-  }
-  ctx.closePath();
+  ctx.ellipse(0, 4 * s, 13 * s, 7 * s, 0, 0, Math.PI * 2);
   ctx.fill();
-  ctx.strokeStyle = '#ffffff';
+  // Icy body (quadruped seen from above — elongated oval)
+  const body = ctx.createRadialGradient(-3 * s, -3 * s, 2, 0, 0, 14 * s);
+  body.addColorStop(0, '#e0f4ff');
+  body.addColorStop(0.6, '#7aa8c8');
+  body.addColorStop(1, '#2a5878');
+  ctx.fillStyle = body;
+  ctx.beginPath();
+  ctx.ellipse(0, 0, 12 * s, 10 * s, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.strokeStyle = '#0a2038';
   ctx.lineWidth = 1;
   ctx.stroke();
-  // Glowing center
-  ctx.fillStyle = 'rgba(160, 240, 255, 0.8)';
+  // 4 claw prints (legs visible as dark circles at corners)
+  ctx.fillStyle = '#1a2838';
+  for (const [px, py] of [[-10, -5], [10, -5], [-10, 6], [10, 6]]) {
+    ctx.beginPath();
+    ctx.arc(px * s, py * s, 2.5 * s, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  // 3 ice spikes on back
+  ctx.fillStyle = '#e0f4ff';
+  for (let i = -1; i <= 1; i++) {
+    const bx = i * 5 * s;
+    ctx.beginPath();
+    ctx.moveTo(bx - 2, -3 * s);
+    ctx.lineTo(bx, -10 * s);
+    ctx.lineTo(bx + 2, -3 * s);
+    ctx.closePath();
+    ctx.fill();
+    ctx.strokeStyle = '#a8d8ff';
+    ctx.lineWidth = 0.6;
+    ctx.stroke();
+  }
+  // Head (front-mounted)
+  ctx.fillStyle = '#5a8aa8';
   ctx.beginPath();
-  ctx.arc(0, 0, 4 * s, 0, Math.PI * 2);
+  ctx.ellipse(0, -10 * s, 4.5 * s, 3.5 * s, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.strokeStyle = '#1a3a58';
+  ctx.lineWidth = 0.8;
+  ctx.stroke();
+  // Glowing eyes
+  ctx.fillStyle = '#6eb8ff';
+  ctx.fillRect(-2.2 * s, -11 * s, 1.3, 1.3);
+  ctx.fillRect(1 * s, -11 * s, 1.3, 1.3);
+  // Frost breath (small white puff below head)
+  ctx.fillStyle = 'rgba(255, 255, 255, 0.35)';
+  ctx.beginPath();
+  ctx.arc(0, -14 * s, 2 * s, 0, Math.PI * 2);
   ctx.fill();
 }
 
@@ -1295,6 +1336,712 @@ function paintHealer(ctx: Ctx, size: number): void {
   ctx.beginPath();
   ctx.arc(0, -10 * s, 5 * s, 0, Math.PI * 2);
   ctx.stroke();
+}
+
+// --- Scout (light skirmisher, cap + sidearm, small & fast)
+function paintScout(ctx: Ctx, size: number): void {
+  const s = size / 40;
+  // Khaki cap (domed, no helmet lip)
+  ctx.fillStyle = '#5a7030';
+  ctx.beginPath();
+  ctx.arc(0, -4 * s, 4.5 * s, Math.PI, 0);
+  ctx.fill();
+  // Cap brim
+  ctx.fillStyle = '#2a3818';
+  ctx.fillRect(-5 * s, -4 * s, 10 * s, 1.3);
+  // Face (tan)
+  ctx.fillStyle = '#e8c098';
+  ctx.beginPath();
+  ctx.arc(0, -2.5 * s, 2.5 * s, 0, Math.PI * 2);
+  ctx.fill();
+  // Thin torso
+  ctx.fillStyle = '#6a8a38';
+  ctx.fillRect(-2.5 * s, 0, 5 * s, 7 * s);
+  // Binoculars hanging at chest (small black rectangle with 2 lens circles)
+  ctx.fillStyle = '#1a1a1a';
+  ctx.fillRect(-2 * s, 2 * s, 4 * s, 1.8);
+  ctx.fillStyle = '#555';
+  ctx.beginPath();
+  ctx.arc(-1.3 * s, 2.9 * s, 0.6, 0, Math.PI * 2);
+  ctx.arc(1.3 * s, 2.9 * s, 0.6, 0, Math.PI * 2);
+  ctx.fill();
+  // Sidearm holster
+  ctx.fillStyle = '#3a2418';
+  ctx.fillRect(2 * s, 3 * s, 1.8 * s, 3 * s);
+  // Satchel
+  ctx.fillStyle = '#4a3018';
+  ctx.fillRect(-4 * s, 4 * s, 2.5 * s, 3 * s);
+}
+
+// --- Runner (forward-leaning sprinter, no visible weapon — courier)
+function paintRunner(ctx: Ctx, size: number): void {
+  const s = size / 40;
+  // Helmet tilted forward
+  ctx.fillStyle = '#5a3218';
+  ctx.beginPath();
+  ctx.ellipse(0, -5 * s, 4.5 * s, 4 * s, -0.15, 0, Math.PI * 2);
+  ctx.fill();
+  // Chin strap
+  ctx.strokeStyle = '#1a1008';
+  ctx.lineWidth = 0.8;
+  ctx.beginPath();
+  ctx.arc(0, -3 * s, 4 * s, -0.3, Math.PI + 0.3);
+  ctx.stroke();
+  // Face
+  ctx.fillStyle = '#d8a878';
+  ctx.beginPath();
+  ctx.arc(-0.5, -3 * s, 3 * s, 0, Math.PI * 2);
+  ctx.fill();
+  // Forward-leaning torso (rotated rectangle)
+  ctx.save();
+  ctx.rotate(-0.18);
+  const g = ctx.createLinearGradient(0, -1, 0, 9);
+  g.addColorStop(0, '#8a6a38');
+  g.addColorStop(1, '#3a2a18');
+  ctx.fillStyle = g;
+  ctx.fillRect(-4 * s, -1 * s, 8 * s, 10 * s);
+  ctx.strokeStyle = '#1a1008';
+  ctx.lineWidth = 0.8;
+  ctx.strokeRect(-4 * s, -1 * s, 8 * s, 10 * s);
+  // Belt pouches (bright)
+  ctx.fillStyle = '#ffd166';
+  ctx.fillRect(-2.5 * s, 3 * s, 1.5, 1.5);
+  ctx.fillRect(1 * s, 3 * s, 1.5, 1.5);
+  ctx.restore();
+  // Arm swinging back with grenade
+  ctx.fillStyle = '#2a4a2a';
+  ctx.beginPath();
+  ctx.arc(-5 * s, 5 * s, 1.8 * s, 0, Math.PI * 2);
+  ctx.fill();
+  // Motion lines behind
+  ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
+  ctx.lineWidth = 0.8;
+  ctx.lineCap = 'round';
+  for (let i = 0; i < 3; i++) {
+    ctx.beginPath();
+    ctx.moveTo(-6 * s - i, 8 * s + i * 1.5);
+    ctx.lineTo(-8 * s - i, 9 * s + i * 1.5);
+    ctx.stroke();
+  }
+}
+
+// --- Armored tank (heavier than basic, double armor + twin barrels)
+function paintArmored(ctx: Ctx, size: number): void {
+  const s = size / 40;
+  // Tracks (wider)
+  ctx.fillStyle = '#0a0a0a';
+  ctx.fillRect(-14 * s, -10 * s, 5 * s, 20 * s);
+  ctx.fillRect(9 * s, -10 * s, 5 * s, 20 * s);
+  // Track tread pattern
+  ctx.fillStyle = '#2a2a2a';
+  for (let i = -9; i <= 9; i += 3) {
+    ctx.fillRect(-14 * s, i * s, 5 * s, 1.5);
+    ctx.fillRect(9 * s, i * s, 5 * s, 1.5);
+  }
+  // Hull with extra armor plates
+  const g = ctx.createLinearGradient(0, -8, 0, 10);
+  g.addColorStop(0, '#5a5a3a');
+  g.addColorStop(1, '#1a1a10');
+  ctx.fillStyle = g;
+  ctx.fillRect(-12 * s, -8 * s, 24 * s, 18 * s);
+  ctx.strokeStyle = '#000';
+  ctx.lineWidth = 0.8;
+  ctx.strokeRect(-12 * s, -8 * s, 24 * s, 18 * s);
+  // Side skirt armor plates (raised)
+  ctx.fillStyle = '#4a4a28';
+  ctx.fillRect(-11 * s, -6 * s, 3 * s, 14 * s);
+  ctx.fillRect(8 * s, -6 * s, 3 * s, 14 * s);
+  ctx.strokeStyle = '#1a1a10';
+  ctx.lineWidth = 0.5;
+  ctx.strokeRect(-11 * s, -6 * s, 3 * s, 14 * s);
+  ctx.strokeRect(8 * s, -6 * s, 3 * s, 14 * s);
+  // Frontal glacis (angled thick plate)
+  ctx.fillStyle = '#6a6a48';
+  ctx.beginPath();
+  ctx.moveTo(-11 * s, -8 * s);
+  ctx.lineTo(11 * s, -8 * s);
+  ctx.lineTo(9 * s, -4 * s);
+  ctx.lineTo(-9 * s, -4 * s);
+  ctx.closePath();
+  ctx.fill();
+  ctx.strokeStyle = '#1a1a10';
+  ctx.lineWidth = 0.8;
+  ctx.stroke();
+  // Turret (offset + bigger)
+  ctx.fillStyle = '#3a3a28';
+  ctx.beginPath();
+  ctx.arc(0, 1 * s, 7 * s, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.strokeStyle = '#000';
+  ctx.lineWidth = 0.8;
+  ctx.stroke();
+  // Twin barrels
+  ctx.fillStyle = '#1a1a1a';
+  ctx.fillRect(-3 * s, -17 * s, 2 * s, 17 * s);
+  ctx.fillRect(1 * s, -17 * s, 2 * s, 17 * s);
+  // Muzzle caps
+  ctx.fillStyle = '#3a3a3a';
+  ctx.fillRect(-3.5 * s, -18 * s, 3 * s, 1.5);
+  ctx.fillRect(0.5 * s, -18 * s, 3 * s, 1.5);
+  // Commander hatch
+  ctx.fillStyle = '#5a5a3a';
+  ctx.beginPath();
+  ctx.arc(0, 5 * s, 1.8 * s, 0, Math.PI * 2);
+  ctx.fill();
+  // Corner rivets (gold)
+  ctx.fillStyle = '#c0a050';
+  for (const [px, py] of [[-10, -5], [10, -5], [-10, 8], [10, 8]]) {
+    ctx.beginPath();
+    ctx.arc(px * s, py * s, 1, 0, Math.PI * 2);
+    ctx.fill();
+  }
+}
+
+// --- Heavy Tank (massive with anti-tank cannon + side skirts)
+function paintHeavyTank(ctx: Ctx, size: number): void {
+  const s = size / 40;
+  // Big shadow
+  ctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
+  ctx.beginPath();
+  ctx.ellipse(0, 12 * s, 16 * s, 4 * s, 0, 0, Math.PI * 2);
+  ctx.fill();
+  // Full side skirts
+  ctx.fillStyle = '#141410';
+  ctx.fillRect(-17 * s, -12 * s, 6 * s, 24 * s);
+  ctx.fillRect(11 * s, -12 * s, 6 * s, 24 * s);
+  // Tread pattern in skirts
+  ctx.fillStyle = '#3a3a3a';
+  for (let i = -11; i <= 11; i += 2.5) {
+    ctx.fillRect(-16 * s, i * s, 4 * s, 1.4);
+    ctx.fillRect(12 * s, i * s, 4 * s, 1.4);
+  }
+  // Main hull (wide + dark)
+  const g = ctx.createLinearGradient(0, -10, 0, 12);
+  g.addColorStop(0, '#4a3a28');
+  g.addColorStop(1, '#1a0e08');
+  ctx.fillStyle = g;
+  ctx.fillRect(-13 * s, -10 * s, 26 * s, 22 * s);
+  ctx.strokeStyle = '#000';
+  ctx.lineWidth = 1;
+  ctx.strokeRect(-13 * s, -10 * s, 26 * s, 22 * s);
+  // Frontal heavy armor (angled)
+  ctx.fillStyle = '#5a4630';
+  ctx.beginPath();
+  ctx.moveTo(-12 * s, -10 * s);
+  ctx.lineTo(12 * s, -10 * s);
+  ctx.lineTo(10 * s, -5 * s);
+  ctx.lineTo(-10 * s, -5 * s);
+  ctx.closePath();
+  ctx.fill();
+  ctx.strokeStyle = '#1a0a05';
+  ctx.lineWidth = 0.8;
+  ctx.stroke();
+  // Turret (huge, offset rearward)
+  ctx.fillStyle = '#2a2018';
+  ctx.beginPath();
+  ctx.arc(0, 2 * s, 9 * s, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.strokeStyle = '#000';
+  ctx.lineWidth = 1;
+  ctx.stroke();
+  // Turret armor plates (star pattern)
+  ctx.fillStyle = '#3a2a1a';
+  for (let i = 0; i < 6; i++) {
+    const a = (Math.PI * 2 * i) / 6;
+    ctx.save();
+    ctx.translate(0, 2 * s);
+    ctx.rotate(a);
+    ctx.fillRect(-1.5, -9 * s, 3, 2);
+    ctx.restore();
+  }
+  // Massive anti-tank gun
+  ctx.fillStyle = '#0a0a0a';
+  ctx.fillRect(-2 * s, -22 * s, 4 * s, 20 * s);
+  // Barrel highlight
+  ctx.fillStyle = '#3a3a3a';
+  ctx.fillRect(-2 * s, -22 * s, 1 * s, 20 * s);
+  // Massive muzzle brake (6-port)
+  ctx.fillStyle = '#1a1a1a';
+  ctx.fillRect(-4 * s, -24 * s, 8 * s, 3 * s);
+  ctx.fillStyle = '#3a3a3a';
+  for (let i = 0; i < 3; i++) {
+    ctx.fillRect(-3 * s + i * 2.5, -23 * s, 1, 1.5);
+  }
+  // Commander hatch + coaxial machine gun
+  ctx.fillStyle = '#5a4828';
+  ctx.beginPath();
+  ctx.arc(4 * s, 6 * s, 2 * s, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.strokeStyle = '#000';
+  ctx.lineWidth = 0.6;
+  ctx.stroke();
+  ctx.fillStyle = '#1a1a1a';
+  ctx.fillRect(3.5 * s, 2 * s, 1 * s, 4 * s);
+  // Red warning stripes (stand out)
+  ctx.fillStyle = '#c84020';
+  ctx.fillRect(-11 * s, 10 * s, 22 * s, 1.5);
+  // Tower id number
+  ctx.fillStyle = '#ffd166';
+  ctx.font = `${5 * s}px sans-serif`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('99', 0, 2 * s);
+  ctx.textAlign = 'start';
+  ctx.textBaseline = 'top';
+}
+
+// --- Armored Boss (bipedal mech suit with glowing core)
+function paintArmoredBoss(ctx: Ctx, size: number): void {
+  const s = size / 40;
+  // Aura (orange-red mech)
+  const aura = ctx.createRadialGradient(0, 0, 3, 0, 0, 22 * s);
+  aura.addColorStop(0, 'rgba(255, 130, 40, 0.5)');
+  aura.addColorStop(1, 'rgba(255, 130, 40, 0)');
+  ctx.fillStyle = aura;
+  ctx.beginPath();
+  ctx.arc(0, 0, 22 * s, 0, Math.PI * 2);
+  ctx.fill();
+  // Shoulders (massive pauldrons)
+  ctx.fillStyle = '#5a2818';
+  ctx.beginPath();
+  ctx.arc(-13 * s, -6 * s, 6 * s, 0, Math.PI * 2);
+  ctx.arc(13 * s, -6 * s, 6 * s, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.strokeStyle = '#1a0a05';
+  ctx.lineWidth = 1;
+  ctx.stroke();
+  // Pauldron rivets
+  ctx.fillStyle = '#ffb060';
+  for (const ox of [-13, 13]) {
+    for (let i = 0; i < 4; i++) {
+      const a = (Math.PI * 2 * i) / 4 + Math.PI / 4;
+      ctx.beginPath();
+      ctx.arc(ox * s + Math.cos(a) * 4, -6 * s + Math.sin(a) * 4, 0.8, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+  // Main body (heavy chest armor)
+  const body = ctx.createLinearGradient(0, -12 * s, 0, 10 * s);
+  body.addColorStop(0, '#6a2a18');
+  body.addColorStop(1, '#2a0808');
+  ctx.fillStyle = body;
+  ctx.fillRect(-9 * s, -12 * s, 18 * s, 22 * s);
+  ctx.strokeStyle = '#000';
+  ctx.lineWidth = 1;
+  ctx.strokeRect(-9 * s, -12 * s, 18 * s, 22 * s);
+  // Chest plate lines (angled)
+  ctx.strokeStyle = '#3a0808';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(-9 * s, -5 * s);
+  ctx.lineTo(0, -2 * s);
+  ctx.lineTo(9 * s, -5 * s);
+  ctx.stroke();
+  // Glowing chest core (reactor)
+  ctx.shadowColor = '#ff8030';
+  ctx.shadowBlur = 10;
+  const core = ctx.createRadialGradient(0, 0, 1, 0, 0, 4 * s);
+  core.addColorStop(0, '#fff8dc');
+  core.addColorStop(0.4, '#ffd166');
+  core.addColorStop(1, '#c84020');
+  ctx.fillStyle = core;
+  ctx.beginPath();
+  ctx.arc(0, 0, 4 * s, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.shadowBlur = 0;
+  // Head visor (dark slit)
+  ctx.fillStyle = '#1a0a05';
+  ctx.fillRect(-6 * s, -18 * s, 12 * s, 7 * s);
+  ctx.strokeStyle = '#000';
+  ctx.lineWidth = 0.8;
+  ctx.strokeRect(-6 * s, -18 * s, 12 * s, 7 * s);
+  // Glowing eye slit
+  ctx.shadowColor = '#ff4030';
+  ctx.shadowBlur = 6;
+  ctx.fillStyle = '#ff4030';
+  ctx.fillRect(-5 * s, -15 * s, 10 * s, 1.5);
+  ctx.fillStyle = '#ff9040';
+  ctx.fillRect(-5 * s, -14.7 * s, 10 * s, 0.7);
+  ctx.shadowBlur = 0;
+  // Antenna/horns
+  ctx.strokeStyle = '#3a0808';
+  ctx.lineWidth = 1.5;
+  ctx.lineCap = 'round';
+  ctx.beginPath();
+  ctx.moveTo(-5 * s, -18 * s);
+  ctx.lineTo(-8 * s, -22 * s);
+  ctx.moveTo(5 * s, -18 * s);
+  ctx.lineTo(8 * s, -22 * s);
+  ctx.stroke();
+  // Hip exhaust vents
+  ctx.fillStyle = '#ff4020';
+  ctx.fillRect(-8 * s, 8 * s, 3 * s, 2 * s);
+  ctx.fillRect(5 * s, 8 * s, 3 * s, 2 * s);
+  // Ammo belts on sides
+  ctx.strokeStyle = '#ffd166';
+  ctx.lineWidth = 0.6;
+  for (let i = 0; i < 5; i++) {
+    ctx.beginPath();
+    ctx.moveTo(-8 * s, -8 * s + i * 3);
+    ctx.lineTo(-8 * s, -7 * s + i * 3);
+    ctx.stroke();
+  }
+}
+
+// --- Final Boss (crown commander with cape + twin swords)
+function paintFinalBoss(ctx: Ctx, size: number): void {
+  const s = size / 40;
+  // Large dark aura
+  const aura = ctx.createRadialGradient(0, 0, 3, 0, 0, 28 * s);
+  aura.addColorStop(0, 'rgba(255, 40, 40, 0.6)');
+  aura.addColorStop(0.6, 'rgba(120, 10, 20, 0.3)');
+  aura.addColorStop(1, 'rgba(50, 0, 10, 0)');
+  ctx.fillStyle = aura;
+  ctx.beginPath();
+  ctx.arc(0, 0, 28 * s, 0, Math.PI * 2);
+  ctx.fill();
+  // Cape flowing behind (triangular shape at bottom)
+  ctx.fillStyle = '#5a0818';
+  ctx.beginPath();
+  ctx.moveTo(-13 * s, -2 * s);
+  ctx.lineTo(-19 * s, 16 * s);
+  ctx.lineTo(-4 * s, 13 * s);
+  ctx.lineTo(0, 15 * s);
+  ctx.lineTo(4 * s, 13 * s);
+  ctx.lineTo(19 * s, 16 * s);
+  ctx.lineTo(13 * s, -2 * s);
+  ctx.closePath();
+  ctx.fill();
+  ctx.strokeStyle = '#2a0408';
+  ctx.lineWidth = 1;
+  ctx.stroke();
+  // Cape inner (gold trim)
+  ctx.strokeStyle = '#ffd166';
+  ctx.lineWidth = 0.8;
+  ctx.beginPath();
+  ctx.moveTo(-10 * s, 2 * s);
+  ctx.lineTo(-14 * s, 13 * s);
+  ctx.moveTo(10 * s, 2 * s);
+  ctx.lineTo(14 * s, 13 * s);
+  ctx.stroke();
+  // Main body (dark armored)
+  const g = ctx.createRadialGradient(-4 * s, -4 * s, 2, 0, 0, 14 * s);
+  g.addColorStop(0, '#8a3028');
+  g.addColorStop(1, '#1a0404');
+  ctx.fillStyle = g;
+  ctx.beginPath();
+  ctx.arc(0, 0, 13 * s, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.strokeStyle = '#5a0810';
+  ctx.lineWidth = 1;
+  ctx.stroke();
+  // Twin swords crossed (golden blades)
+  ctx.save();
+  ctx.shadowColor = 'rgba(255, 215, 100, 0.8)';
+  ctx.shadowBlur = 6;
+  ctx.strokeStyle = '#ffd166';
+  ctx.lineWidth = 2.5;
+  ctx.lineCap = 'round';
+  ctx.beginPath();
+  ctx.moveTo(-15 * s, -15 * s);
+  ctx.lineTo(15 * s, 5 * s);
+  ctx.moveTo(15 * s, -15 * s);
+  ctx.lineTo(-15 * s, 5 * s);
+  ctx.stroke();
+  ctx.restore();
+  // Sword hilts (gold crossguards)
+  ctx.fillStyle = '#c8a058';
+  ctx.beginPath();
+  ctx.arc(-14 * s, -14 * s, 1.8, 0, Math.PI * 2);
+  ctx.arc(14 * s, -14 * s, 1.8, 0, Math.PI * 2);
+  ctx.fill();
+  // Elaborate gold crown on top
+  ctx.save();
+  ctx.shadowColor = 'rgba(255, 200, 80, 0.9)';
+  ctx.shadowBlur = 6;
+  ctx.fillStyle = '#ffd166';
+  ctx.beginPath();
+  ctx.moveTo(-7 * s, -11 * s);
+  ctx.lineTo(-7 * s, -15 * s);
+  ctx.lineTo(-5 * s, -13 * s);
+  ctx.lineTo(-3 * s, -18 * s);
+  ctx.lineTo(-1 * s, -14 * s);
+  ctx.lineTo(0, -17 * s);
+  ctx.lineTo(1 * s, -14 * s);
+  ctx.lineTo(3 * s, -18 * s);
+  ctx.lineTo(5 * s, -13 * s);
+  ctx.lineTo(7 * s, -15 * s);
+  ctx.lineTo(7 * s, -11 * s);
+  ctx.closePath();
+  ctx.fill();
+  ctx.restore();
+  ctx.strokeStyle = '#8a6018';
+  ctx.lineWidth = 0.8;
+  ctx.stroke();
+  // Crown gems (3 red rubies)
+  ctx.fillStyle = '#ff3030';
+  ctx.beginPath();
+  ctx.arc(-3 * s, -13.5 * s, 0.8, 0, Math.PI * 2);
+  ctx.arc(0, -14 * s, 1, 0, Math.PI * 2);
+  ctx.arc(3 * s, -13.5 * s, 0.8, 0, Math.PI * 2);
+  ctx.fill();
+  // Single red baleful eye
+  ctx.save();
+  ctx.shadowColor = '#ff4040';
+  ctx.shadowBlur = 8;
+  ctx.fillStyle = '#ff2020';
+  ctx.beginPath();
+  ctx.arc(0, -3 * s, 3 * s, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+  ctx.fillStyle = '#ffff80';
+  ctx.beginPath();
+  ctx.arc(0, -3 * s, 1.3 * s, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = '#000';
+  ctx.beginPath();
+  ctx.arc(0, -3 * s, 0.6 * s, 0, Math.PI * 2);
+  ctx.fill();
+}
+
+// --- Frost Raider (ice-themed warrior, fast)
+function paintFrostRaider(ctx: Ctx, size: number): void {
+  const s = size / 40;
+  // Icy cloak hood
+  ctx.fillStyle = '#4a7898';
+  ctx.beginPath();
+  ctx.arc(0, -4 * s, 5.5 * s, Math.PI, 0);
+  ctx.fill();
+  ctx.strokeStyle = '#1a3a58';
+  ctx.lineWidth = 0.8;
+  ctx.stroke();
+  // Face shadow in hood (pale/ghostly)
+  ctx.fillStyle = '#c8d0d8';
+  ctx.beginPath();
+  ctx.arc(0, -3 * s, 2.5 * s, 0, Math.PI * 2);
+  ctx.fill();
+  // Body cloak (trapezoidal, flowing)
+  const g = ctx.createLinearGradient(0, -2, 0, 10);
+  g.addColorStop(0, '#7aa8c8');
+  g.addColorStop(1, '#1a3858');
+  ctx.fillStyle = g;
+  ctx.beginPath();
+  ctx.moveTo(-5 * s, -1 * s);
+  ctx.lineTo(-7 * s, 10 * s);
+  ctx.lineTo(7 * s, 10 * s);
+  ctx.lineTo(5 * s, -1 * s);
+  ctx.closePath();
+  ctx.fill();
+  ctx.strokeStyle = '#0a2038';
+  ctx.lineWidth = 0.8;
+  ctx.stroke();
+  // Ice spear (long triangular blade above head)
+  const spearX = -6 * s;
+  ctx.save();
+  ctx.shadowColor = 'rgba(200, 230, 255, 0.8)';
+  ctx.shadowBlur = 4;
+  ctx.fillStyle = '#e0f4ff';
+  ctx.beginPath();
+  ctx.moveTo(spearX - 1.5, -9 * s);
+  ctx.lineTo(spearX, -18 * s);
+  ctx.lineTo(spearX + 1.5, -9 * s);
+  ctx.closePath();
+  ctx.fill();
+  ctx.restore();
+  ctx.strokeStyle = '#a8d8ff';
+  ctx.lineWidth = 0.6;
+  ctx.stroke();
+  // Spear shaft
+  ctx.strokeStyle = '#3a4858';
+  ctx.lineWidth = 1.3;
+  ctx.beginPath();
+  ctx.moveTo(spearX, -9 * s);
+  ctx.lineTo(spearX + 3, 2 * s);
+  ctx.stroke();
+  // Glowing blue eyes
+  ctx.save();
+  ctx.shadowColor = '#6eb8ff';
+  ctx.shadowBlur = 3;
+  ctx.fillStyle = '#a0d8ff';
+  ctx.fillRect(-1.6 * s, -3 * s, 1.3, 1.3);
+  ctx.fillRect(0.3 * s, -3 * s, 1.3, 1.3);
+  ctx.restore();
+  // Frost trail behind cloak
+  ctx.fillStyle = 'rgba(220, 240, 255, 0.35)';
+  ctx.beginPath();
+  ctx.arc(0, 11 * s, 4 * s, 0, Math.PI * 2);
+  ctx.fill();
+}
+
+// --- Glacial Boss (ancient ice giant)
+function paintGlacialBoss(ctx: Ctx, size: number): void {
+  const s = size / 40;
+  // Massive freezing aura
+  const aura = ctx.createRadialGradient(0, 0, 3, 0, 0, 26 * s);
+  aura.addColorStop(0, 'rgba(130, 210, 255, 0.55)');
+  aura.addColorStop(0.6, 'rgba(80, 160, 220, 0.25)');
+  aura.addColorStop(1, 'rgba(40, 90, 140, 0)');
+  ctx.fillStyle = aura;
+  ctx.beginPath();
+  ctx.arc(0, 0, 26 * s, 0, Math.PI * 2);
+  ctx.fill();
+  // Body (humanoid ice giant from above)
+  const body = ctx.createRadialGradient(-5 * s, -5 * s, 3, 0, 0, 17 * s);
+  body.addColorStop(0, '#e0f4ff');
+  body.addColorStop(0.4, '#7aa8c8');
+  body.addColorStop(1, '#1a3a58');
+  ctx.fillStyle = body;
+  ctx.beginPath();
+  ctx.arc(0, 0, 16 * s, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.strokeStyle = '#0a2038';
+  ctx.lineWidth = 1.2;
+  ctx.stroke();
+  // Shoulder ice spikes (4 large)
+  for (let i = 0; i < 4; i++) {
+    const a = (Math.PI * 2 * i) / 4 + Math.PI / 4;
+    const basePx = Math.cos(a) * 13 * s;
+    const basePy = Math.sin(a) * 13 * s;
+    const tipX = Math.cos(a) * 24 * s;
+    const tipY = Math.sin(a) * 24 * s;
+    const perp = a + Math.PI / 2;
+    const spikeG = ctx.createLinearGradient(basePx, basePy, tipX, tipY);
+    spikeG.addColorStop(0, '#7aa8c8');
+    spikeG.addColorStop(1, '#ffffff');
+    ctx.fillStyle = spikeG;
+    ctx.beginPath();
+    ctx.moveTo(basePx + Math.cos(perp) * 3, basePy + Math.sin(perp) * 3);
+    ctx.lineTo(tipX, tipY);
+    ctx.lineTo(basePx - Math.cos(perp) * 3, basePy - Math.sin(perp) * 3);
+    ctx.closePath();
+    ctx.fill();
+    ctx.strokeStyle = '#e0f4ff';
+    ctx.lineWidth = 0.8;
+    ctx.stroke();
+  }
+  // Frost crown of 5 spikes across top
+  ctx.fillStyle = '#ffffff';
+  for (let i = 0; i < 5; i++) {
+    const ox = -8 * s + i * 4 * s;
+    ctx.beginPath();
+    ctx.moveTo(ox - 1.5, -13 * s);
+    ctx.lineTo(ox, -19 * s - (i === 2 ? 3 : 0));
+    ctx.lineTo(ox + 1.5, -13 * s);
+    ctx.closePath();
+    ctx.fill();
+    ctx.strokeStyle = '#a8d8ff';
+    ctx.lineWidth = 0.6;
+    ctx.stroke();
+  }
+  // Glowing inner core (heart)
+  ctx.save();
+  ctx.shadowColor = '#a8d8ff';
+  ctx.shadowBlur = 10;
+  const core = ctx.createRadialGradient(0, 0, 1, 0, 0, 6 * s);
+  core.addColorStop(0, '#ffffff');
+  core.addColorStop(0.5, '#a8d8ff');
+  core.addColorStop(1, '#3a7ac8');
+  ctx.fillStyle = core;
+  ctx.beginPath();
+  ctx.arc(0, 0, 5 * s, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+  // Inner eye (frost blue)
+  ctx.fillStyle = '#ffffff';
+  ctx.beginPath();
+  ctx.arc(0, -1 * s, 2.5 * s, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = '#2a5aa8';
+  ctx.beginPath();
+  ctx.arc(0, -1 * s, 1.3 * s, 0, Math.PI * 2);
+  ctx.fill();
+  // Frost breath trail (bottom)
+  ctx.fillStyle = 'rgba(220, 240, 255, 0.4)';
+  ctx.beginPath();
+  ctx.arc(-3 * s, 14 * s, 3 * s, 0, Math.PI * 2);
+  ctx.arc(3 * s, 14 * s, 2.5 * s, 0, Math.PI * 2);
+  ctx.fill();
+}
+
+// --- Void Boss (eldritch 6-armed entity)
+function paintVoidBoss(ctx: Ctx, size: number): void {
+  const s = size / 40;
+  // Massive void pulse
+  const pulse = ctx.createRadialGradient(0, 0, 3, 0, 0, 30 * s);
+  pulse.addColorStop(0, 'rgba(200, 100, 255, 0.6)');
+  pulse.addColorStop(0.5, 'rgba(100, 20, 140, 0.35)');
+  pulse.addColorStop(1, 'rgba(30, 5, 50, 0)');
+  ctx.fillStyle = pulse;
+  ctx.beginPath();
+  ctx.arc(0, 0, 30 * s, 0, Math.PI * 2);
+  ctx.fill();
+  // 6 arms radiating from center (tapered)
+  for (let i = 0; i < 6; i++) {
+    const a = (Math.PI * 2 * i) / 6 + Math.PI / 6;
+    const len = 20 * s + (i % 2) * 4;
+    const tipX = Math.cos(a) * len;
+    const tipY = Math.sin(a) * len;
+    const perp = a + Math.PI / 2;
+    // Arm body (thick to thin)
+    ctx.fillStyle = '#1a0428';
+    ctx.beginPath();
+    ctx.moveTo(Math.cos(perp) * 3, Math.sin(perp) * 3);
+    ctx.lineTo(tipX + Math.cos(perp) * 0.8, tipY + Math.sin(perp) * 0.8);
+    ctx.lineTo(tipX - Math.cos(perp) * 0.8, tipY - Math.sin(perp) * 0.8);
+    ctx.lineTo(-Math.cos(perp) * 3, -Math.sin(perp) * 3);
+    ctx.closePath();
+    ctx.fill();
+    ctx.strokeStyle = '#8848a8';
+    ctx.lineWidth = 0.8;
+    ctx.stroke();
+    // Glowing hand orb at tip
+    ctx.save();
+    ctx.shadowColor = '#c878ff';
+    ctx.shadowBlur = 8;
+    ctx.fillStyle = '#e0a0ff';
+    ctx.beginPath();
+    ctx.arc(tipX, tipY, 2.2, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+  // Central void body
+  const body = ctx.createRadialGradient(-3 * s, -3 * s, 2, 0, 0, 14 * s);
+  body.addColorStop(0, '#3a0848');
+  body.addColorStop(1, '#050008');
+  ctx.fillStyle = body;
+  ctx.beginPath();
+  ctx.arc(0, 0, 12 * s, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.strokeStyle = '#c878ff';
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+  // Inner ring of runes
+  ctx.strokeStyle = 'rgba(200, 120, 255, 0.7)';
+  ctx.lineWidth = 0.7;
+  ctx.beginPath();
+  ctx.arc(0, 0, 9 * s, 0, Math.PI * 2);
+  ctx.stroke();
+  // Cluster of 7 eyes (primary + 6 orbiting)
+  const eyePositions: [number, number, number][] = [
+    [0, 0, 2.5],
+    [-5, -3, 1.3], [5, -3, 1.3],
+    [-5, 3, 1.3], [5, 3, 1.3],
+    [0, -6, 1.3], [0, 6, 1.3],
+  ];
+  for (const [ex, ey, er] of eyePositions) {
+    ctx.fillStyle = '#ffffff';
+    ctx.beginPath();
+    ctx.arc(ex * s, ey * s, er * s, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#c878ff';
+    ctx.beginPath();
+    ctx.arc(ex * s, ey * s, er * s * 0.55, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#000';
+    ctx.beginPath();
+    ctx.arc(ex * s, ey * s, er * s * 0.25, 0, Math.PI * 2);
+    ctx.fill();
+  }
 }
 
 // ---------- Projectiles ----------
