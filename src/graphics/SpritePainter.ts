@@ -192,8 +192,11 @@ export function drawTowerTurret(
   ctx.restore();
 }
 
-function paintTurretBody(ctx: Ctx, bodyColor: string, highlight: string, radius: number): void {
-  // Dome body
+/**
+ * Shared helper — domed body used only as a supporting visual element, not as
+ * the primary silhouette. Individual paint functions define their own shapes.
+ */
+function paintDome(ctx: Ctx, bodyColor: string, highlight: string, radius: number): void {
   const g = ctx.createRadialGradient(-radius * 0.3, -radius * 0.3, radius * 0.2, 0, 0, radius);
   g.addColorStop(0, highlight);
   g.addColorStop(1, bodyColor);
@@ -201,158 +204,463 @@ function paintTurretBody(ctx: Ctx, bodyColor: string, highlight: string, radius:
   ctx.beginPath();
   ctx.arc(0, 0, radius, 0, Math.PI * 2);
   ctx.fill();
-  // Rim
   ctx.strokeStyle = 'rgba(0, 0, 0, 0.4)';
   ctx.lineWidth = 1;
   ctx.stroke();
 }
 
+/**
+ * 加農砲 — 輪式野戰砲 (field cannon on wheeled carriage).
+ * Silhouette: rectangular body with visible wheels on each side, thick central barrel.
+ */
 function paintCannon(ctx: Ctx, level: number): void {
-  const scale = 1 + level * 0.08;
-  paintTurretBody(ctx, '#8a5a3a', '#c9955e', 11 * scale);
-  // Barrel pointing up
-  const bw = 5 * scale;
-  const bh = 16 * scale;
-  ctx.fillStyle = '#2a2018';
+  const s = 1 + level * 0.08;
+  // Wheels (dark brown circles at sides)
+  ctx.fillStyle = '#2a1a0e';
+  ctx.beginPath();
+  ctx.arc(-9 * s, 4 * s, 5 * s, 0, Math.PI * 2);
+  ctx.arc(9 * s, 4 * s, 5 * s, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = '#5a3820';
+  ctx.beginPath();
+  ctx.arc(-9 * s, 4 * s, 3 * s, 0, Math.PI * 2);
+  ctx.arc(9 * s, 4 * s, 3 * s, 0, Math.PI * 2);
+  ctx.fill();
+  // Wooden carriage frame (rectangular olive body)
+  const g = ctx.createLinearGradient(0, -4, 0, 10);
+  g.addColorStop(0, '#8a7a3a');
+  g.addColorStop(1, '#4a3820');
+  ctx.fillStyle = g;
+  ctx.fillRect(-11 * s, -2 * s, 22 * s, 10 * s);
+  ctx.strokeStyle = '#1a1008';
+  ctx.lineWidth = 1.2;
+  ctx.strokeRect(-11 * s, -2 * s, 22 * s, 10 * s);
+  // Breech block (rear)
+  ctx.fillStyle = '#3a2818';
+  ctx.fillRect(-5 * s, 2 * s, 10 * s, 6 * s);
+  // Thick single barrel pointing up
+  const bw = 6 * s;
+  const bh = 18 * s;
+  ctx.fillStyle = '#1a1410';
   ctx.fillRect(-bw / 2, -bh, bw, bh);
-  // Barrel highlight
-  ctx.fillStyle = '#5a4028';
-  ctx.fillRect(-bw / 2, -bh, bw * 0.35, bh);
-  // Muzzle
+  // Barrel highlight stripe
+  ctx.fillStyle = '#4a3a28';
+  ctx.fillRect(-bw / 2 + 0.8, -bh, bw * 0.3, bh);
+  // Reinforcing gold band
+  ctx.fillStyle = '#ffd166';
+  ctx.fillRect(-bw / 2 - 1, -bh + 5, bw + 2, 1.5);
+  // Muzzle ring
   ctx.fillStyle = '#ffd166';
   ctx.fillRect(-bw / 2 - 1, -bh - 2, bw + 2, 2);
 }
 
+/**
+ * 速射槍 — 輕型戰術步槍 (tactical carbine).
+ * Silhouette: small rectangular receiver + long thin barrel + front sight post + tactical rail.
+ */
 function paintQuickShot(ctx: Ctx, level: number): void {
-  const scale = 1 + level * 0.08;
-  paintTurretBody(ctx, '#2a6a3a', '#4ecb7a', 10 * scale);
-  const bw = 3 * scale;
-  const bh = 18 * scale;
-  ctx.fillStyle = '#1a1a20';
-  ctx.fillRect(-bw / 2, -bh, bw, bh);
-  ctx.fillStyle = '#ffd166';
-  ctx.fillRect(-1, -bh - 1, 2, 2);
-}
-
-function paintMachineGun(ctx: Ctx, level: number): void {
-  const scale = 1 + level * 0.08;
-  paintTurretBody(ctx, '#1f4a68', '#3a7a9c', 11 * scale);
-  // Twin barrels
-  ctx.fillStyle = '#111';
-  ctx.fillRect(-5 * scale, -17 * scale, 3 * scale, 17 * scale);
-  ctx.fillRect(2 * scale, -17 * scale, 3 * scale, 17 * scale);
-  ctx.fillStyle = '#ffd166';
-  ctx.fillRect(-5 * scale, -18 * scale, 3 * scale, 2);
-  ctx.fillRect(2 * scale, -18 * scale, 3 * scale, 2);
-}
-
-function paintSniper(ctx: Ctx, level: number): void {
-  const scale = 1 + level * 0.08;
-  paintTurretBody(ctx, '#3a2028', '#7a3848', 10 * scale);
-  // Long thin barrel
-  ctx.fillStyle = '#0a0a12';
-  ctx.fillRect(-1.5 * scale, -22 * scale, 3 * scale, 22 * scale);
-  // Scope
-  ctx.fillStyle = '#c85050';
+  const s = 1 + level * 0.08;
+  // Rear stock (rounded rectangle)
+  ctx.fillStyle = '#3a5a2a';
   ctx.beginPath();
-  ctx.arc(0, -10 * scale, 3 * scale, 0, Math.PI * 2);
+  ctx.roundRect(-4 * s, 2 * s, 8 * s, 10 * s, 2);
   ctx.fill();
-  // Laser dot
-  ctx.fillStyle = '#ffd166';
-  ctx.fillRect(-1, -24 * scale, 2, 2);
-}
-
-function paintMissile(ctx: Ctx, level: number): void {
-  const scale = 1 + level * 0.08;
-  paintTurretBody(ctx, '#4a2818', '#9c5a38', 12 * scale);
-  // Missile cluster — 3 tubes
-  for (let i = -1; i <= 1; i++) {
-    ctx.fillStyle = '#1a1012';
-    ctx.fillRect(i * 4 * scale - 1.5, -14 * scale, 3, 12 * scale);
-    ctx.fillStyle = '#ff6b6b';
-    ctx.fillRect(i * 4 * scale - 1.5, -14 * scale, 3, 2);
-  }
-}
-
-function paintHeavyCannon(ctx: Ctx, level: number): void {
-  const scale = 1 + level * 0.1;
-  paintTurretBody(ctx, '#2a2a2a', '#5a5a60', 13 * scale);
-  // Thick short barrel
-  ctx.fillStyle = '#111';
-  ctx.fillRect(-5 * scale, -14 * scale, 10 * scale, 14 * scale);
-  ctx.fillStyle = '#3a3a3a';
-  ctx.fillRect(-5 * scale, -14 * scale, 10 * scale * 0.3, 14 * scale);
-  ctx.fillStyle = '#ff9f43';
-  ctx.fillRect(-5 * scale, -16 * scale, 10 * scale, 2);
-}
-
-function paintFrost(ctx: Ctx, level: number): void {
-  const scale = 1 + level * 0.08;
-  // Icy body
-  const g = ctx.createRadialGradient(-3, -3, 2, 0, 0, 11 * scale);
-  g.addColorStop(0, '#e0f4ff');
-  g.addColorStop(1, '#2e6a9a');
+  // Receiver body (compact rectangle)
+  const g = ctx.createLinearGradient(0, -4, 0, 4);
+  g.addColorStop(0, '#6a9a4a');
+  g.addColorStop(1, '#2a4a1a');
   ctx.fillStyle = g;
-  ctx.beginPath();
-  ctx.arc(0, 0, 11 * scale, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.strokeStyle = 'rgba(255,255,255,0.5)';
-  ctx.lineWidth = 1;
-  ctx.stroke();
-  // Crystal spike up
-  ctx.fillStyle = '#9ecbff';
-  ctx.beginPath();
-  ctx.moveTo(-4 * scale, -4);
-  ctx.lineTo(0, -18 * scale);
-  ctx.lineTo(4 * scale, -4);
-  ctx.closePath();
-  ctx.fill();
-  ctx.strokeStyle = '#e0f4ff';
-  ctx.lineWidth = 1;
-  ctx.stroke();
-}
-
-function paintTesla(ctx: Ctx, level: number): void {
-  const scale = 1 + level * 0.08;
-  paintTurretBody(ctx, '#2a1848', '#6840c8', 11 * scale);
-  // Coil rings
-  ctx.strokeStyle = '#ffd166';
-  ctx.lineWidth = 1.5;
+  ctx.fillRect(-5 * s, -5 * s, 10 * s, 10 * s);
+  ctx.strokeStyle = '#111';
+  ctx.lineWidth = 0.8;
+  ctx.strokeRect(-5 * s, -5 * s, 10 * s, 10 * s);
+  // Tactical rail slits on top (dark lines)
+  ctx.strokeStyle = '#0a0a0a';
+  ctx.lineWidth = 0.6;
   for (let i = 0; i < 3; i++) {
     ctx.beginPath();
-    ctx.arc(0, -4 - i * 4 * scale, 4 - i * 0.5, 0, Math.PI * 2);
+    ctx.moveTo(-4 * s, -3 * s + i * 3);
+    ctx.lineTo(4 * s, -3 * s + i * 3);
     ctx.stroke();
   }
-  // Top ball
-  const topG = ctx.createRadialGradient(-1, -16 * scale, 1, 0, -14 * scale, 4);
-  topG.addColorStop(0, '#ffffff');
-  topG.addColorStop(1, '#9ecbff');
-  ctx.fillStyle = topG;
+  // Long thin barrel
+  ctx.fillStyle = '#111';
+  ctx.fillRect(-1.5 * s, -20 * s, 3 * s, 15 * s);
+  // Front sight post
+  ctx.fillStyle = '#ffd166';
+  ctx.fillRect(-1 * s, -13 * s, 2 * s, 2 * s);
+  // Muzzle brake
+  ctx.fillStyle = '#3a3a3a';
+  ctx.fillRect(-2.5 * s, -21 * s, 5 * s, 2 * s);
+  ctx.fillStyle = '#ffd166';
+  ctx.fillRect(-1, -22 * s, 2, 1.5);
+}
+
+/**
+ * 機槍塔 — 加特林旋轉機槍 (gatling gun).
+ * Silhouette: cylindrical housing + 6 rotating barrels visible as dots arranged in ring + muzzle fan.
+ */
+function paintMachineGun(ctx: Ctx, level: number): void {
+  const s = 1 + level * 0.08;
+  // Back housing (hex)
+  ctx.fillStyle = '#4a4a4a';
   ctx.beginPath();
-  ctx.arc(0, -14 * scale, 3 * scale, 0, Math.PI * 2);
+  for (let i = 0; i < 6; i++) {
+    const a = (Math.PI * 2 * i) / 6 + Math.PI / 6;
+    const px = Math.cos(a) * 10 * s;
+    const py = Math.sin(a) * 10 * s + 2 * s;
+    if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+  }
+  ctx.closePath();
+  ctx.fill();
+  ctx.strokeStyle = '#1a1a1a';
+  ctx.lineWidth = 1;
+  ctx.stroke();
+  // Central barrel cluster — 6 barrels arranged in a circle pointing forward
+  // Viewed from above, they appear as a cluster of dots extending forward
+  const clusterY = -4 * s; // forward offset
+  const clusterR = 3.5 * s;
+  ctx.fillStyle = '#0a0a0a';
+  ctx.beginPath();
+  ctx.arc(0, clusterY, clusterR + 1, 0, Math.PI * 2);
+  ctx.fill();
+  // 6 barrel holes arranged in ring
+  ctx.fillStyle = '#2a2a2a';
+  for (let i = 0; i < 6; i++) {
+    const a = (Math.PI * 2 * i) / 6;
+    const bx = Math.cos(a) * 2.2 * s;
+    const by = clusterY + Math.sin(a) * 2.2 * s;
+    ctx.beginPath();
+    ctx.arc(bx, by, 0.8 * s, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  // Central pin
+  ctx.fillStyle = '#ffd166';
+  ctx.beginPath();
+  ctx.arc(0, clusterY, 0.8 * s, 0, Math.PI * 2);
+  ctx.fill();
+  // Long barrel protrusion (2 visible main barrels out of cluster)
+  ctx.fillStyle = '#111';
+  ctx.fillRect(-1 * s, -18 * s, 2 * s, 14 * s);
+  ctx.fillStyle = '#ffd166';
+  ctx.fillRect(-1.5, -19 * s, 3, 1.5);
+}
+
+/**
+ * 狙擊塔 — 長距離狙擊槍 (long-range sniper with bipod + scope).
+ * Silhouette: extremely long thin barrel + big scope + bipod legs at front.
+ */
+function paintSniper(ctx: Ctx, level: number): void {
+  const s = 1 + level * 0.08;
+  // Rear stock
+  ctx.fillStyle = '#5a2028';
+  ctx.beginPath();
+  ctx.roundRect(-3 * s, 2 * s, 6 * s, 10 * s, 2);
+  ctx.fill();
+  // Receiver (small)
+  ctx.fillStyle = '#2a0e14';
+  ctx.fillRect(-4 * s, -3 * s, 8 * s, 7 * s);
+  ctx.strokeStyle = '#000';
+  ctx.lineWidth = 0.8;
+  ctx.strokeRect(-4 * s, -3 * s, 8 * s, 7 * s);
+  // HUGE scope (prominent circle on top)
+  ctx.fillStyle = '#1a1a1a';
+  ctx.beginPath();
+  ctx.ellipse(0, -4 * s, 3.5 * s, 5 * s, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.strokeStyle = '#c85050';
+  ctx.lineWidth = 1.2;
+  ctx.stroke();
+  // Scope lens (red glint)
+  ctx.fillStyle = '#ff4040';
+  ctx.beginPath();
+  ctx.arc(0, -4 * s, 1.5 * s, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = '#fff';
+  ctx.fillRect(-0.5, -5 * s, 1, 1);
+  // Extra long thin barrel
+  ctx.fillStyle = '#0a0a0a';
+  ctx.fillRect(-1 * s, -26 * s, 2 * s, 17 * s);
+  // Bipod legs at the front (V shape)
+  ctx.strokeStyle = '#3a3a3a';
+  ctx.lineWidth = 1.2;
+  ctx.beginPath();
+  ctx.moveTo(0, -21 * s);
+  ctx.lineTo(-5 * s, -14 * s);
+  ctx.moveTo(0, -21 * s);
+  ctx.lineTo(5 * s, -14 * s);
+  ctx.stroke();
+  // Muzzle brake
+  ctx.fillStyle = '#3a3a3a';
+  ctx.fillRect(-2 * s, -27 * s, 4 * s, 2);
+  // Laser sight dot
+  ctx.fillStyle = '#ff4040';
+  ctx.fillRect(-0.5, -28 * s, 1, 1.5);
+}
+
+/**
+ * 飛彈塔 — 多管火箭發射器 (6-cell MLRS honeycomb).
+ * Silhouette: hexagonal array of 6 missile tubes, exhaust vents at rear.
+ */
+function paintMissile(ctx: Ctx, level: number): void {
+  const s = 1 + level * 0.08;
+  // Base platform
+  ctx.fillStyle = '#4a2818';
+  ctx.beginPath();
+  ctx.roundRect(-11 * s, -3 * s, 22 * s, 12 * s, 3);
+  ctx.fill();
+  ctx.strokeStyle = '#1a0a05';
+  ctx.lineWidth = 1;
+  ctx.stroke();
+  // Exhaust vents at rear (3 dark slits)
+  ctx.fillStyle = '#111';
+  for (let i = -1; i <= 1; i++) {
+    ctx.fillRect(i * 5 * s - 1.5, 6 * s, 3, 3 * s);
+  }
+  // Hex array of 6 missile tubes (viewed from above, pointing up)
+  const tubeR = 2.2 * s;
+  const positions: [number, number][] = [
+    [-5 * s, -8 * s], [0, -10 * s], [5 * s, -8 * s],
+    [-5 * s, -4 * s], [0, -6 * s], [5 * s, -4 * s],
+  ];
+  for (const [px, py] of positions) {
+    // Outer tube ring (dark)
+    ctx.fillStyle = '#1a0a05';
+    ctx.beginPath();
+    ctx.arc(px, py, tubeR + 0.5, 0, Math.PI * 2);
+    ctx.fill();
+    // Red missile tip (visible inside tube)
+    ctx.fillStyle = '#c84020';
+    ctx.beginPath();
+    ctx.arc(px, py, tubeR * 0.7, 0, Math.PI * 2);
+    ctx.fill();
+    // Tip highlight
+    ctx.fillStyle = '#ff8a60';
+    ctx.beginPath();
+    ctx.arc(px, py - 0.5, tubeR * 0.3, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  // Center yellow trigger/guidance dot
+  ctx.fillStyle = '#ffd166';
+  ctx.fillRect(-1, -7 * s, 2, 2);
+}
+
+/**
+ * 重砲 — 攻城臼砲 (siege mortar with massive stubby barrel).
+ * Silhouette: wide square base + huge thick short barrel, angled rivets.
+ */
+function paintHeavyCannon(ctx: Ctx, level: number): void {
+  const s = 1 + level * 0.1;
+  // Square base plate with rivets in corners
+  const g = ctx.createLinearGradient(0, -4, 0, 10);
+  g.addColorStop(0, '#3a3a3a');
+  g.addColorStop(1, '#1a1a1a');
+  ctx.fillStyle = g;
+  ctx.fillRect(-13 * s, -3 * s, 26 * s, 12 * s);
+  ctx.strokeStyle = '#000';
+  ctx.lineWidth = 1.5;
+  ctx.strokeRect(-13 * s, -3 * s, 26 * s, 12 * s);
+  // Corner rivets (gold)
+  ctx.fillStyle = '#ffd166';
+  for (const [px, py] of [[-11, -1], [11, -1], [-11, 7], [11, 7]]) {
+    ctx.beginPath();
+    ctx.arc(px * s, py * s, 1.3, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  // MASSIVE thick stubby barrel (trapezoid wider at back)
+  ctx.fillStyle = '#1a1a1a';
+  ctx.beginPath();
+  ctx.moveTo(-7 * s, -3 * s);
+  ctx.lineTo(7 * s, -3 * s);
+  ctx.lineTo(6 * s, -15 * s);
+  ctx.lineTo(-6 * s, -15 * s);
+  ctx.closePath();
+  ctx.fill();
+  // Barrel highlight
+  ctx.fillStyle = '#3a3a3a';
+  ctx.beginPath();
+  ctx.moveTo(-7 * s, -3 * s);
+  ctx.lineTo(-4 * s, -3 * s);
+  ctx.lineTo(-3.5 * s, -15 * s);
+  ctx.lineTo(-6 * s, -15 * s);
+  ctx.closePath();
+  ctx.fill();
+  // Hot orange muzzle (glowing)
+  const muz = ctx.createLinearGradient(0, -17 * s, 0, -13 * s);
+  muz.addColorStop(0, '#ff4020');
+  muz.addColorStop(1, '#ff9f43');
+  ctx.fillStyle = muz;
+  ctx.fillRect(-6 * s, -17 * s, 12 * s, 2.5);
+  // Center reinforcing band
+  ctx.fillStyle = '#ffd166';
+  ctx.fillRect(-7 * s, -9 * s, 14 * s, 1);
+}
+
+/**
+ * 冰霜塔 — 冰晶群 (no gun at all — pure ice crystal cluster).
+ * Silhouette: 3 tall ice spikes forming a triangle, glowing blue core.
+ */
+function paintFrost(ctx: Ctx, level: number): void {
+  const s = 1 + level * 0.08;
+  // Glowing blue aura
+  const aura = ctx.createRadialGradient(0, 0, 2, 0, 0, 14 * s);
+  aura.addColorStop(0, 'rgba(140, 220, 255, 0.7)');
+  aura.addColorStop(1, 'rgba(140, 220, 255, 0)');
+  ctx.fillStyle = aura;
+  ctx.beginPath();
+  ctx.arc(0, 0, 14 * s, 0, Math.PI * 2);
+  ctx.fill();
+  // Three ice spikes forming a triangle (no dome!)
+  const spikeAngles = [-Math.PI / 2, -Math.PI / 2 + (Math.PI * 2) / 3, -Math.PI / 2 + 2 * (Math.PI * 2) / 3];
+  for (const angle of spikeAngles) {
+    const tipX = Math.cos(angle) * 15 * s;
+    const tipY = Math.sin(angle) * 15 * s;
+    const baseA = angle + Math.PI / 2;
+    const bx1 = Math.cos(angle) * 4 * s + Math.cos(baseA) * 3 * s;
+    const by1 = Math.sin(angle) * 4 * s + Math.sin(baseA) * 3 * s;
+    const bx2 = Math.cos(angle) * 4 * s - Math.cos(baseA) * 3 * s;
+    const by2 = Math.sin(angle) * 4 * s - Math.sin(baseA) * 3 * s;
+    const g = ctx.createLinearGradient(0, 0, tipX, tipY);
+    g.addColorStop(0, '#6eb8ff');
+    g.addColorStop(1, '#ffffff');
+    ctx.fillStyle = g;
+    ctx.beginPath();
+    ctx.moveTo(bx1, by1);
+    ctx.lineTo(tipX, tipY);
+    ctx.lineTo(bx2, by2);
+    ctx.closePath();
+    ctx.fill();
+    ctx.strokeStyle = '#e0f4ff';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  }
+  // Glowing center orb
+  const core = ctx.createRadialGradient(0, 0, 1, 0, 0, 5 * s);
+  core.addColorStop(0, '#ffffff');
+  core.addColorStop(0.4, '#a8d8ff');
+  core.addColorStop(1, '#2e6a9a');
+  ctx.fillStyle = core;
+  ctx.beginPath();
+  ctx.arc(0, 0, 5 * s, 0, Math.PI * 2);
   ctx.fill();
 }
 
-function paintLight(ctx: Ctx, level: number): void {
-  const scale = 1 + level * 0.08;
-  paintTurretBody(ctx, '#c8a058', '#ffe9a8', 11 * scale);
-  // Sun rays
-  ctx.strokeStyle = 'rgba(255, 230, 150, 0.75)';
-  ctx.lineWidth = 1.5;
-  for (let i = 0; i < 6; i++) {
-    const a = (Math.PI * 2 * i) / 6;
-    const x1 = Math.cos(a) * 8 * scale;
-    const y1 = Math.sin(a) * 8 * scale;
-    const x2 = Math.cos(a) * 13 * scale;
-    const y2 = Math.sin(a) * 13 * scale;
+/**
+ * 特斯拉塔 — 電磁線圈 (visible copper coil + large orb + electric arcs).
+ * Silhouette: tall stacked coil with orb on top, lightning bolts around.
+ */
+function paintTesla(ctx: Ctx, level: number): void {
+  const s = 1 + level * 0.08;
+  // Base plate
+  paintDome(ctx, '#2a1848', '#6840c8', 8 * s);
+  // Tall copper coil body (stacked rings)
+  const coilX = 0;
+  const coilBottom = -2 * s;
+  const coilTop = -14 * s;
+  const coilWidth = 5 * s;
+  ctx.fillStyle = '#c88030';
+  ctx.fillRect(coilX - coilWidth / 2, coilTop, coilWidth, coilBottom - coilTop);
+  // Coil wire wrap (horizontal stripes)
+  ctx.strokeStyle = '#8a4818';
+  ctx.lineWidth = 0.8;
+  for (let y = coilTop; y <= coilBottom; y += 1.2) {
     ctx.beginPath();
-    ctx.moveTo(x1, y1);
-    ctx.lineTo(x2, y2);
+    ctx.moveTo(coilX - coilWidth / 2, y);
+    ctx.lineTo(coilX + coilWidth / 2, y);
     ctx.stroke();
   }
-  // Barrel
-  ctx.fillStyle = '#fff8dc';
-  ctx.fillRect(-2 * scale, -12 * scale, 4 * scale, 12 * scale);
+  // Wire highlight (one brighter stripe)
+  ctx.fillStyle = '#ffb060';
+  ctx.fillRect(coilX - coilWidth / 2, coilTop, 1, coilBottom - coilTop);
+  // Top sphere (large, glowing)
+  const orbX = 0;
+  const orbY = -17 * s;
+  const orbR = 4 * s;
+  const orbG = ctx.createRadialGradient(orbX - 1, orbY - 1, 0.5, orbX, orbY, orbR);
+  orbG.addColorStop(0, '#ffffff');
+  orbG.addColorStop(0.3, '#c8e8ff');
+  orbG.addColorStop(1, '#3a7ac8');
+  ctx.fillStyle = orbG;
+  ctx.beginPath();
+  ctx.arc(orbX, orbY, orbR, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.strokeStyle = '#ffffff';
+  ctx.lineWidth = 0.6;
+  ctx.stroke();
+  // Electric arcs radiating from orb (pseudo-random zigzags)
+  ctx.strokeStyle = 'rgba(200, 230, 255, 0.9)';
+  ctx.lineWidth = 1.2;
+  ctx.lineCap = 'round';
+  const arcs: [number, number][][] = [
+    [[0, -17], [-5, -19], [-6, -14], [-8, -13]],
+    [[0, -17], [5, -19], [6, -14], [8, -13]],
+    [[0, -17], [0, -22]],
+  ];
+  for (const pts of arcs) {
+    ctx.beginPath();
+    pts.forEach(([px, py], i) => {
+      const x = px * s;
+      const y = py * s;
+      if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    });
+    ctx.stroke();
+  }
+}
+
+/**
+ * 聖光塔 — 太陽徽章 (sunburst halo + eye symbol, no barrel).
+ * Silhouette: 8 long rays + central luminous disk + eye in middle.
+ */
+function paintLight(ctx: Ctx, level: number): void {
+  const s = 1 + level * 0.08;
+  // Outer halo glow
+  const halo = ctx.createRadialGradient(0, 0, 3 * s, 0, 0, 18 * s);
+  halo.addColorStop(0, 'rgba(255, 240, 180, 0.6)');
+  halo.addColorStop(1, 'rgba(255, 200, 80, 0)');
+  ctx.fillStyle = halo;
+  ctx.beginPath();
+  ctx.arc(0, 0, 18 * s, 0, Math.PI * 2);
+  ctx.fill();
+  // 8 pointed rays
+  ctx.fillStyle = '#ffd166';
+  for (let i = 0; i < 8; i++) {
+    const a = (Math.PI * 2 * i) / 8;
+    const inner = 7 * s;
+    const outer = 16 * s;
+    const perp = a + Math.PI / 2;
+    const width = 1.8;
+    ctx.beginPath();
+    ctx.moveTo(Math.cos(a) * inner + Math.cos(perp) * width, Math.sin(a) * inner + Math.sin(perp) * width);
+    ctx.lineTo(Math.cos(a) * outer, Math.sin(a) * outer);
+    ctx.lineTo(Math.cos(a) * inner - Math.cos(perp) * width, Math.sin(a) * inner - Math.sin(perp) * width);
+    ctx.closePath();
+    ctx.fill();
+  }
+  // Central gold disk
+  const disk = ctx.createRadialGradient(-2, -2, 1, 0, 0, 7 * s);
+  disk.addColorStop(0, '#fffcd0');
+  disk.addColorStop(0.5, '#ffd166');
+  disk.addColorStop(1, '#c8a058');
+  ctx.fillStyle = disk;
+  ctx.beginPath();
+  ctx.arc(0, 0, 7 * s, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.strokeStyle = '#8a6018';
+  ctx.lineWidth = 1;
+  ctx.stroke();
+  // Eye of providence — white sclera + dark pupil
+  ctx.fillStyle = '#fffcd0';
+  ctx.beginPath();
+  ctx.ellipse(0, 0, 4 * s, 2.5 * s, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = '#3a2818';
+  ctx.beginPath();
+  ctx.arc(0, 0, 1.8 * s, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = '#ffffff';
+  ctx.beginPath();
+  ctx.arc(-0.5, -0.5, 0.6, 0, Math.PI * 2);
+  ctx.fill();
 }
 
 // ---------- Enemies ----------
