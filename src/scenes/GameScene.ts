@@ -138,7 +138,9 @@ export class GameScene extends BaseScene {
       sellBonus: upgradeValue(ctx.save, 'sellValue'),
       costDiscount: upgradeValue(ctx.save, 'towerCost'),
     };
-    this.path = new Path(level.path.map((p) => ({ x: p.x * T, y: p.y * T })));
+    // Waypoints in JSON are tile indices. Offset by T/2 so enemies walk through
+    // tile centers (not along the top-left edges of the tile row).
+    this.path = new Path(level.path.map((p) => ({ x: p.x * T + T / 2, y: p.y * T + T / 2 })));
     this.pathTiles = this.path.computeOccupiedTiles(T);
     this.obstacleTiles = new Set<string>();
     for (const ob of level.obstacles ?? []) {
