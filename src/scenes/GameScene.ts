@@ -24,6 +24,7 @@ import {
 } from '../graphics/SpritePainter.ts';
 import { ParticleSystem } from '../graphics/Particles.ts';
 import { drawGrassTile, drawPathTile, themeForWorld } from '../graphics/UIPainter.ts';
+import { makeBanner, showBanner, updateBanner, renderBanner } from '../graphics/WaveBanner.ts';
 
 interface Rect { x: number; y: number; w: number; h: number }
 interface Floater { x: number; y: number; vx: number; vy: number; text: string; color: string; life: number; maxLife: number; size: number }
@@ -63,6 +64,15 @@ export class GameScene extends BaseScene {
   private readonly floaters: Floater[] = [];
   private readonly pendingSpawns: { config: EnemyConfig; progress: number; delay: number }[] = [];
   private readonly particles = new ParticleSystem();
+  private readonly banner = makeBanner();
+  private bossEntranceFlash = 0;
+  private bossSeen = new Set<string>();
+  private goldPulse = 0;      // seconds remaining of gold-change pulse
+  private lifePulse = 0;      // seconds remaining of life-lost pulse
+  private goldPulseSign = 1;  // +1 for gain, -1 for spend
+  private lastGold = 0;
+  private lastLives = 0;
+  private starRain: { x: number; y: number; vy: number; rot: number; vrot: number; life: number; size: number }[] = [];
   private readonly dialogue = new DialogueBox();
   private readonly difficulty: Difficulty;
   private readonly diffMod: typeof DIFF_MOD[Difficulty];
@@ -165,11 +175,32 @@ export class GameScene extends BaseScene {
     this.waveMgr.startWave(this.state.waveIndex);
     this.state.status = 'playing';
     this.ctx.audio.waveStart();
+    const total = this.isEndless ? '無盡' : `${this.waveMgr.totalWaves()}`;
+    const isFinal = !this.isEndless && this.state.waveIndex === this.waveMgr.totalWaves() - 1;
+    const accent = isFinal ? '#ff6b6b' : '#ffd166';
+    const label = isFinal ? `FINAL WAVE` : `WAVE ${this.state.waveIndex + 1}`;
+    showBanner(this.banner, label, `${this.level.name} · ${this.state.waveIndex + 1}/${total}`, accent);
+  }
+
+  private spawnStarRain(count: number): void {
+    const vw = this.ctx.renderer.vw();
+    for (let i = 0; i < count; i++) {
+      this.starRain.push({
+        x: Math.random() * vw,
+        y: -20 - Math.random() * 100,
+        vy: 120 + Math.random() * 80,
+        rot: Math.random() * Math.PI,
+        vrot: (Math.random() - 0.5) * 4,
+        life: 2.5 + Math.random() * 1.5,
+        size: 10 + Math.random() * 14,
+      });
+    }
   }
 
   private triggerWin(): void {
     const ratio = this.state.lives / this.level.startingLives;
     const stars = ratio >= 1 ? 3 : ratio >= 0.5 ? 2 : 1;
+    this.spawnStarRain(60 + stars * 20);
     recordCompletion(this.ctx.save, this.level.id, stars, this.difficulty);
     this.ctx.save.stats.totalWavesSurvived += this.waveMgr.totalWaves();
     this.ctx.persistSave();
@@ -234,11 +265,41 @@ export class GameScene extends BaseScene {
   override update(dt: number): void {
     this.elapsed += dt;
     this.ctx.renderer.updateShake(dt);
+    updateBanner(this.banner, dt);
+    if (this.bossEntranceFlash > 0) this.bossEntranceFlash = Math.max(0, this.bossEntranceFlash - dt * 1.5);
+    // HUD pulse detection
+    if (this.state.gold !== this.lastGold) {
+      this.goldPulseSign = this.state.gold > this.lastGold ? 1 : -1;
+      this.goldPulse = 0.35;
+      this.lastGold = this.state.gold;
+    } else if (this.goldPulse > 0) this.goldPulse = Math.max(0, this.goldPulse - dt);
+    if (this.state.lives !== this.lastLives) {
+      this.lifePulse = 0.5;
+      this.lastLives = this.state.lives;
+    } else if (this.lifePulse > 0) this.lifePulse = Math.max(0, this.lifePulse - dt);
+    // Star rain update
+    for (let i = this.starRain.length - 1; i >= 0; i--) {
+      const s = this.starRain[i];
+      s.y += s.vy * dt;
+      s.vy += 120 * dt;
+      s.rot += s.vrot * dt;
+      s.life -= dt;
+      if (s.life <= 0) this.starRain.splice(i, 1);
+    }
 
     if (this.paused) return;
 
     if (this.state.status === 'playing') {
-      this.waveMgr.update(dt, (e) => this.enemies.push(e));
+      this.waveMgr.update(dt, (e) => {
+        this.enemies.push(e);
+        // Boss entrance effect — triggered first time a boss-tier enemy spawns
+        const isBoss = e.sprite === 'enemyBoss' || e.hpMax >= 500;
+        if (isBoss && !this.bossSeen.has(e.sprite + e.hpMax)) {
+          this.bossSeen.add(e.sprite + e.hpMax);
+          this.bossEntranceFlash = 1;
+          this.ctx.renderer.shake(0.5, 8);
+        }
+      });
       // Process pending spawns (from splitters etc.)
       for (let i = this.pendingSpawns.length - 1; i >= 0; i--) {
         this.pendingSpawns[i].delay -= dt;
@@ -414,6 +475,27 @@ export class GameScene extends BaseScene {
       drawPathTile(r.ctx, tx * T, ty * T, T, theme);
     }
 
+    // Flowing path indicators — dots slide along path showing direction
+    const totalLen = this.path.totalLength;
+    const dotSpacing = 60; // world px between dots
+    const flowSpeed = 40; // world px per second
+    const flowOffset = (this.elapsed * flowSpeed) % dotSpacing;
+    for (let d = -flowOffset; d < totalLen; d += dotSpacing) {
+      if (d < 0) continue;
+      const p = this.path.pointAt(d);
+      r.ctx.save();
+      r.ctx.globalAlpha = 0.5;
+      r.ctx.fillStyle = '#ffd166';
+      r.ctx.beginPath();
+      r.ctx.arc(p.x, p.y, 2.5, 0, Math.PI * 2);
+      r.ctx.fill();
+      r.ctx.globalAlpha = 0.2;
+      r.ctx.beginPath();
+      r.ctx.arc(p.x, p.y, 5, 0, Math.PI * 2);
+      r.ctx.fill();
+      r.ctx.restore();
+    }
+
     for (const t of this.towers) {
       const lv = t.currentLevel();
       const isSelected = this.selectedExisting === t;
@@ -492,9 +574,24 @@ export class GameScene extends BaseScene {
     }
 
     for (const f of this.floaters) {
-      const alpha = Math.max(0, Math.min(1, f.life / f.maxLife));
+      const t = f.life / f.maxLife;
+      const alpha = Math.max(0, Math.min(1, t));
+      // Punch-in: scale starts at 1.6 and settles to 1.0
+      const punch = 1 + Math.max(0, (1 - t) < 0.2 ? 0 : t * 0.6);
+      r.ctx.save();
       r.ctx.globalAlpha = alpha;
-      r.drawTextWorld(f.text, f.x - 8, f.y - 20, f.color, f.size, true);
+      r.ctx.translate(f.x, f.y - 20);
+      r.ctx.scale(punch, punch);
+      // Dark outline for legibility
+      r.ctx.strokeStyle = 'rgba(0,0,0,0.8)';
+      r.ctx.lineWidth = 3;
+      r.ctx.font = `bold ${f.size}px system-ui, sans-serif`;
+      r.ctx.textAlign = 'center';
+      r.ctx.textBaseline = 'middle';
+      r.ctx.strokeText(f.text, 0, 0);
+      r.ctx.fillStyle = f.color;
+      r.ctx.fillText(f.text, 0, 0);
+      r.ctx.restore();
       r.ctx.globalAlpha = 1;
     }
 
@@ -543,6 +640,17 @@ export class GameScene extends BaseScene {
       }
     }
 
+    // Boss entrance red flash (fade)
+    if (this.bossEntranceFlash > 0) {
+      r.ctx.save();
+      r.ctx.globalAlpha = this.bossEntranceFlash * 0.35;
+      r.drawScreenRect(0, 0, vw, vh, '#ff3030');
+      r.ctx.restore();
+    }
+
+    // Wave banner overlay
+    renderBanner(r.ctx, this.banner, vw, vh);
+
     // Achievement toasts
     this.renderAchievementToasts(r, vw);
 
@@ -552,14 +660,43 @@ export class GameScene extends BaseScene {
     // End overlay
     if (this.state.status === 'won' || this.state.status === 'lost') this.renderEndOverlay(r, vw, vh);
 
+    // Star rain (on top of everything)
+    if (this.starRain.length > 0) {
+      const dpr = window.devicePixelRatio || 1;
+      r.ctx.save();
+      for (const s of this.starRain) {
+        const alpha = Math.max(0, Math.min(1, s.life / 2));
+        r.ctx.save();
+        r.ctx.globalAlpha = alpha;
+        r.ctx.translate(s.x * dpr, s.y * dpr);
+        r.ctx.rotate(s.rot);
+        r.ctx.fillStyle = '#ffd166';
+        r.ctx.shadowColor = '#ffd166';
+        r.ctx.shadowBlur = 8 * dpr;
+        r.ctx.font = `bold ${s.size * dpr}px system-ui, sans-serif`;
+        r.ctx.textAlign = 'center';
+        r.ctx.textBaseline = 'middle';
+        r.ctx.fillText('★', 0, 0);
+        r.ctx.restore();
+      }
+      r.ctx.restore();
+    }
+
     this.dialogue.render(r);
   }
 
   private renderHUD(r: import('../engine/Renderer.ts').Renderer, vw: number): void {
     r.drawScreenVerticalGradient(0, 0, vw, 62, 'rgba(8,12,22,0.95)', 'rgba(8,12,22,0.7)');
 
-    r.drawTextScreen(`💰 ${this.state.gold}`, 12, 12, '#ffd166', 17, true);
-    r.drawTextScreen(`❤ ${this.state.lives}`, 110, 12, '#ff8a8a', 17, true);
+    const goldPulseScale = this.goldPulse > 0 ? 1 + (this.goldPulse / 0.35) * (this.goldPulseSign > 0 ? 0.25 : 0.15) : 1;
+    const goldColor = this.goldPulse > 0 ? (this.goldPulseSign > 0 ? '#fff3a8' : '#ff9f43') : '#ffd166';
+    const goldSize = Math.round(17 * goldPulseScale);
+    r.drawTextScreen(`💰 ${this.state.gold}`, 12, 12 - (goldSize - 17) / 2, goldColor, goldSize, true);
+
+    const lifePulseScale = this.lifePulse > 0 ? 1 + (this.lifePulse / 0.5) * 0.3 : 1;
+    const lifeColor = this.lifePulse > 0 ? '#ffffff' : '#ff8a8a';
+    const lifeSize = Math.round(17 * lifePulseScale);
+    r.drawTextScreen(`❤ ${this.state.lives}`, 110, 12 - (lifeSize - 17) / 2, lifeColor, lifeSize, true);
     if (this.isEndless) {
       r.drawTextScreen(`⚑ 無盡 ${this.state.waveIndex + 1}`, 184, 12, '#c878ff', 16, true);
     } else {
