@@ -39,6 +39,8 @@ export interface SaveData {
   achievements: Record<string, { unlockedAt: number }>;
   stats: GlobalStats;
   endlessHighScore?: EndlessScore;
+  /** Meta-progression: map of upgrade id → current tier (0-3). */
+  metaUpgrades?: Record<string, number>;
 }
 
 const SAVE_KEY = 'td-solenne-save-v1';

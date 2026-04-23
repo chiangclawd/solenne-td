@@ -3,11 +3,13 @@ import { LevelSelectScene } from './LevelSelectScene.ts';
 import { SettingsScene } from './SettingsScene.ts';
 import { CodexScene } from './CodexScene.ts';
 import { CreditsScene } from './CreditsScene.ts';
+import { UpgradeScene } from './UpgradeScene.ts';
 import { GameScene } from './GameScene.ts';
 import { COLORS, TILE_SIZE, WORLD_WIDTH, WORLD_HEIGHT, GRID_COLS, GRID_ROWS } from '../config.ts';
 import { totalStars, countCompleted } from '../storage/SaveData.ts';
 import { ACHIEVEMENTS } from '../game/Achievements.ts';
 import { generateEndlessLevel } from '../game/WaveGenerator.ts';
+import { availableStars } from '../game/MetaUpgrades.ts';
 import { drawGoldFrame, drawGlossButton, drawGlowTitle, drawGrassTile } from '../graphics/UIPainter.ts';
 import { drawWorldSilhouette } from '../graphics/WorldBackground.ts';
 
@@ -42,6 +44,7 @@ export class MainMenuScene extends BaseScene {
   private playBtn: Rect | null = null;
   private levelsBtn: Rect | null = null;
   private endlessBtn: Rect | null = null;
+  private upgradeBtn: Rect | null = null;
   private codexBtn: Rect | null = null;
   private settingsBtn: Rect | null = null;
   private creditsBtn: Rect | null = null;
@@ -143,9 +146,9 @@ export class MainMenuScene extends BaseScene {
     r.drawScreenRoundedRect(barX, barY, barW * pct, barH, 3, '#ffd166');
 
     // Buttons
-    const bw = 240, bh = 42;
-    const gap = 8;
-    const baseY = vh * 0.54;
+    const bw = 240, bh = 40;
+    const gap = 7;
+    const baseY = vh * 0.50;
     const cx = (vw - bw) / 2;
 
     const mkBtn = (label: string, sub: string | null, y: number, primary = false): Rect => {
@@ -179,9 +182,15 @@ export class MainMenuScene extends BaseScene {
       hs ? `最佳紀錄：${hs.waves} 波 (${hs.difficulty})` : '虛空不會停 · 挑戰高分',
       baseY + (bh + gap) * 2,
     );
-    this.codexBtn = mkBtn('🛠 塔百科', '檢視 9 座塔 · 17 種敵人', baseY + (bh + gap) * 3);
-    this.settingsBtn = mkBtn('⚙ 設定', '音量 · 難度 · 效果', baseY + (bh + gap) * 4);
-    this.creditsBtn = mkBtn('✦ 致謝', '製作團隊 / 資源', baseY + (bh + gap) * 5);
+    const avail = availableStars(this.ctx.save);
+    this.upgradeBtn = mkBtn(
+      '★ 星星升級',
+      avail > 0 ? `可用 ${avail} ★ · 永久強化` : '累積星星解鎖永久加成',
+      baseY + (bh + gap) * 3,
+    );
+    this.codexBtn = mkBtn('🛠 塔百科', '9 塔 · 17 敵', baseY + (bh + gap) * 4);
+    this.settingsBtn = mkBtn('⚙ 設定', '音量 · 難度 · 效果', baseY + (bh + gap) * 5);
+    this.creditsBtn = mkBtn('✦ 致謝', '製作團隊 / 資源', baseY + (bh + gap) * 6);
 
     // Footer
     r.drawTextScreenCenter(
@@ -211,6 +220,11 @@ export class MainMenuScene extends BaseScene {
     if (this.endlessBtn && this.inside(screenX, screenY, this.endlessBtn)) {
       this.ctx.audio.click();
       this.ctx.transition(new GameScene(this.ctx, generateEndlessLevel()));
+      return;
+    }
+    if (this.upgradeBtn && this.inside(screenX, screenY, this.upgradeBtn)) {
+      this.ctx.audio.click();
+      this.ctx.transition(new UpgradeScene(this.ctx));
       return;
     }
     if (this.codexBtn && this.inside(screenX, screenY, this.codexBtn)) {

@@ -18,6 +18,7 @@ import { recordCompletion, getStars } from '../storage/SaveData.ts';
 import type { SceneContext } from './SceneContext.ts';
 import type { Difficulty } from '../storage/SaveData.ts';
 import { generateEndlessWave } from '../game/WaveGenerator.ts';
+import { upgradeValue } from '../game/MetaUpgrades.ts';
 import {
   drawTowerBase, drawTowerTurret, drawEnemy, drawProjectile,
   drawTowerIconScreen, drawEnemyIconScreen,
@@ -82,6 +83,16 @@ export class GameScene extends BaseScene {
   private readonly dialogue = new DialogueBox();
   private readonly difficulty: Difficulty;
   private readonly diffMod: typeof DIFF_MOD[Difficulty];
+  private readonly metaMod: {
+    startGold: number;
+    startLives: number;
+    damageMul: number;
+    rangeMul: number;
+    fireRateMul: number;
+    killRewardMul: number;
+    sellBonus: number;
+    costDiscount: number;
+  };
 
   private selectedTowerId: string;
   private selectedExisting: Tower | null = null;
@@ -111,6 +122,16 @@ export class GameScene extends BaseScene {
     this.isEndless = level.endless === true;
     this.difficulty = ctx.save.settings.difficulty;
     this.diffMod = DIFF_MOD[this.difficulty];
+    this.metaMod = {
+      startGold: upgradeValue(ctx.save, 'startGold'),
+      startLives: upgradeValue(ctx.save, 'startLives'),
+      damageMul: 1 + upgradeValue(ctx.save, 'towerDamage'),
+      rangeMul: 1 + upgradeValue(ctx.save, 'towerRange'),
+      fireRateMul: 1 + upgradeValue(ctx.save, 'towerFireRate'),
+      killRewardMul: 1 + upgradeValue(ctx.save, 'killReward'),
+      sellBonus: upgradeValue(ctx.save, 'sellValue'),
+      costDiscount: upgradeValue(ctx.save, 'towerCost'),
+    };
     this.path = new Path(level.path.map((p) => ({ x: p.x * T, y: p.y * T })));
     this.pathTiles = this.path.computeOccupiedTiles(T);
     this.obstacleTiles = new Set<string>();
@@ -125,7 +146,9 @@ export class GameScene extends BaseScene {
     this.availableTowers = TOWER_ORDER.filter((id) => allow.has(id));
     if (this.availableTowers.length === 0) throw new Error('No available towers');
     this.selectedTowerId = this.availableTowers[0];
-    this.state = new GameState(level.startingGold, level.startingLives);
+    const boostedGold = level.startingGold + this.metaMod.startGold;
+    const boostedLives = level.startingLives + this.metaMod.startLives;
+    this.state = new GameState(boostedGold, boostedLives);
     this.waveMgr = new WaveManager(this.waves, this.path);
     this.weather = new Weather(level.world);
   }
@@ -336,7 +359,12 @@ export class GameScene extends BaseScene {
       }
       for (const e of this.enemies) e.update(dt, this.enemies);
       const projectilesBefore = this.projectiles.length;
-      for (const t of this.towers) t.update(dt, this.enemies, this.projectiles, this.chainSegments);
+      const buffs = {
+        damageMul: this.metaMod.damageMul,
+        rangeMul: this.metaMod.rangeMul,
+        fireRateMul: this.metaMod.fireRateMul,
+      };
+      for (const t of this.towers) t.update(dt, this.enemies, this.projectiles, this.chainSegments, buffs);
       // Muzzle flash for any tower that fired
       for (let i = projectilesBefore; i < this.projectiles.length; i++) {
         const p = this.projectiles[i];
@@ -404,11 +432,12 @@ export class GameScene extends BaseScene {
             this.ctx.audio.leak();
             this.ctx.renderer.shake(0.2, 4);
           } else {
-            this.state.gold += e.reward;
+            const reward = Math.round(e.reward * this.metaMod.killRewardMul);
+            this.state.gold += reward;
             this.state.kills++;
             this.ctx.save.stats.totalKills++;
-            this.ctx.save.stats.totalGoldEarned += e.reward;
-            this.spawnFloater(p.x, p.y, `+${e.reward}`, '#ffd166');
+            this.ctx.save.stats.totalGoldEarned += reward;
+            this.spawnFloater(p.x, p.y, `+${reward}`, '#ffd166');
             this.ctx.audio.enemyDie();
             this.particles.enemyDeath(p.x, p.y);
             // Gold coins fly to HUD
@@ -554,23 +583,22 @@ export class GameScene extends BaseScene {
 
     for (const t of this.towers) {
       const lv = t.currentLevel();
+      const effRange = lv.range * this.metaMod.rangeMul;
       const isSelected = this.selectedExisting === t;
       if (isSelected) {
-        // Breathing range ring: inner fixed + outer pulsing
         const pulse = 0.5 + Math.sin(this.elapsed * 3) * 0.5;
         r.ctx.save();
         r.ctx.globalAlpha = 0.6;
-        r.drawCircleOutline(t.x, t.y, lv.range, '#ffd166', 2);
+        r.drawCircleOutline(t.x, t.y, effRange, '#ffd166', 2);
         r.ctx.globalAlpha = 0.25 * pulse;
-        r.drawCircleOutline(t.x, t.y, lv.range + 4 + pulse * 6, '#ffd166', 2);
+        r.drawCircleOutline(t.x, t.y, effRange + 4 + pulse * 6, '#ffd166', 2);
         r.ctx.restore();
-        // Faint fill
         r.ctx.save();
         r.ctx.globalAlpha = 0.06;
-        r.drawCircle(t.x, t.y, lv.range, '#ffd166');
+        r.drawCircle(t.x, t.y, effRange, '#ffd166');
         r.ctx.restore();
       } else {
-        r.drawCircleOutline(t.x, t.y, lv.range, 'rgba(255, 220, 120, 0.14)', 1);
+        r.drawCircleOutline(t.x, t.y, effRange, 'rgba(255, 220, 120, 0.14)', 1);
       }
       drawTowerBase(r.ctx, t.x, t.y, T * 0.95);
       drawTowerTurret(r.ctx, t.config.id, t.x, t.y, t.turretRotation, t.level, t.fireAnim, t.buildAnim);
@@ -1049,7 +1077,8 @@ export class GameScene extends BaseScene {
       const rect: Rect = { x: bx, y: by, w: btnSize, h: btnSize + 4 };
       this.towerSelectorRects.push({ id, rect });
 
-      const baseCost = cfg.levels[0].cost;
+      const rawCost = cfg.levels[0].cost;
+      const baseCost = Math.round(rawCost * (1 - this.metaMod.costDiscount));
       const affordable = this.state.gold >= baseCost;
       const selected = id === this.selectedTowerId;
       r.drawScreenRoundedRect(bx, by, btnSize, btnSize, 8, affordable ? '#22304a' : '#1a1a22');
@@ -1094,7 +1123,7 @@ export class GameScene extends BaseScene {
     const padX = 16;
 
     const canUp = t.canUpgrade();
-    const upCost = t.nextUpgradeCost();
+    const upCost = Math.round(t.nextUpgradeCost() * (1 - this.metaMod.costDiscount));
     const canAfford = canUp && this.state.gold >= upCost;
     this.upgradeBtn = { x: padX, y: by, w: bw, h: bh };
     r.drawScreenRoundedRect(padX, by, bw, bh, 9, canAfford ? '#2c8cc7' : '#22304a');
@@ -1105,7 +1134,7 @@ export class GameScene extends BaseScene {
       r.drawTextScreenCenter('滿級', padX + bw / 2, by + bh / 2, '#ffd166', 16, true);
     }
 
-    const sellVal = t.sellValue();
+    const sellVal = t.sellValue(this.metaMod.sellBonus);
     const sellX = padX + bw + 8;
     this.sellBtn = { x: sellX, y: by, w: bw, h: bh };
     r.drawScreenRoundedRect(sellX, by, bw, bh, 9, '#22304a');
@@ -1182,7 +1211,7 @@ export class GameScene extends BaseScene {
       if (this.upgradeBtn && this.inside(screenX, screenY, this.upgradeBtn)) {
         const t = this.selectedExisting;
         if (t.canUpgrade()) {
-          const cost = t.nextUpgradeCost();
+          const cost = Math.round(t.nextUpgradeCost() * (1 - this.metaMod.costDiscount));
           if (this.state.gold >= cost) {
             this.state.gold -= cost;
             t.upgrade();
@@ -1193,7 +1222,7 @@ export class GameScene extends BaseScene {
       }
       if (this.sellBtn && this.inside(screenX, screenY, this.sellBtn)) {
         const t = this.selectedExisting;
-        this.state.gold += t.sellValue();
+        this.state.gold += t.sellValue(this.metaMod.sellBonus);
         const idx = this.towers.indexOf(t);
         if (idx >= 0) this.towers.splice(idx, 1);
         this.occupiedTiles.delete(`${t.tileX},${t.tileY}`);
@@ -1243,7 +1272,7 @@ export class GameScene extends BaseScene {
     if (this.pathTiles.has(key) || this.occupiedTiles.has(key) || this.obstacleTiles.has(key)) return;
     const cfg = TOWER_TYPES[this.selectedTowerId];
     if (!cfg) return;
-    const baseCost = cfg.levels[0].cost;
+    const baseCost = Math.round(cfg.levels[0].cost * (1 - this.metaMod.costDiscount));
     if (this.state.gold < baseCost) return;
     this.state.gold -= baseCost;
     this.towers.push(new Tower(tx, ty, T, cfg));

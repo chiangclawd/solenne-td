@@ -78,8 +78,8 @@ export class Tower {
     this.buildAnim = 1; // retrigger build anim on upgrade
   }
 
-  sellValue(): number {
-    return Math.floor(this.totalInvested * 0.5);
+  sellValue(bonus = 0): number {
+    return Math.floor(this.totalInvested * (0.5 + bonus));
   }
 
   update(
@@ -87,15 +87,18 @@ export class Tower {
     enemies: readonly Enemy[],
     projectiles: Projectile[],
     chainSegments: ChainSegment[],
+    buffs: TowerBuffs = { damageMul: 1, rangeMul: 1, fireRateMul: 1 },
   ): void {
     this.cooldown = Math.max(0, this.cooldown - dt);
-    if (this.fireAnim > 0) this.fireAnim = Math.max(0, this.fireAnim - dt * 6); // decays in ~0.17s
-    if (this.buildAnim > 0) this.buildAnim = Math.max(0, this.buildAnim - dt * 4); // ~0.25s
+    if (this.fireAnim > 0) this.fireAnim = Math.max(0, this.fireAnim - dt * 6);
+    if (this.buildAnim > 0) this.buildAnim = Math.max(0, this.buildAnim - dt * 4);
     const lv = this.currentLevel();
+
+    const effRange = lv.range * buffs.rangeMul;
 
     let target: Enemy | null = null;
     let bestProgress = -Infinity;
-    const r2 = lv.range * lv.range;
+    const r2 = effRange * effRange;
     for (const e of enemies) {
       if (!e.alive) continue;
       const p = e.position();
@@ -109,40 +112,47 @@ export class Tower {
     }
 
     if (!target) {
-      // Idle: slowly rotate the turret (scanning)
       this.idleScanPhase += dt * 0.4;
       const targetIdle = Math.sin(this.idleScanPhase) * 0.7;
-      // Smoothly drift rotation toward idle angle
       const delta = targetIdle - this.turretRotation;
       this.turretRotation += delta * dt * 1.5;
       return;
     }
 
-    if (target) {
-      const tp = target.position();
-      this.turretRotation = Math.atan2(tp.y - this.y, tp.x - this.x) + Math.PI / 2;
+    const tp = target.position();
+    this.turretRotation = Math.atan2(tp.y - this.y, tp.x - this.x) + Math.PI / 2;
 
-      if (this.cooldown === 0) {
-        let damage = lv.damage;
-        if (this.config.pierceResist) damage *= 1.3;
-        projectiles.push(new Projectile(
-          { x: this.x, y: this.y },
-          target,
-          {
-            damage,
-            speed: lv.projectileSpeed,
-            sprite: this.config.projectileSprite,
-            splashRadius: this.config.splashRadius ?? 0,
-            slowDuration: this.config.slowDuration ?? 0,
-            slowFactor: this.config.slowFactor ?? 1,
-            chainCount: this.config.chainCount ?? 0,
-            chainRange: this.config.chainRange ?? 0,
-            chainSegments: this.config.chainCount ? chainSegments : undefined,
-          },
-        ));
-        this.cooldown = 1 / lv.fireRate;
-        this.fireAnim = 1;
-      }
+    if (this.cooldown === 0) {
+      let damage = lv.damage * buffs.damageMul;
+      if (this.config.pierceResist) damage *= 1.3;
+      projectiles.push(new Projectile(
+        { x: this.x, y: this.y },
+        target,
+        {
+          damage,
+          speed: lv.projectileSpeed,
+          sprite: this.config.projectileSprite,
+          splashRadius: this.config.splashRadius ?? 0,
+          slowDuration: this.config.slowDuration ?? 0,
+          slowFactor: this.config.slowFactor ?? 1,
+          chainCount: this.config.chainCount ?? 0,
+          chainRange: this.config.chainRange ?? 0,
+          chainSegments: this.config.chainCount ? chainSegments : undefined,
+        },
+      ));
+      this.cooldown = 1 / (lv.fireRate * buffs.fireRateMul);
+      this.fireAnim = 1;
     }
   }
+
+  /** Visible range (used by GameScene for rendering range circles). */
+  effectiveRange(rangeMul: number = 1): number {
+    return this.currentLevel().range * rangeMul;
+  }
+}
+
+export interface TowerBuffs {
+  damageMul: number;
+  rangeMul: number;
+  fireRateMul: number;
 }
