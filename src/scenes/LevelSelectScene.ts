@@ -6,18 +6,27 @@ import { getStars, isUnlocked, totalStars, countCompleted } from '../storage/Sav
 import { COLORS, TILE_SIZE, GRID_COLS, GRID_ROWS, WORLD_WIDTH, WORLD_HEIGHT } from '../config.ts';
 import { drawGrassTile, drawGoldFrame } from '../graphics/UIPainter.ts';
 
-// Lazy-load world cover banner. User may drop public/assets/covers/worldN.png.
-const coverCache = new Map<number, HTMLImageElement | 'fail'>();
+// Lazy-load world cover banner with sequential WebP → PNG fallback.
+interface CoverState { extIdx: number; img: HTMLImageElement | null }
+const COVER_EXTS = ['webp', 'png'] as const;
+const coverCache = new Map<number, CoverState>();
 function getCover(worldId: number, base: string): HTMLImageElement | null {
-  const entry = coverCache.get(worldId);
-  if (entry === 'fail') return null;
-  if (entry) return entry.complete && entry.naturalWidth > 0 ? entry : null;
-  const img = new Image();
-  img.onerror = () => { coverCache.set(worldId, 'fail'); };
-  // Try png first (webp could also be added if desired)
-  img.src = `${base}assets/covers/world${worldId}.png`;
-  coverCache.set(worldId, img);
+  let st = coverCache.get(worldId);
+  if (!st) {
+    st = { extIdx: 0, img: null };
+    coverCache.set(worldId, st);
+    coverTryNext(worldId, base, st);
+  }
+  if (st.img && st.img.complete && st.img.naturalWidth > 0) return st.img;
   return null;
+}
+function coverTryNext(worldId: number, base: string, st: CoverState): void {
+  if (st.extIdx >= COVER_EXTS.length) return;
+  const ext = COVER_EXTS[st.extIdx];
+  const img = new Image();
+  img.onload = () => { st.img = img; };
+  img.onerror = () => { st.extIdx++; coverTryNext(worldId, base, st); };
+  img.src = `${base}assets/covers/world${worldId}.${ext}`;
 }
 import type { LevelData } from '../game/Level.ts';
 

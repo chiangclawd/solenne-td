@@ -8,37 +8,41 @@ export interface DialogueLine {
   portrait?: string;
 }
 
-const portraitCache = new Map<string, HTMLImageElement | 'fail'>();
+// Per-portrait loader state: sequential PNG → WebP → SVG fallback.
+// Never shows a lower-priority image while a higher-priority one is still pending —
+// this prevents the "SVG flashes then gets replaced by PNG" problem.
+interface PortraitState {
+  extIdx: number;
+  img: HTMLImageElement | null;
+  exhausted: boolean;
+}
+const EXTS = ['webp', 'png', 'svg'] as const;
+const portraitState = new Map<string, PortraitState>();
 
-/**
- * Try multiple extensions in priority order (PNG > WebP > SVG).
- * Returns the first loaded image, or null if all still loading.
- * AI-generated PNGs drop-in override the bundled SVG placeholder.
- */
 function getPortrait(id: string, baseUrl: string): HTMLImageElement | null {
-  const exts = ['png', 'webp', 'svg'];
-  for (const ext of exts) {
-    const src = `${baseUrl}assets/portraits/${id}.${ext}`;
-    const cached = portraitCache.get(src);
-    if (cached === 'fail') continue;
-    if (cached) {
-      if (cached.complete && cached.naturalWidth > 0) return cached;
-      continue;
-    }
-    const img = new Image();
-    img.onerror = () => { portraitCache.set(src, 'fail'); };
-    img.src = src;
-    portraitCache.set(src, img);
+  let st = portraitState.get(id);
+  if (!st) {
+    st = { extIdx: 0, img: null, exhausted: false };
+    portraitState.set(id, st);
+    tryNext(id, baseUrl, st);
   }
-  // Return first loaded among ext priority
-  for (const ext of exts) {
-    const src = `${baseUrl}assets/portraits/${id}.${ext}`;
-    const cached = portraitCache.get(src);
-    if (cached && cached !== 'fail' && cached.complete && cached.naturalWidth > 0) {
-      return cached;
-    }
-  }
+  // Ready image available?
+  if (st.img && st.img.complete && st.img.naturalWidth > 0) return st.img;
+  // Loading: show nothing (caller skips portrait area)
   return null;
+}
+
+function tryNext(id: string, baseUrl: string, st: PortraitState): void {
+  if (st.extIdx >= EXTS.length) { st.exhausted = true; return; }
+  const ext = EXTS[st.extIdx];
+  const src = `${baseUrl}assets/portraits/${id}.${ext}`;
+  const img = new Image();
+  img.onload = () => { st.img = img; };
+  img.onerror = () => {
+    st.extIdx++;
+    tryNext(id, baseUrl, st);
+  };
+  img.src = src;
 }
 
 export class DialogueBox {

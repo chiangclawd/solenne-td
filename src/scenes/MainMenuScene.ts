@@ -11,16 +11,26 @@ import { generateEndlessLevel } from '../game/WaveGenerator.ts';
 import { drawGoldFrame, drawGlossButton, drawGlowTitle, drawGrassTile } from '../graphics/UIPainter.ts';
 import { drawWorldSilhouette } from '../graphics/WorldBackground.ts';
 
-// Optional hero image at public/assets/hero.png — replaces silhouette if present
-let heroImg: HTMLImageElement | 'fail' | null = null;
+// Optional hero image — tries WebP → PNG, sequential fallback
+const HERO_EXTS = ['webp', 'png'] as const;
+let heroState: { extIdx: number; img: HTMLImageElement | null } | null = null;
 function tryHero(base: string): HTMLImageElement | null {
-  if (heroImg === 'fail') return null;
-  if (heroImg) return heroImg.complete && heroImg.naturalWidth > 0 ? heroImg : null;
-  const img = new Image();
-  img.onerror = () => { heroImg = 'fail'; };
-  img.src = `${base}assets/hero.png`;
-  heroImg = img;
+  if (!heroState) {
+    heroState = { extIdx: 0, img: null };
+    heroTryNext(base);
+  }
+  const st = heroState;
+  if (st.img && st.img.complete && st.img.naturalWidth > 0) return st.img;
   return null;
+}
+function heroTryNext(base: string): void {
+  const st = heroState!;
+  if (st.extIdx >= HERO_EXTS.length) return;
+  const ext = HERO_EXTS[st.extIdx];
+  const img = new Image();
+  img.onload = () => { st.img = img; };
+  img.onerror = () => { st.extIdx++; heroTryNext(base); };
+  img.src = `${base}assets/hero.${ext}`;
 }
 
 interface Rect { x: number; y: number; w: number; h: number }
