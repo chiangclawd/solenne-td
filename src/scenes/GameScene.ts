@@ -100,6 +100,8 @@ export class GameScene extends BaseScene {
   private speedIdx = 0;
   private elapsed = 0;
   private hoverTile: { x: number; y: number } | null = null;
+  /** True when current touch started on a tower-selector button; lets pointerup place on tile. */
+  private dragFromSelector = false;
 
   // Transient UI rects
   private nextWaveBtn: Rect | null = null;
@@ -192,6 +194,39 @@ export class GameScene extends BaseScene {
   }
 
   override onHoverEnd(): void { this.hoverTile = null; }
+
+  /**
+   * Called when touch / pointer lifts. If this gesture started on a tower-selector
+   * button (drag-to-place), try to build a tower where the finger was released.
+   */
+  override onRelease(screenX: number, screenY: number, worldX: number, worldY: number): void {
+    if (!this.dragFromSelector) return;
+    this.dragFromSelector = false;
+    // Skip if release landed on any selector button (user let go on the bar)
+    for (const b of this.towerSelectorRects) {
+      if (this.inside(screenX, screenY, b.rect)) return;
+    }
+    if (this.paused || this.dialogue.isActive()) return;
+    if (this.state.status === 'won' || this.state.status === 'lost') return;
+    if (this.selectedExisting) return;
+    // Place tower at release position
+    const tx = Math.floor(worldX / T);
+    const ty = Math.floor(worldY / T);
+    if (tx < 0 || tx >= GRID_COLS || ty < 0 || ty >= GRID_ROWS) return;
+    const key = `${tx},${ty}`;
+    if (this.pathTiles.has(key) || this.occupiedTiles.has(key) || this.obstacleTiles.has(key)) return;
+    const cfg = TOWER_TYPES[this.selectedTowerId];
+    if (!cfg) return;
+    const cost = Math.round(cfg.levels[0].cost * (1 - this.metaMod.costDiscount));
+    if (this.state.gold < cost) return;
+    this.state.gold -= cost;
+    this.towers.push(new Tower(tx, ty, T, cfg));
+    this.occupiedTiles.add(key);
+    this.ctx.save.stats.totalTowersBuilt++;
+    const unlocked = this.ctx.achievements.check(this.ctx.save, { type: 'towerPlaced', towerId: this.selectedTowerId });
+    if (unlocked.length > 0) this.ctx.audio.achievement();
+    this.ctx.audio.place();
+  }
 
   private resetLevel(): void {
     this.state.reset();
@@ -1240,6 +1275,7 @@ export class GameScene extends BaseScene {
         if (this.inside(screenX, screenY, b.rect)) {
           this.ctx.audio.click();
           this.selectedTowerId = b.id;
+          this.dragFromSelector = true;
           return;
         }
       }

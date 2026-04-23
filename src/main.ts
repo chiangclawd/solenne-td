@@ -98,6 +98,9 @@ async function main(): Promise<void> {
     if (!ev) { sceneManager.current?.onHoverEnd?.(); return; }
     sceneManager.current?.onHover?.(ev.screenX, ev.screenY, ev.world.x, ev.world.y);
   });
+  input.onRelease((ev) => {
+    sceneManager.current?.onRelease?.(ev.screenX, ev.screenY, ev.world.x, ev.world.y);
+  });
 
   loop.start();
 }
