@@ -752,7 +752,9 @@ export class GameScene extends BaseScene {
 
       if (this.state.status === 'idle' && this.state.waveIndex < this.waveMgr.totalWaves() && !this.selectedExisting) {
         const bw = 220, bh = 56;
-        const bx = (vw - bw) / 2, by = vh - 64 - bh - 14;
+        // Place above the (now taller) tower selector bar
+        const selectorBarH = 94;
+        const bx = (vw - bw) / 2, by = vh - selectorBarH - bh - 10;
         this.nextWaveBtn = { x: bx, y: by, w: bw, h: bh };
         const pulse = 0.85 + Math.sin(this.elapsed * 3) * 0.15;
         r.ctx.globalAlpha = pulse;
@@ -1023,13 +1025,20 @@ export class GameScene extends BaseScene {
   }
 
   private renderTowerSelector(r: import('../engine/Renderer.ts').Renderer, vw: number, vh: number): void {
-    const btnSize = 46, gap = 3;
     const n = this.availableTowers.length;
+    // Fit buttons to screen width with 4px gap; cap between 50-72px
+    const gap = 4;
+    const maxBtn = Math.min(72, Math.floor((vw - 20 - gap * (n - 1)) / n));
+    const btnSize = Math.max(50, maxBtn);
     const totalW = btnSize * n + gap * (n - 1);
     const startX = (vw - totalW) / 2;
-    const selY = vh - 64;
+    const barH = btnSize + 22; // extra vertical room for larger cost label
+    const selY = vh - barH;
 
-    r.drawScreenRect(0, selY - 8, vw, btnSize + 16, 'rgba(8, 12, 22, 0.9)');
+    r.drawScreenRect(0, selY - 4, vw, barH + 4, 'rgba(8, 12, 22, 0.92)');
+
+    const costBandH = 18;
+    const iconArea = btnSize - costBandH - 2;
 
     for (let i = 0; i < n; i++) {
       const id = this.availableTowers[i];
@@ -1037,16 +1046,25 @@ export class GameScene extends BaseScene {
       if (!cfg) continue;
       const bx = startX + i * (btnSize + gap);
       const by = selY;
-      const rect: Rect = { x: bx, y: by, w: btnSize, h: btnSize };
+      const rect: Rect = { x: bx, y: by, w: btnSize, h: btnSize + 4 };
       this.towerSelectorRects.push({ id, rect });
 
       const baseCost = cfg.levels[0].cost;
       const affordable = this.state.gold >= baseCost;
       const selected = id === this.selectedTowerId;
-      r.drawScreenRoundedRect(bx, by, btnSize, btnSize, 7, affordable ? '#22304a' : '#1a1a22');
-      drawTowerIconScreen(r.ctx, id, bx + 5, by + 3, btnSize - 10, 0);
-      r.drawTextScreenCenter(`${baseCost}`, bx + btnSize / 2, by + btnSize - 7, affordable ? '#ffd166' : '#666', 9, true);
-      if (selected) r.drawScreenRoundedRectOutline(bx, by, btnSize, btnSize, 7, '#ffd166', 2);
+      r.drawScreenRoundedRect(bx, by, btnSize, btnSize, 8, affordable ? '#22304a' : '#1a1a22');
+      drawTowerIconScreen(r.ctx, id, bx + 4, by + 2, iconArea, 0);
+      // Cost band at bottom — darker background for legibility
+      r.drawScreenRect(bx + 2, by + btnSize - costBandH, btnSize - 4, costBandH, 'rgba(0,0,0,0.4)');
+      r.drawTextScreenCenter(
+        `💰${baseCost}`,
+        bx + btnSize / 2,
+        by + btnSize - costBandH / 2,
+        affordable ? '#ffd166' : '#888',
+        14,
+        true,
+      );
+      if (selected) r.drawScreenRoundedRectOutline(bx, by, btnSize, btnSize, 8, '#ffd166', 2.5);
       if (!affordable) r.drawScreenRect(bx, by, btnSize, btnSize, 'rgba(8,12,22,0.55)');
     }
   }
@@ -1055,49 +1073,49 @@ export class GameScene extends BaseScene {
     const t = this.selectedExisting;
     if (!t) return;
     const vh = this.ctx.renderer.vh();
-    const panelH = 108;
+    const panelH = 128;
     const panelY = vh - panelH - 8;
-    r.drawScreenRect(0, panelY, vw, panelH + 8, 'rgba(8, 12, 22, 0.94)');
-    r.drawScreenRect(0, panelY, vw, 1, 'rgba(255,215,100,0.3)');
+    r.drawScreenRect(0, panelY, vw, panelH + 8, 'rgba(8, 12, 22, 0.95)');
+    r.drawScreenRect(0, panelY, vw, 2, 'rgba(255,215,100,0.4)');
 
     const lv = t.currentLevel();
     const title = `${t.config.name} · Lv ${t.level + 1}`;
-    r.drawTextScreen(title, 14, panelY + 10, '#ffd166', 14, true);
+    r.drawTextScreen(title, 16, panelY + 10, '#ffd166', 17, true);
     r.drawTextScreen(
-      `DMG ${lv.damage}  RNG ${(lv.range / T).toFixed(1)}t  ${lv.fireRate.toFixed(1)}/s` +
-      (t.config.splashRadius ? `  AOE` : '') +
-      (t.config.slowDuration ? `  SLOW` : ''),
-      14, panelY + 32, COLORS.text, 11,
+      `DMG ${lv.damage}  ·  RNG ${(lv.range / T).toFixed(1)}t  ·  ${lv.fireRate.toFixed(1)}/s` +
+      (t.config.splashRadius ? `  · AOE` : '') +
+      (t.config.slowDuration ? `  · SLOW` : ''),
+      16, panelY + 36, COLORS.text, 13,
     );
 
     const bw = (vw - 32 - 16) / 3;
-    const bh = 38;
-    const by = panelY + 58;
-    const padX = 14;
+    const bh = 46;
+    const by = panelY + 68;
+    const padX = 16;
 
     const canUp = t.canUpgrade();
     const upCost = t.nextUpgradeCost();
     const canAfford = canUp && this.state.gold >= upCost;
     this.upgradeBtn = { x: padX, y: by, w: bw, h: bh };
-    r.drawScreenRoundedRect(padX, by, bw, bh, 8, canAfford ? '#2c8cc7' : '#22304a');
+    r.drawScreenRoundedRect(padX, by, bw, bh, 9, canAfford ? '#2c8cc7' : '#22304a');
     if (canUp) {
-      r.drawTextScreenCenter(`⬆ Upgrade`, padX + bw / 2, by + bh / 2 - 5, '#fff', 11, true);
-      r.drawTextScreenCenter(`${upCost}g`, padX + bw / 2, by + bh / 2 + 9, canAfford ? '#ffd166' : '#666', 11, true);
+      r.drawTextScreenCenter(`⬆ 升級`, padX + bw / 2, by + bh / 2 - 8, '#fff', 14, true);
+      r.drawTextScreenCenter(`💰${upCost}`, padX + bw / 2, by + bh / 2 + 11, canAfford ? '#ffd166' : '#888', 14, true);
     } else {
-      r.drawTextScreenCenter('MAX LEVEL', padX + bw / 2, by + bh / 2, '#ffd166', 11, true);
+      r.drawTextScreenCenter('滿級', padX + bw / 2, by + bh / 2, '#ffd166', 16, true);
     }
 
     const sellVal = t.sellValue();
     const sellX = padX + bw + 8;
     this.sellBtn = { x: sellX, y: by, w: bw, h: bh };
-    r.drawScreenRoundedRect(sellX, by, bw, bh, 8, '#22304a');
-    r.drawTextScreenCenter('💰 Sell', sellX + bw / 2, by + bh / 2 - 5, '#fff', 11, true);
-    r.drawTextScreenCenter(`+${sellVal}g`, sellX + bw / 2, by + bh / 2 + 9, '#ffd166', 11, true);
+    r.drawScreenRoundedRect(sellX, by, bw, bh, 9, '#22304a');
+    r.drawTextScreenCenter('出售', sellX + bw / 2, by + bh / 2 - 8, '#fff', 14, true);
+    r.drawTextScreenCenter(`+💰${sellVal}`, sellX + bw / 2, by + bh / 2 + 11, '#ffd166', 14, true);
 
     const closeX = sellX + bw + 8;
     this.closePanelBtn = { x: closeX, y: by, w: bw, h: bh };
-    r.drawScreenRoundedRect(closeX, by, bw, bh, 8, '#1a1a22');
-    r.drawTextScreenCenter('✕ 關閉', closeX + bw / 2, by + bh / 2, '#fff', 12, true);
+    r.drawScreenRoundedRect(closeX, by, bw, bh, 9, '#1a1a22');
+    r.drawTextScreenCenter('✕ 關閉', closeX + bw / 2, by + bh / 2, '#fff', 14, true);
   }
 
   private cycleSpeed(): void {

@@ -45,11 +45,16 @@ function tryNext(id: string, baseUrl: string, st: PortraitState): void {
   img.src = src;
 }
 
+const ADVANCE_COOLDOWN = 0.25; // seconds — prevents mobile touch/mouse double-fire
+const SHOW_GRACE = 0.35;       // seconds after show() before tap can advance
+
 export class DialogueBox {
   private lines: readonly DialogueLine[] = [];
   private index: number = 0;
   private active: boolean = false;
   private onComplete: (() => void) | null = null;
+  private showTime = 0;          // performance.now() when shown
+  private lastAdvance = 0;       // performance.now() of last advance
 
   isActive(): boolean {
     return this.active;
@@ -64,10 +69,18 @@ export class DialogueBox {
     this.index = 0;
     this.active = true;
     this.onComplete = onComplete ?? null;
+    this.showTime = performance.now();
+    this.lastAdvance = this.showTime;
   }
 
   advance(): void {
     if (!this.active) return;
+    const now = performance.now();
+    // Grace window right after show — ignore accidental stale taps
+    if (now - this.showTime < SHOW_GRACE * 1000) return;
+    // Debounce rapid double-fire (mobile touch + synth mouse events)
+    if (now - this.lastAdvance < ADVANCE_COOLDOWN * 1000) return;
+    this.lastAdvance = now;
     this.index++;
     if (this.index >= this.lines.length) {
       this.active = false;
@@ -84,17 +97,17 @@ export class DialogueBox {
     const vw = renderer.vw();
     const vh = renderer.vh();
 
-    renderer.drawScreenRect(0, 0, vw, vh, 'rgba(0, 0, 0, 0.65)');
+    renderer.drawScreenRect(0, 0, vw, vh, 'rgba(0, 0, 0, 0.7)');
 
-    const boxMargin = 16;
+    const boxMargin = 14;
     const boxW = vw - boxMargin * 2;
-    const boxH = 180;
+    const boxH = 230;
     const boxX = boxMargin;
-    const boxY = vh - boxH - 30;
+    const boxY = vh - boxH - 24;
 
-    renderer.drawScreenRoundedRect(boxX + 2, boxY + 3, boxW, boxH, 12, 'rgba(0, 0, 0, 0.5)');
-    renderer.drawScreenRoundedRect(boxX, boxY, boxW, boxH, 12, 'rgba(12, 18, 32, 0.96)');
-    renderer.drawScreenRoundedRectOutline(boxX, boxY, boxW, boxH, 12, '#3a4a66', 2);
+    renderer.drawScreenRoundedRect(boxX + 2, boxY + 3, boxW, boxH, 14, 'rgba(0, 0, 0, 0.5)');
+    renderer.drawScreenRoundedRect(boxX, boxY, boxW, boxH, 14, 'rgba(12, 18, 32, 0.97)');
+    renderer.drawScreenRoundedRectOutline(boxX, boxY, boxW, boxH, 14, '#3a4a66', 2);
 
     const speakerColor = line.color ?? '#5eb8ff';
     let textOffsetX = 0;
@@ -105,30 +118,30 @@ export class DialogueBox {
       const img = getPortrait(line.portrait, base);
       if (img) {
         const dpr = window.devicePixelRatio || 1;
-        const pSize = 90;
+        const pSize = 108;
         renderer.ctx.save();
         renderer.ctx.beginPath();
-        renderer.ctx.roundRect((boxX + 12) * dpr, (boxY + 12) * dpr, pSize * dpr, pSize * dpr, 8 * dpr);
+        renderer.ctx.roundRect((boxX + 14) * dpr, (boxY + 14) * dpr, pSize * dpr, pSize * dpr, 10 * dpr);
         renderer.ctx.clip();
-        renderer.ctx.drawImage(img, (boxX + 12) * dpr, (boxY + 12) * dpr, pSize * dpr, pSize * dpr);
+        renderer.ctx.drawImage(img, (boxX + 14) * dpr, (boxY + 14) * dpr, pSize * dpr, pSize * dpr);
         renderer.ctx.restore();
-        textOffsetX = pSize + 12;
+        textOffsetX = pSize + 14;
       }
     }
 
-    renderer.drawTextScreen(line.speaker, boxX + 18 + textOffsetX, boxY + 14, speakerColor, 15);
+    renderer.drawTextScreen(line.speaker, boxX + 20 + textOffsetX, boxY + 16, speakerColor, 19, true);
 
-    const textSize = 13;
-    const padX = 18;
+    const textSize = 17;
+    const padX = 20;
     const maxCssPx = boxW - padX * 2 - textOffsetX;
     const wrapped = this.wrap(renderer, line.text, maxCssPx, textSize);
     wrapped.forEach((l, i) => {
-      renderer.drawTextScreen(l, boxX + padX + textOffsetX, boxY + 42 + i * 20, COLORS.text, textSize);
+      renderer.drawTextScreen(l, boxX + padX + textOffsetX, boxY + 48 + i * 26, COLORS.text, textSize);
     });
 
     renderer.drawTextScreen(
-      `${this.index + 1} / ${this.lines.length}  ·  tap to continue ▼`,
-      boxX + padX, boxY + boxH - 22, COLORS.textDim, 10,
+      `${this.index + 1} / ${this.lines.length}  ·  點擊繼續 ▼`,
+      boxX + padX, boxY + boxH - 24, COLORS.textDim, 12,
     );
   }
 
