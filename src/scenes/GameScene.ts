@@ -287,7 +287,13 @@ export class GameScene extends BaseScene {
 
       for (let i = this.enemies.length - 1; i >= 0; i--) {
         const e = this.enemies[i];
-        if (!e.alive) {
+        // Remove only after death fade completes
+        if (!e.alive && e.deathAnim >= 1) {
+          this.enemies.splice(i, 1);
+          continue;
+        }
+        if (!e.alive && !e.processed) {
+          e.processed = true;
           const p = e.position();
           if (e.reachedGoal) {
             this.state.lives--;
@@ -321,7 +327,6 @@ export class GameScene extends BaseScene {
               }
             }
           }
-          this.enemies.splice(i, 1);
         }
       }
       for (let i = this.projectiles.length - 1; i >= 0; i--) {
@@ -418,7 +423,7 @@ export class GameScene extends BaseScene {
         isSelected ? 2 : 1,
       );
       drawTowerBase(r.ctx, t.x, t.y, T * 0.95);
-      drawTowerTurret(r.ctx, t.config.id, t.x, t.y, t.turretRotation, t.level);
+      drawTowerTurret(r.ctx, t.config.id, t.x, t.y, t.turretRotation, t.level, t.fireAnim, t.buildAnim);
       // Level pips
       for (let i = 0; i <= t.level; i++) {
         r.drawCircle(t.x - 10 + i * 7, t.y + T * 0.4, 2.5, '#ffd166');
@@ -427,21 +432,23 @@ export class GameScene extends BaseScene {
 
     for (const e of this.enemies) {
       const p = e.position();
-      if (e.healsNearby) {
+      if (e.alive && e.healsNearby) {
         r.drawCircleOutline(p.x, p.y, e.healsNearby.radius, 'rgba(110, 235, 140, 0.25)', 1);
       }
-      drawEnemy(r.ctx, e.sprite, p.x, p.y, e.rotation, e.spriteSize, e.hitFlash);
-      if (e.isSlowed()) {
-        r.drawCircleOutline(p.x, p.y, e.radius + 3, 'rgba(110, 200, 255, 0.9)', 1.5);
+      drawEnemy(r.ctx, e.sprite, p.x, p.y, e.rotation, e.spriteSize, e.hitFlash, e.age, e.deathAnim);
+      if (e.alive) {
+        if (e.isSlowed()) {
+          r.drawCircleOutline(p.x, p.y, e.radius + 3, 'rgba(110, 200, 255, 0.9)', 1.5);
+        }
+        if (e.damageResist > 0.2) {
+          r.drawCircleOutline(p.x, p.y, e.radius + 1, 'rgba(200, 120, 255, 0.5)', 1);
+        }
+        const ratio = Math.max(0, e.hp / e.hpMax);
+        const bw = e.radius * 2;
+        r.drawRect(p.x - e.radius, p.y - e.radius - 8, bw, 3, 'rgba(0,0,0,0.6)');
+        const hpColor = ratio > 0.6 ? '#6ee17a' : ratio > 0.3 ? '#ffd166' : '#ff6b6b';
+        r.drawRect(p.x - e.radius, p.y - e.radius - 8, bw * ratio, 3, hpColor);
       }
-      if (e.damageResist > 0.2) {
-        r.drawCircleOutline(p.x, p.y, e.radius + 1, 'rgba(200, 120, 255, 0.5)', 1);
-      }
-      const ratio = Math.max(0, e.hp / e.hpMax);
-      const bw = e.radius * 2;
-      r.drawRect(p.x - e.radius, p.y - e.radius - 8, bw, 3, 'rgba(0,0,0,0.6)');
-      const hpColor = ratio > 0.6 ? '#6ee17a' : ratio > 0.3 ? '#ffd166' : '#ff6b6b';
-      r.drawRect(p.x - e.radius, p.y - e.radius - 8, bw * ratio, 3, hpColor);
     }
 
     for (const p of this.projectiles) {

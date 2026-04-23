@@ -43,6 +43,13 @@ export class Enemy {
   reachedGoal: boolean;
   rotation: number;
   hitFlash: number;
+  /** Seconds since spawn, drives walk wobble and other anims. */
+  age: number;
+  /** Death fade progress (0..1). 0 = alive, 1 = fully gone. */
+  deathAnim: number;
+  deathKind: 'killed' | 'leaked' | null;
+  /** Whether GameScene has already paid out gold/deducted life for this death. */
+  processed: boolean;
   private slowRemaining: number;
   private slowFactor: number;
   private healTimer: number;
@@ -64,6 +71,10 @@ export class Enemy {
     this.reachedGoal = false;
     this.rotation = 0;
     this.hitFlash = 0;
+    this.age = Math.random() * 2; // stagger wobble phase across units
+    this.deathAnim = 0;
+    this.deathKind = null;
+    this.processed = false;
     this.slowRemaining = 0;
     this.slowFactor = 1;
     this.healTimer = 0;
@@ -73,7 +84,10 @@ export class Enemy {
     const effective = amount * (1 - this.damageResist);
     this.hp -= effective;
     this.hitFlash = 0.12;
-    if (this.hp <= 0) this.alive = false;
+    if (this.hp <= 0 && this.alive) {
+      this.alive = false;
+      this.deathKind = 'killed';
+    }
   }
 
   applySlow(duration: number, factor: number): void {
@@ -89,7 +103,14 @@ export class Enemy {
   }
 
   update(dt: number, nearby?: readonly Enemy[]): void {
-    if (!this.alive) return;
+    // Death fade still animates after alive=false
+    if (!this.alive) {
+      if (this.deathKind && this.deathAnim < 1) {
+        this.deathAnim = Math.min(1, this.deathAnim + dt * 3); // ~0.33s
+      }
+      return;
+    }
+    this.age += dt;
 
     if (this.hitFlash > 0) this.hitFlash = Math.max(0, this.hitFlash - dt);
 
@@ -125,6 +146,7 @@ export class Enemy {
     if (this.progress >= this.path.totalLength) {
       this.alive = false;
       this.reachedGoal = true;
+      this.deathKind = 'leaked';
       return;
     }
     const now = this.path.pointAt(this.progress);

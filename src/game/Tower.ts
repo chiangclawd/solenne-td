@@ -34,6 +34,10 @@ export class Tower {
   level: number;
   totalInvested: number;
   turretRotation: number;
+  /** Seconds since firing, drives recoil animation (decays to 0). */
+  fireAnim: number;
+  /** Seconds since placement / upgrade, drives pop-in scale. */
+  buildAnim: number;
   private cooldown: number;
 
   constructor(tileX: number, tileY: number, tileSize: number, config: TowerConfig) {
@@ -46,6 +50,8 @@ export class Tower {
     this.totalInvested = config.levels[0].cost;
     this.cooldown = 0;
     this.turretRotation = 0;
+    this.fireAnim = 0;
+    this.buildAnim = 1; // starts at 1, decays to 0 (1 = fresh, 0 = stable)
   }
 
   currentLevel(): TowerLevel {
@@ -64,6 +70,7 @@ export class Tower {
     if (!this.canUpgrade()) return;
     this.level++;
     this.totalInvested += this.currentLevel().cost;
+    this.buildAnim = 1; // retrigger build anim on upgrade
   }
 
   sellValue(): number {
@@ -77,6 +84,8 @@ export class Tower {
     chainSegments: ChainSegment[],
   ): void {
     this.cooldown = Math.max(0, this.cooldown - dt);
+    if (this.fireAnim > 0) this.fireAnim = Math.max(0, this.fireAnim - dt * 6); // decays in ~0.17s
+    if (this.buildAnim > 0) this.buildAnim = Math.max(0, this.buildAnim - dt * 4); // ~0.25s
     const lv = this.currentLevel();
 
     let target: Enemy | null = null;
@@ -117,6 +126,7 @@ export class Tower {
           },
         ));
         this.cooldown = 1 / lv.fireRate;
+        this.fireAnim = 1;
       }
     }
   }

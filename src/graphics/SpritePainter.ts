@@ -140,10 +140,43 @@ export function drawTowerTurret(
   y: number,
   rotation: number,
   level: number, // 0, 1, 2
+  fireAnim: number = 0,
+  buildAnim: number = 0,
 ): void {
   ctx.save();
   ctx.translate(x, y);
+
+  // Build pop-in: overshoot 1.2x then settle
+  if (buildAnim > 0) {
+    const scale = 1 + Math.sin(buildAnim * Math.PI) * 0.22;
+    ctx.scale(scale, scale);
+  }
+
   ctx.rotate(rotation);
+
+  // Fire recoil: barrel pulled back along its own axis (-Y local)
+  if (fireAnim > 0) {
+    const recoil = -fireAnim * 3;
+    ctx.translate(0, recoil);
+  }
+
+  // Muzzle flash glow at tip when freshly fired
+  if (fireAnim > 0.4) {
+    const flashAlpha = (fireAnim - 0.4) * 1.6;
+    ctx.save();
+    ctx.globalAlpha = Math.min(1, flashAlpha);
+    ctx.globalCompositeOperation = 'lighter';
+    const g = ctx.createRadialGradient(0, -18, 1, 0, -18, 10);
+    g.addColorStop(0, '#fff8dc');
+    g.addColorStop(0.4, '#ffd166');
+    g.addColorStop(1, 'rgba(255, 180, 60, 0)');
+    ctx.fillStyle = g;
+    ctx.beginPath();
+    ctx.arc(0, -18, 10, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+
   switch (type) {
     case 'cannon': paintCannon(ctx, level); break;
     case 'quickShot': paintQuickShot(ctx, level); break;
@@ -332,10 +365,29 @@ export function drawEnemy(
   rotation: number,
   size: number,
   hitFlash: number,
+  age: number = 0,
+  deathAnim: number = 0,
 ): void {
   ctx.save();
   ctx.translate(x, y);
   ctx.rotate(rotation);
+
+  // Walk wobble (small vertical + rotational sway). Ignored for flying/boss-heavy units.
+  const wobbleSpeed = 8 + (type === 'enemyWraith' ? 4 : 0); // wraith floats faster
+  const wobbleMag = type === 'enemyBoss' || type === 'enemyIce' ? 0.02 : 0.05;
+  const bob = Math.sin(age * wobbleSpeed) * size * wobbleMag;
+  ctx.translate(0, bob);
+  if (type !== 'enemyPlane' && type !== 'enemyBoss') {
+    const sway = Math.sin(age * wobbleSpeed + Math.PI / 2) * 0.03;
+    ctx.rotate(sway);
+  }
+
+  // Death fade + shrink
+  if (deathAnim > 0) {
+    const scale = 1 - deathAnim * 0.6;
+    ctx.scale(scale, scale);
+    ctx.globalAlpha = Math.max(0, 1 - deathAnim);
+  }
 
   switch (type) {
     case 'enemySoldier': paintSoldier(ctx, size); break;
