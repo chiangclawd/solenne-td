@@ -425,5 +425,37 @@
         "enemy": "boss"
       }
     ]
+  ],
+  "obstacles": [
+    {
+      "x": 0,
+      "y": 11,
+      "kind": "ruin"
+    },
+    {
+      "x": 0,
+      "y": 9,
+      "kind": "tree"
+    },
+    {
+      "x": 0,
+      "y": 13,
+      "kind": "tree"
+    },
+    {
+      "x": 0,
+      "y": 6,
+      "kind": "tree"
+    },
+    {
+      "x": 0,
+      "y": 7,
+      "kind": "tree"
+    },
+    {
+      "x": 0,
+      "y": 12,
+      "kind": "tree"
+    }
   ]
 }

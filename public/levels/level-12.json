@@ -579,5 +579,52 @@
         "enemy": "finalBoss"
       }
     ]
+  ],
+  "obstacles": [
+    {
+      "x": 9,
+      "y": 10,
+      "kind": "ruin"
+    },
+    {
+      "x": 1,
+      "y": 9,
+      "kind": "ruin"
+    },
+    {
+      "x": 9,
+      "y": 8,
+      "kind": "ruin"
+    },
+    {
+      "x": 9,
+      "y": 11,
+      "kind": "rock"
+    },
+    {
+      "x": 0,
+      "y": 9,
+      "kind": "ruin"
+    },
+    {
+      "x": 0,
+      "y": 2,
+      "kind": "ruin"
+    },
+    {
+      "x": 9,
+      "y": 9,
+      "kind": "rock"
+    },
+    {
+      "x": 0,
+      "y": 6,
+      "kind": "rock"
+    },
+    {
+      "x": 5,
+      "y": 1,
+      "kind": "ruin"
+    }
   ]
 }

@@ -532,5 +532,42 @@
         "enemy": "armoredBoss"
       }
     ]
+  ],
+  "obstacles": [
+    {
+      "x": 8,
+      "y": 1,
+      "kind": "ruin"
+    },
+    {
+      "x": 0,
+      "y": 13,
+      "kind": "rock"
+    },
+    {
+      "x": 0,
+      "y": 4,
+      "kind": "ruin"
+    },
+    {
+      "x": 7,
+      "y": 2,
+      "kind": "rock"
+    },
+    {
+      "x": 7,
+      "y": 1,
+      "kind": "ruin"
+    },
+    {
+      "x": 0,
+      "y": 8,
+      "kind": "rock"
+    },
+    {
+      "x": 8,
+      "y": 2,
+      "kind": "rock"
+    }
   ]
 }

@@ -17,6 +17,13 @@ export interface DialogueLineData {
   portrait?: string;
 }
 
+export interface Obstacle {
+  x: number;
+  y: number;
+  /** 'tree' | 'rock' | 'barrel' | 'column' | 'crystal' | 'totem' | 'ruin' — kind of decoration. */
+  kind: string;
+}
+
 export interface LevelData {
   id: string;
   name: string;
@@ -32,4 +39,6 @@ export interface LevelData {
   outroLose?: readonly DialogueLineData[];
   endless?: boolean;
   coverImage?: string;
+  /** Optional obstacles — occupy tiles, block tower placement, drawn as decorations. */
+  obstacles?: readonly Obstacle[];
 }

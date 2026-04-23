@@ -474,5 +474,42 @@
         "enemy": "armoredBoss"
       }
     ]
+  ],
+  "obstacles": [
+    {
+      "x": 7,
+      "y": 1,
+      "kind": "rock"
+    },
+    {
+      "x": 0,
+      "y": 6,
+      "kind": "barrel"
+    },
+    {
+      "x": 5,
+      "y": 10,
+      "kind": "barrel"
+    },
+    {
+      "x": 8,
+      "y": 2,
+      "kind": "barrel"
+    },
+    {
+      "x": 5,
+      "y": 6,
+      "kind": "barrel"
+    },
+    {
+      "x": 7,
+      "y": 6,
+      "kind": "barrel"
+    },
+    {
+      "x": 4,
+      "y": 10,
+      "kind": "rock"
+    }
   ]
 }

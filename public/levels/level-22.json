@@ -575,5 +575,57 @@
         "enemy": "finalBoss"
       }
     ]
+  ],
+  "obstacles": [
+    {
+      "x": 7,
+      "y": 2,
+      "kind": "crystal"
+    },
+    {
+      "x": 9,
+      "y": 3,
+      "kind": "totem"
+    },
+    {
+      "x": 2,
+      "y": 8,
+      "kind": "crystal"
+    },
+    {
+      "x": 7,
+      "y": 3,
+      "kind": "totem"
+    },
+    {
+      "x": 2,
+      "y": 9,
+      "kind": "totem"
+    },
+    {
+      "x": 0,
+      "y": 4,
+      "kind": "rock"
+    },
+    {
+      "x": 1,
+      "y": 9,
+      "kind": "crystal"
+    },
+    {
+      "x": 1,
+      "y": 7,
+      "kind": "crystal"
+    },
+    {
+      "x": 0,
+      "y": 2,
+      "kind": "totem"
+    },
+    {
+      "x": 0,
+      "y": 3,
+      "kind": "totem"
+    }
   ]
 }

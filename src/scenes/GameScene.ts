@@ -25,6 +25,7 @@ import {
 import { ParticleSystem } from '../graphics/Particles.ts';
 import { ScreenParticleSystem } from '../graphics/ScreenParticles.ts';
 import { drawGrassTile, drawPathTile, themeForWorld } from '../graphics/UIPainter.ts';
+import { drawObstacle } from '../graphics/ObstaclePainter.ts';
 import { makeBanner, showBanner, updateBanner, renderBanner } from '../graphics/WaveBanner.ts';
 import { Weather } from '../graphics/Weather.ts';
 
@@ -52,6 +53,7 @@ export class GameScene extends BaseScene {
   private readonly level: LevelData;
   private readonly path: Path;
   private readonly pathTiles: Set<string>;
+  private readonly obstacleTiles: Set<string>;
   private waves: Wave[];
   private readonly isEndless: boolean;
   private readonly availableTowers: string[];
@@ -111,6 +113,10 @@ export class GameScene extends BaseScene {
     this.diffMod = DIFF_MOD[this.difficulty];
     this.path = new Path(level.path.map((p) => ({ x: p.x * T, y: p.y * T })));
     this.pathTiles = this.path.computeOccupiedTiles(T);
+    this.obstacleTiles = new Set<string>();
+    for (const ob of level.obstacles ?? []) {
+      this.obstacleTiles.add(`${ob.x},${ob.y}`);
+    }
     this.waves = level.waves.map((wave) => this.buildWave(wave));
     if (this.isEndless) {
       this.waves.push(this.buildWave(generateEndlessWave(1)));
@@ -518,6 +524,13 @@ export class GameScene extends BaseScene {
       drawPathTile(r.ctx, tx * T, ty * T, T, theme);
     }
 
+    // Obstacles (decorative + block tower placement)
+    for (const ob of this.level.obstacles ?? []) {
+      const cx = ob.x * T + T / 2;
+      const cy = ob.y * T + T / 2;
+      drawObstacle(r.ctx, ob.kind, cx, cy, T, this.elapsed);
+    }
+
     // Flowing path indicators — dots slide along path showing direction
     const totalLen = this.path.totalLength;
     const dotSpacing = 60; // world px between dots
@@ -573,7 +586,7 @@ export class GameScene extends BaseScene {
       const key = `${tx},${ty}`;
       const cfg = TOWER_TYPES[this.selectedTowerId];
       const onPath = this.pathTiles.has(key);
-      const occupied = this.occupiedTiles.has(key);
+      const occupied = this.occupiedTiles.has(key) || this.obstacleTiles.has(key);
       const canAfford = cfg ? this.state.gold >= cfg.levels[0].cost : false;
       const validSpot = !onPath && !occupied && canAfford;
       const cx = tx * T + T / 2;
@@ -1209,7 +1222,7 @@ export class GameScene extends BaseScene {
       return;
     }
 
-    if (this.pathTiles.has(key) || this.occupiedTiles.has(key)) return;
+    if (this.pathTiles.has(key) || this.occupiedTiles.has(key) || this.obstacleTiles.has(key)) return;
     const cfg = TOWER_TYPES[this.selectedTowerId];
     if (!cfg) return;
     const baseCost = cfg.levels[0].cost;

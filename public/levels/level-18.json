@@ -616,5 +616,57 @@
         "enemy": "armoredBoss"
       }
     ]
+  ],
+  "obstacles": [
+    {
+      "x": 8,
+      "y": 1,
+      "kind": "iceRock"
+    },
+    {
+      "x": 0,
+      "y": 7,
+      "kind": "deadTree"
+    },
+    {
+      "x": 8,
+      "y": 3,
+      "kind": "deadTree"
+    },
+    {
+      "x": 1,
+      "y": 13,
+      "kind": "rock"
+    },
+    {
+      "x": 7,
+      "y": 1,
+      "kind": "iceRock"
+    },
+    {
+      "x": 7,
+      "y": 3,
+      "kind": "deadTree"
+    },
+    {
+      "x": 0,
+      "y": 9,
+      "kind": "iceRock"
+    },
+    {
+      "x": 0,
+      "y": 10,
+      "kind": "iceRock"
+    },
+    {
+      "x": 9,
+      "y": 2,
+      "kind": "iceRock"
+    },
+    {
+      "x": 0,
+      "y": 11,
+      "kind": "iceRock"
+    }
   ]
 }
