@@ -98,8 +98,8 @@
       "y": 15.5
     }
   ],
-  "startingGold": 190,
-  "startingLives": 10,
+  "startingGold": 230,
+  "startingLives": 12,
   "availableTowers": [
     "cannon",
     "quickShot",
@@ -279,6 +279,252 @@
       {
         "delay": 0.7,
         "enemy": "plane"
+      },
+      {
+        "delay": 2.2,
+        "enemy": "armoredBoss"
+      }
+    ],
+    [
+      {
+        "delay": 0.45,
+        "enemy": "scout"
+      },
+      {
+        "delay": 0.45,
+        "enemy": "runner"
+      },
+      {
+        "delay": 0.45,
+        "enemy": "frostRaider"
+      },
+      {
+        "delay": 0.45,
+        "enemy": "scout"
+      },
+      {
+        "delay": 0.45,
+        "enemy": "runner"
+      },
+      {
+        "delay": 0.45,
+        "enemy": "frostRaider"
+      },
+      {
+        "delay": 0.7,
+        "enemy": "iceBeast"
+      },
+      {
+        "delay": 0.7,
+        "enemy": "iceBeast"
+      },
+      {
+        "delay": 0.7,
+        "enemy": "iceBeast"
+      },
+      {
+        "delay": 0.7,
+        "enemy": "iceBeast"
+      },
+      {
+        "delay": 0.7,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 0.7,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 0.8,
+        "enemy": "plane"
+      },
+      {
+        "delay": 0.8,
+        "enemy": "plane"
+      },
+      {
+        "delay": 1.4,
+        "enemy": "boss"
+      },
+      {
+        "delay": 1.4,
+        "enemy": "glacialBoss"
+      }
+    ],
+    [
+      {
+        "delay": 0.4,
+        "enemy": "scout"
+      },
+      {
+        "delay": 0.4,
+        "enemy": "runner"
+      },
+      {
+        "delay": 0.4,
+        "enemy": "frostRaider"
+      },
+      {
+        "delay": 0.4,
+        "enemy": "scout"
+      },
+      {
+        "delay": 0.4,
+        "enemy": "runner"
+      },
+      {
+        "delay": 0.6,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 0.6,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 0.6,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 0.6,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 0.6,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 0.7,
+        "enemy": "armored"
+      },
+      {
+        "delay": 0.7,
+        "enemy": "armored"
+      },
+      {
+        "delay": 0.7,
+        "enemy": "armored"
+      },
+      {
+        "delay": 0.7,
+        "enemy": "armored"
+      },
+      {
+        "delay": 0.7,
+        "enemy": "plane"
+      },
+      {
+        "delay": 0.7,
+        "enemy": "plane"
+      },
+      {
+        "delay": 0.7,
+        "enemy": "plane"
+      },
+      {
+        "delay": 0.7,
+        "enemy": "plane"
+      },
+      {
+        "delay": 1.3,
+        "enemy": "boss"
+      },
+      {
+        "delay": 1.5,
+        "enemy": "glacialBoss"
+      }
+    ],
+    [
+      {
+        "delay": 1.2,
+        "enemy": "glacialBoss"
+      },
+      {
+        "delay": 1.4,
+        "enemy": "armoredBoss"
+      },
+      {
+        "delay": 0.35,
+        "enemy": "scout"
+      },
+      {
+        "delay": 0.35,
+        "enemy": "runner"
+      },
+      {
+        "delay": 0.35,
+        "enemy": "frostRaider"
+      },
+      {
+        "delay": 0.35,
+        "enemy": "scout"
+      },
+      {
+        "delay": 0.35,
+        "enemy": "runner"
+      },
+      {
+        "delay": 0.35,
+        "enemy": "frostRaider"
+      },
+      {
+        "delay": 0.35,
+        "enemy": "scout"
+      },
+      {
+        "delay": 0.35,
+        "enemy": "runner"
+      },
+      {
+        "delay": 0.35,
+        "enemy": "frostRaider"
+      },
+      {
+        "delay": 0.55,
+        "enemy": "iceBeast"
+      },
+      {
+        "delay": 0.55,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 0.55,
+        "enemy": "armored"
+      },
+      {
+        "delay": 0.55,
+        "enemy": "iceBeast"
+      },
+      {
+        "delay": 0.55,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 0.55,
+        "enemy": "armored"
+      },
+      {
+        "delay": 0.6,
+        "enemy": "plane"
+      },
+      {
+        "delay": 0.6,
+        "enemy": "plane"
+      },
+      {
+        "delay": 0.6,
+        "enemy": "plane"
+      },
+      {
+        "delay": 0.6,
+        "enemy": "plane"
+      },
+      {
+        "delay": 0.6,
+        "enemy": "plane"
+      },
+      {
+        "delay": 2,
+        "enemy": "glacialBoss"
       },
       {
         "delay": 2.2,

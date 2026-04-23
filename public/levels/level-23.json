@@ -170,8 +170,8 @@
       "y": 15.5
     }
   ],
-  "startingGold": 250,
-  "startingLives": 12,
+  "startingGold": 290,
+  "startingLives": 14,
   "availableTowers": [
     "quickShot",
     "machineGun",
@@ -415,6 +415,288 @@
       {
         "delay": 2.5,
         "enemy": "voidBoss"
+      }
+    ],
+    [
+      {
+        "delay": 0.45,
+        "enemy": "runner"
+      },
+      {
+        "delay": 0.45,
+        "enemy": "wraith"
+      },
+      {
+        "delay": 0.45,
+        "enemy": "frostRaider"
+      },
+      {
+        "delay": 0.45,
+        "enemy": "runner"
+      },
+      {
+        "delay": 0.45,
+        "enemy": "wraith"
+      },
+      {
+        "delay": 0.45,
+        "enemy": "frostRaider"
+      },
+      {
+        "delay": 0.45,
+        "enemy": "runner"
+      },
+      {
+        "delay": 0.7,
+        "enemy": "splitter"
+      },
+      {
+        "delay": 0.7,
+        "enemy": "splitter"
+      },
+      {
+        "delay": 0.7,
+        "enemy": "splitter"
+      },
+      {
+        "delay": 0.7,
+        "enemy": "splitter"
+      },
+      {
+        "delay": 0.7,
+        "enemy": "healer"
+      },
+      {
+        "delay": 0.7,
+        "enemy": "healer"
+      },
+      {
+        "delay": 0.7,
+        "enemy": "healer"
+      },
+      {
+        "delay": 0.8,
+        "enemy": "plane"
+      },
+      {
+        "delay": 0.8,
+        "enemy": "plane"
+      },
+      {
+        "delay": 0.8,
+        "enemy": "plane"
+      },
+      {
+        "delay": 1.4,
+        "enemy": "boss"
+      },
+      {
+        "delay": 1.4,
+        "enemy": "armoredBoss"
+      }
+    ],
+    [
+      {
+        "delay": 0.4,
+        "enemy": "runner"
+      },
+      {
+        "delay": 0.4,
+        "enemy": "wraith"
+      },
+      {
+        "delay": 0.4,
+        "enemy": "frostRaider"
+      },
+      {
+        "delay": 0.4,
+        "enemy": "runner"
+      },
+      {
+        "delay": 0.4,
+        "enemy": "wraith"
+      },
+      {
+        "delay": 0.4,
+        "enemy": "frostRaider"
+      },
+      {
+        "delay": 0.6,
+        "enemy": "healer"
+      },
+      {
+        "delay": 0.6,
+        "enemy": "healer"
+      },
+      {
+        "delay": 0.6,
+        "enemy": "healer"
+      },
+      {
+        "delay": 0.6,
+        "enemy": "healer"
+      },
+      {
+        "delay": 0.6,
+        "enemy": "healer"
+      },
+      {
+        "delay": 0.6,
+        "enemy": "healer"
+      },
+      {
+        "delay": 0.7,
+        "enemy": "iceBeast"
+      },
+      {
+        "delay": 0.7,
+        "enemy": "iceBeast"
+      },
+      {
+        "delay": 0.7,
+        "enemy": "iceBeast"
+      },
+      {
+        "delay": 0.7,
+        "enemy": "iceBeast"
+      },
+      {
+        "delay": 0.7,
+        "enemy": "plane"
+      },
+      {
+        "delay": 0.7,
+        "enemy": "plane"
+      },
+      {
+        "delay": 0.7,
+        "enemy": "plane"
+      },
+      {
+        "delay": 0.7,
+        "enemy": "plane"
+      },
+      {
+        "delay": 1.3,
+        "enemy": "boss"
+      },
+      {
+        "delay": 1.5,
+        "enemy": "armoredBoss"
+      },
+      {
+        "delay": 1.5,
+        "enemy": "voidBoss"
+      }
+    ],
+    [
+      {
+        "delay": 1.2,
+        "enemy": "armoredBoss"
+      },
+      {
+        "delay": 1.4,
+        "enemy": "voidBoss"
+      },
+      {
+        "delay": 0.35,
+        "enemy": "runner"
+      },
+      {
+        "delay": 0.35,
+        "enemy": "wraith"
+      },
+      {
+        "delay": 0.35,
+        "enemy": "frostRaider"
+      },
+      {
+        "delay": 0.35,
+        "enemy": "runner"
+      },
+      {
+        "delay": 0.35,
+        "enemy": "wraith"
+      },
+      {
+        "delay": 0.35,
+        "enemy": "frostRaider"
+      },
+      {
+        "delay": 0.35,
+        "enemy": "runner"
+      },
+      {
+        "delay": 0.35,
+        "enemy": "wraith"
+      },
+      {
+        "delay": 0.35,
+        "enemy": "frostRaider"
+      },
+      {
+        "delay": 0.35,
+        "enemy": "runner"
+      },
+      {
+        "delay": 0.55,
+        "enemy": "splitter"
+      },
+      {
+        "delay": 0.55,
+        "enemy": "healer"
+      },
+      {
+        "delay": 0.55,
+        "enemy": "iceBeast"
+      },
+      {
+        "delay": 0.55,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 0.55,
+        "enemy": "splitter"
+      },
+      {
+        "delay": 0.55,
+        "enemy": "healer"
+      },
+      {
+        "delay": 0.55,
+        "enemy": "iceBeast"
+      },
+      {
+        "delay": 0.6,
+        "enemy": "plane"
+      },
+      {
+        "delay": 0.6,
+        "enemy": "plane"
+      },
+      {
+        "delay": 0.6,
+        "enemy": "plane"
+      },
+      {
+        "delay": 0.6,
+        "enemy": "plane"
+      },
+      {
+        "delay": 0.6,
+        "enemy": "plane"
+      },
+      {
+        "delay": 0.6,
+        "enemy": "plane"
+      },
+      {
+        "delay": 2,
+        "enemy": "armoredBoss"
+      },
+      {
+        "delay": 2.2,
+        "enemy": "finalBoss"
       }
     ]
   ]
