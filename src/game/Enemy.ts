@@ -30,7 +30,7 @@ export interface EnemyConfig {
 }
 
 export class Enemy {
-  private readonly path: Path;
+  readonly path: Path;
   readonly hpMax: number;
   hp: number;
   readonly baseSpeed: number;

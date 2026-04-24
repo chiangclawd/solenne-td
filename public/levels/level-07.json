@@ -2,7 +2,7 @@
   "id": "level-07",
   "name": "鐵軌之夜",
   "world": 2,
-  "flavorText": "調度場上空，翅膀在煤煙中掠過。",
+  "flavorText": "兩條鐵軌，都要守住。快速單位會走直線快道。",
   "intro": [
     {
       "speaker": "旁白",
@@ -37,6 +37,12 @@
       "text": "飛彈塔！我現在就蓋！",
       "color": "#6ee17a",
       "portrait": "pip"
+    },
+    {
+      "speaker": "皮普工程師",
+      "text": "指揮官！他們分兩條路進來——左邊繞道，右邊直線！",
+      "color": "#6ee17a",
+      "portrait": "pip"
     }
   ],
   "outroWin": [
@@ -61,41 +67,53 @@
       "portrait": "kieran"
     }
   ],
-  "path": [
-    {
-      "x": 1,
-      "y": -0.5
-    },
-    {
-      "x": 1,
-      "y": 4
-    },
-    {
-      "x": 9,
-      "y": 4
-    },
-    {
-      "x": 9,
-      "y": 8
-    },
-    {
-      "x": 1,
-      "y": 8
-    },
-    {
-      "x": 1,
-      "y": 12
-    },
-    {
-      "x": 9,
-      "y": 12
-    },
-    {
-      "x": 9,
-      "y": 15.5
-    }
+  "paths": [
+    [
+      {
+        "x": 1,
+        "y": -0.5
+      },
+      {
+        "x": 1,
+        "y": 4
+      },
+      {
+        "x": 9,
+        "y": 4
+      },
+      {
+        "x": 9,
+        "y": 8
+      },
+      {
+        "x": 1,
+        "y": 8
+      },
+      {
+        "x": 1,
+        "y": 12
+      },
+      {
+        "x": 9,
+        "y": 12
+      },
+      {
+        "x": 9,
+        "y": 15.5
+      }
+    ],
+    [
+      {
+        "x": 7,
+        "y": -0.5
+      },
+      {
+        "x": 7,
+        "y": 15.5
+      }
+    ]
   ],
-  "startingGold": 190,
+  "startingGold": 218,
   "startingLives": 13,
   "availableTowers": [
     "cannon",
@@ -167,7 +185,8 @@
       },
       {
         "delay": 0.5,
-        "enemy": "scout"
+        "enemy": "scout",
+        "path": 1
       },
       {
         "delay": 0.5,
@@ -175,7 +194,8 @@
       },
       {
         "delay": 0.5,
-        "enemy": "scout"
+        "enemy": "scout",
+        "path": 1
       },
       {
         "delay": 0.8,
@@ -187,11 +207,13 @@
       },
       {
         "delay": 0.8,
-        "enemy": "plane"
+        "enemy": "plane",
+        "path": 1
       },
       {
         "delay": 0.8,
-        "enemy": "plane"
+        "enemy": "plane",
+        "path": 1
       },
       {
         "delay": 0.7,
@@ -229,7 +251,8 @@
       },
       {
         "delay": 0.6,
-        "enemy": "plane"
+        "enemy": "plane",
+        "path": 1
       },
       {
         "delay": 0.4,
@@ -237,11 +260,13 @@
       },
       {
         "delay": 0.4,
-        "enemy": "runner"
+        "enemy": "runner",
+        "path": 1
       },
       {
         "delay": 0.4,
-        "enemy": "runner"
+        "enemy": "runner",
+        "path": 1
       },
       {
         "delay": 0.4,
@@ -267,7 +292,8 @@
     [
       {
         "delay": 0.45,
-        "enemy": "scout"
+        "enemy": "scout",
+        "path": 1
       },
       {
         "delay": 0.45,
@@ -275,11 +301,13 @@
       },
       {
         "delay": 0.45,
-        "enemy": "runner"
+        "enemy": "runner",
+        "path": 1
       },
       {
         "delay": 0.45,
-        "enemy": "scout"
+        "enemy": "scout",
+        "path": 1
       },
       {
         "delay": 0.45,
@@ -287,7 +315,8 @@
       },
       {
         "delay": 0.45,
-        "enemy": "runner"
+        "enemy": "runner",
+        "path": 1
       },
       {
         "delay": 0.7,
@@ -311,7 +340,8 @@
       },
       {
         "delay": 0.8,
-        "enemy": "plane"
+        "enemy": "plane",
+        "path": 1
       },
       {
         "delay": 0.8,
@@ -337,7 +367,8 @@
       },
       {
         "delay": 0.4,
-        "enemy": "scout"
+        "enemy": "scout",
+        "path": 1
       },
       {
         "delay": 0.6,
@@ -395,7 +426,8 @@
       },
       {
         "delay": 0.35,
-        "enemy": "scout"
+        "enemy": "scout",
+        "path": 1
       },
       {
         "delay": 0.35,
@@ -407,7 +439,8 @@
       },
       {
         "delay": 0.35,
-        "enemy": "scout"
+        "enemy": "scout",
+        "path": 1
       },
       {
         "delay": 0.35,
@@ -419,7 +452,8 @@
       },
       {
         "delay": 0.35,
-        "enemy": "scout"
+        "enemy": "scout",
+        "path": 1
       },
       {
         "delay": 0.35,
@@ -459,11 +493,13 @@
       },
       {
         "delay": 0.6,
-        "enemy": "plane"
+        "enemy": "plane",
+        "path": 1
       },
       {
         "delay": 0.6,
-        "enemy": "plane"
+        "enemy": "plane",
+        "path": 1
       },
       {
         "delay": 2,
