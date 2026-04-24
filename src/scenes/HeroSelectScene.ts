@@ -13,7 +13,7 @@ import { COLORS } from '../config.ts';
 import type { LevelData } from '../game/Level.ts';
 import { HEROES, HERO_UNLOCKS, isHeroUnlocked } from '../game/Heroes.ts';
 import type { HeroDef, HeroId } from '../game/Heroes.ts';
-import { drawHeroIconScreen } from '../graphics/HeroPainter.ts';
+import { drawHeroIconScreen, drawSkillIconScreen } from '../graphics/HeroPainter.ts';
 
 interface Rect { x: number; y: number; w: number; h: number }
 
@@ -127,9 +127,14 @@ export class HeroSelectScene extends BaseScene {
         r.drawTextScreen(def.tagline, tx, ty + 22, COLORS.textDim, 11);
         r.drawTextScreen(`◆ ${def.passive.name}`, tx, ty + 42, def.accent, 11, true);
         r.drawTextScreen(def.passive.description, tx, ty + 58, COLORS.text, 10);
-        // Skills list
-        const skillStr = def.skills.map((s) => `${s.icon} ${s.name}`).join(' · ');
-        r.drawTextScreen(skillStr, tx, ty + 78, '#ffd166', 10, true);
+        // Skills: custom procedural icons + short names
+        let sx = tx;
+        const sy = ty + 76;
+        for (const skill of def.skills) {
+          drawSkillIconScreen(r.ctx, skill.id, sx, sy, 20);
+          r.drawTextScreen(skill.name, sx + 22, sy + 4, '#ffd166', 10, true);
+          sx += 22 + r.measureTextScreen(skill.name, 10, true) + 10;
+        }
       } else {
         const entry = HERO_UNLOCKS.find((u) => u.heroId === def.id);
         const lvIdx = entry ? this.ctx.levels.findIndex((l) => l.id === entry.afterLevelId) + 1 : 0;

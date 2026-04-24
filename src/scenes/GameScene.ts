@@ -26,7 +26,7 @@ import type { HeroDef, HeroId, HeroSkill } from '../game/Heroes.ts';
 import { ARMOR_INFO } from '../game/ArmorTypes.ts';
 import { Hero, frontlineBuffForTileDist } from '../game/Hero.ts';
 import type { HeroImpactFx } from '../game/Hero.ts';
-import { drawHero, drawHeroIconScreen } from '../graphics/HeroPainter.ts';
+import { drawHero, drawHeroIconScreen, drawSkillIconScreen } from '../graphics/HeroPainter.ts';
 import {
   drawTowerBase, drawTowerTurret, drawEnemy, drawProjectile,
   drawTowerIconScreen, drawEnemyIconScreen,
@@ -1408,11 +1408,11 @@ export class GameScene extends BaseScene {
       const bgColor = active ? def.color : (ready ? '#22304a' : '#14202e');
       r.drawScreenRoundedRect(rect.x, rect.y, rect.w, rect.h, 8, bgColor);
 
-      // Icon emoji — dim when on CD, bright otherwise
+      // Custom procedural skill icon — dim when on CD, bright otherwise
       const iconAlpha = onCd ? 0.35 : 1.0;
       r.ctx.save();
       r.ctx.globalAlpha = iconAlpha;
-      r.drawTextScreenCenter(skill.icon, rect.x + rect.w / 2, rect.y + rect.h / 2, '#fff', 24);
+      drawSkillIconScreen(r.ctx, skill.id, rect.x + 2, rect.y + 2, rect.w - 4);
       r.ctx.restore();
 
       // On CD: radial sweep (pie-chart depletion) + corner seconds badge
