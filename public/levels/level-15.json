@@ -518,5 +518,13 @@
       "y": 13,
       "kind": "rock"
     }
-  ]
+  ],
+  "challenges": {
+    "star2": {
+      "kind": "noHero"
+    },
+    "star3": {
+      "kind": "destroyAllDestr"
+    }
+  }
 }

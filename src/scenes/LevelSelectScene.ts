@@ -5,6 +5,10 @@ import { SettingsScene } from './SettingsScene.ts';
 import { getStars, isUnlocked, totalStars, countCompleted } from '../storage/SaveData.ts';
 import { COLORS } from '../config.ts';
 import { drawGoldFrame } from '../graphics/UIPainter.ts';
+import { describeChallenge } from '../game/Challenges.ts';
+import { TOWER_TYPES } from '../data/towers.ts';
+import { getHero } from '../game/Heroes.ts';
+import type { HeroId } from '../game/Heroes.ts';
 
 // Lazy-load world cover banner with sequential WebP → PNG fallback.
 interface CoverState { extIdx: number; img: HTMLImageElement | null }
@@ -51,6 +55,13 @@ const DIFF_COLOR: Record<string, string> = {
   hard: '#ffd166',
   heroic: '#ff6b6b',
 };
+
+// Lookup helpers for describeChallenge so card hints read naturally
+// ("不建造「加農砲」" vs "不建造「cannon」").
+const CH_OPTS = {
+  towerName: (id: string) => TOWER_TYPES[id]?.name ?? id,
+  heroName: (id: HeroId) => getHero(id).name,
+} as const;
 
 export class LevelSelectScene extends BaseScene {
   private cards: { rect: Rect; level: LevelData; unlocked: boolean }[] = [];
@@ -234,10 +245,22 @@ export class LevelSelectScene extends BaseScene {
         if (unlocked) {
           const idx = this.ctx.levels.findIndex((l) => l.id === level.id) + 1;
           r.drawTextScreen(`L${idx}`, cx + 8, cy + 6, '#9aa5b8', 10, true);
-          r.drawTextScreenCenter(level.name, cx + cardW / 2, cy + cardH / 2 - 6, COLORS.text, 13, true);
+          r.drawTextScreenCenter(level.name, cx + cardW / 2, cy + cardH / 2 - 10, COLORS.text, 13, true);
           const starText = '★'.repeat(stars) + '☆'.repeat(3 - stars);
-          r.drawTextScreenCenter(starText, cx + cardW / 2, cy + cardH - 22, stars > 0 ? '#ffd166' : '#4a5568', 14, true);
+          r.drawTextScreenCenter(starText, cx + cardW / 2, cy + cardH - 26, stars > 0 ? '#ffd166' : '#4a5568', 14, true);
           const progress = this.ctx.save.levelProgress[level.id];
+          // v2.3 A1 — show a tiny hint for the first unmet challenge so players
+          // know what to aim for on replay. Only shown when stars < 3.
+          if (stars < 3 && progress && level.challenges) {
+            const flags = progress.challengeFlags ?? [true, false, false];
+            let hint: string | null = null;
+            if (!flags[1]) hint = describeChallenge(level.challenges.star2, CH_OPTS);
+            else if (!flags[2]) hint = describeChallenge(level.challenges.star3, CH_OPTS);
+            if (hint) {
+              const truncated = hint.length > 7 ? hint.substring(0, 6) + '…' : hint;
+              r.drawTextScreenCenter(truncated, cx + cardW / 2, cy + cardH - 10, '#7a8a9f', 8, false);
+            }
+          }
           if (progress?.bestStarsByDifficulty?.heroic) {
             r.drawTextScreen('H', cx + cardW - 14, cy + 6, DIFF_COLOR.heroic, 10, true);
           } else if (progress?.bestStarsByDifficulty?.hard) {

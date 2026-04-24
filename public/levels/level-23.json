@@ -788,5 +788,13 @@
       "y": 14,
       "kind": "totem"
     }
-  ]
+  ],
+  "challenges": {
+    "star2": {
+      "kind": "noHero"
+    },
+    "star3": {
+      "kind": "noLivesLost"
+    }
+  }
 }

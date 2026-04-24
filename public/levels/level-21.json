@@ -612,5 +612,14 @@
       "y": 13,
       "kind": "rock"
     }
-  ]
+  ],
+  "challenges": {
+    "star2": {
+      "kind": "towerForbidden",
+      "id": "cannon"
+    },
+    "star3": {
+      "kind": "noLivesLost"
+    }
+  }
 }

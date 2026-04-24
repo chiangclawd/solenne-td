@@ -244,7 +244,7 @@ LevelSelect 目前是方格列表 → 改成手繪風世界地圖：
 
 | 季度 | 里程碑 | Why now |
 |---|---|---|
-| **v2.3 (近期)** | A1 Challenge stars | 立刻 28 → 84 挑戰，壽命最直接 |
+| ✅ **v2.3.0** | A1 Challenge stars | 立刻 28 → 84 挑戰，壽命最直接 |
 | **v2.3** | A2 Tower branching | 同時擴展核心策略深度 |
 | **v2.4** | B1 Daily Challenge | 有每日回流動機 |
 | **v2.4** | C2 Codex 擴充 | 低工程高體驗，夾在 A2 後做 |

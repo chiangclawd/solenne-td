@@ -76,18 +76,48 @@
   ],
   "paths": [
     [
-      { "x": -0.5, "y": 3 },
-      { "x": 3, "y": 3 },
-      { "x": 3, "y": 9 },
-      { "x": 5, "y": 9 },
-      { "x": 5, "y": 15.5 }
+      {
+        "x": -0.5,
+        "y": 3
+      },
+      {
+        "x": 3,
+        "y": 3
+      },
+      {
+        "x": 3,
+        "y": 9
+      },
+      {
+        "x": 5,
+        "y": 9
+      },
+      {
+        "x": 5,
+        "y": 15.5
+      }
     ],
     [
-      { "x": 10.5, "y": 3 },
-      { "x": 7, "y": 3 },
-      { "x": 7, "y": 9 },
-      { "x": 5, "y": 9 },
-      { "x": 5, "y": 15.5 }
+      {
+        "x": 10.5,
+        "y": 3
+      },
+      {
+        "x": 7,
+        "y": 3
+      },
+      {
+        "x": 7,
+        "y": 9
+      },
+      {
+        "x": 5,
+        "y": 9
+      },
+      {
+        "x": 5,
+        "y": 15.5
+      }
     ]
   ],
   "startingGold": 320,
@@ -106,102 +136,452 @@
   ],
   "waves": [
     [
-      { "delay": 0.6, "enemy": "tentacle", "path": 0 },
-      { "delay": 0.6, "enemy": "tentacle", "path": 1 },
-      { "delay": 0.4, "enemy": "runner", "path": 0 },
-      { "delay": 0.4, "enemy": "runner", "path": 1 },
-      { "delay": 0.4, "enemy": "runner", "path": 0 },
-      { "delay": 0.4, "enemy": "runner", "path": 1 }
+      {
+        "delay": 0.6,
+        "enemy": "tentacle",
+        "path": 0
+      },
+      {
+        "delay": 0.6,
+        "enemy": "tentacle",
+        "path": 1
+      },
+      {
+        "delay": 0.4,
+        "enemy": "runner",
+        "path": 0
+      },
+      {
+        "delay": 0.4,
+        "enemy": "runner",
+        "path": 1
+      },
+      {
+        "delay": 0.4,
+        "enemy": "runner",
+        "path": 0
+      },
+      {
+        "delay": 0.4,
+        "enemy": "runner",
+        "path": 1
+      }
     ],
     [
-      { "delay": 0.2, "enemy": "swimmerShoal", "path": 0 },
-      { "delay": 0.2, "enemy": "swimmerShoal", "path": 0 },
-      { "delay": 0.2, "enemy": "swimmerShoal", "path": 0 },
-      { "delay": 0.2, "enemy": "swimmerShoal", "path": 0 },
-      { "delay": 0.2, "enemy": "swimmerShoal", "path": 1 },
-      { "delay": 0.2, "enemy": "swimmerShoal", "path": 1 },
-      { "delay": 0.2, "enemy": "swimmerShoal", "path": 1 },
-      { "delay": 0.5, "enemy": "tentacle", "path": 0 },
-      { "delay": 0.5, "enemy": "tentacle", "path": 1 },
-      { "delay": 0.5, "enemy": "armored", "path": 1 }
+      {
+        "delay": 0.2,
+        "enemy": "swimmerShoal",
+        "path": 0
+      },
+      {
+        "delay": 0.2,
+        "enemy": "swimmerShoal",
+        "path": 0
+      },
+      {
+        "delay": 0.2,
+        "enemy": "swimmerShoal",
+        "path": 0
+      },
+      {
+        "delay": 0.2,
+        "enemy": "swimmerShoal",
+        "path": 0
+      },
+      {
+        "delay": 0.2,
+        "enemy": "swimmerShoal",
+        "path": 1
+      },
+      {
+        "delay": 0.2,
+        "enemy": "swimmerShoal",
+        "path": 1
+      },
+      {
+        "delay": 0.2,
+        "enemy": "swimmerShoal",
+        "path": 1
+      },
+      {
+        "delay": 0.5,
+        "enemy": "tentacle",
+        "path": 0
+      },
+      {
+        "delay": 0.5,
+        "enemy": "tentacle",
+        "path": 1
+      },
+      {
+        "delay": 0.5,
+        "enemy": "armored",
+        "path": 1
+      }
     ],
     [
-      { "delay": 0.5, "enemy": "tentacle", "path": 0 },
-      { "delay": 0.5, "enemy": "tentacle", "path": 0 },
-      { "delay": 0.5, "enemy": "tentacle", "path": 1 },
-      { "delay": 0.5, "enemy": "tentacle", "path": 1 },
-      { "delay": 0.4, "enemy": "heavyTank", "path": 0 },
-      { "delay": 0.4, "enemy": "heavyTank", "path": 1 },
-      { "delay": 0.25, "enemy": "swimmerShoal", "path": 0 },
-      { "delay": 0.25, "enemy": "swimmerShoal", "path": 1 },
-      { "delay": 0.25, "enemy": "swimmerShoal", "path": 0 },
-      { "delay": 0.25, "enemy": "swimmerShoal", "path": 1 },
-      { "delay": 1.4, "enemy": "boss", "path": 1 }
+      {
+        "delay": 0.5,
+        "enemy": "tentacle",
+        "path": 0
+      },
+      {
+        "delay": 0.5,
+        "enemy": "tentacle",
+        "path": 0
+      },
+      {
+        "delay": 0.5,
+        "enemy": "tentacle",
+        "path": 1
+      },
+      {
+        "delay": 0.5,
+        "enemy": "tentacle",
+        "path": 1
+      },
+      {
+        "delay": 0.4,
+        "enemy": "heavyTank",
+        "path": 0
+      },
+      {
+        "delay": 0.4,
+        "enemy": "heavyTank",
+        "path": 1
+      },
+      {
+        "delay": 0.25,
+        "enemy": "swimmerShoal",
+        "path": 0
+      },
+      {
+        "delay": 0.25,
+        "enemy": "swimmerShoal",
+        "path": 1
+      },
+      {
+        "delay": 0.25,
+        "enemy": "swimmerShoal",
+        "path": 0
+      },
+      {
+        "delay": 0.25,
+        "enemy": "swimmerShoal",
+        "path": 1
+      },
+      {
+        "delay": 1.4,
+        "enemy": "boss",
+        "path": 1
+      }
     ],
     [
-      { "delay": 0.4, "enemy": "plane", "path": 0 },
-      { "delay": 0.4, "enemy": "plane", "path": 1 },
-      { "delay": 0.4, "enemy": "plane", "path": 0 },
-      { "delay": 0.4, "enemy": "plane", "path": 1 },
-      { "delay": 0.4, "enemy": "tentacle", "path": 0 },
-      { "delay": 0.4, "enemy": "tentacle", "path": 0 },
-      { "delay": 0.4, "enemy": "tentacle", "path": 1 },
-      { "delay": 0.4, "enemy": "tentacle", "path": 1 },
-      { "delay": 0.25, "enemy": "swimmerShoal", "path": 0 },
-      { "delay": 0.25, "enemy": "swimmerShoal", "path": 1 },
-      { "delay": 0.25, "enemy": "swimmerShoal", "path": 0 },
-      { "delay": 0.25, "enemy": "swimmerShoal", "path": 1 },
-      { "delay": 1.3, "enemy": "armoredBoss", "path": 0 }
+      {
+        "delay": 0.4,
+        "enemy": "plane",
+        "path": 0
+      },
+      {
+        "delay": 0.4,
+        "enemy": "plane",
+        "path": 1
+      },
+      {
+        "delay": 0.4,
+        "enemy": "plane",
+        "path": 0
+      },
+      {
+        "delay": 0.4,
+        "enemy": "plane",
+        "path": 1
+      },
+      {
+        "delay": 0.4,
+        "enemy": "tentacle",
+        "path": 0
+      },
+      {
+        "delay": 0.4,
+        "enemy": "tentacle",
+        "path": 0
+      },
+      {
+        "delay": 0.4,
+        "enemy": "tentacle",
+        "path": 1
+      },
+      {
+        "delay": 0.4,
+        "enemy": "tentacle",
+        "path": 1
+      },
+      {
+        "delay": 0.25,
+        "enemy": "swimmerShoal",
+        "path": 0
+      },
+      {
+        "delay": 0.25,
+        "enemy": "swimmerShoal",
+        "path": 1
+      },
+      {
+        "delay": 0.25,
+        "enemy": "swimmerShoal",
+        "path": 0
+      },
+      {
+        "delay": 0.25,
+        "enemy": "swimmerShoal",
+        "path": 1
+      },
+      {
+        "delay": 1.3,
+        "enemy": "armoredBoss",
+        "path": 0
+      }
     ],
     [
-      { "delay": 0.35, "enemy": "tentacle", "path": 0 },
-      { "delay": 0.35, "enemy": "tentacle", "path": 0 },
-      { "delay": 0.35, "enemy": "tentacle", "path": 0 },
-      { "delay": 0.35, "enemy": "tentacle", "path": 1 },
-      { "delay": 0.35, "enemy": "tentacle", "path": 1 },
-      { "delay": 0.35, "enemy": "tentacle", "path": 1 },
-      { "delay": 0.3, "enemy": "armored", "path": 0 },
-      { "delay": 0.3, "enemy": "armored", "path": 1 },
-      { "delay": 0.3, "enemy": "heavyTank", "path": 0 },
-      { "delay": 0.3, "enemy": "heavyTank", "path": 1 },
-      { "delay": 0.2, "enemy": "swimmerShoal", "path": 0 },
-      { "delay": 0.2, "enemy": "swimmerShoal", "path": 1 },
-      { "delay": 0.2, "enemy": "swimmerShoal", "path": 0 },
-      { "delay": 0.2, "enemy": "swimmerShoal", "path": 1 },
-      { "delay": 1.4, "enemy": "finalBoss", "path": 0 }
+      {
+        "delay": 0.35,
+        "enemy": "tentacle",
+        "path": 0
+      },
+      {
+        "delay": 0.35,
+        "enemy": "tentacle",
+        "path": 0
+      },
+      {
+        "delay": 0.35,
+        "enemy": "tentacle",
+        "path": 0
+      },
+      {
+        "delay": 0.35,
+        "enemy": "tentacle",
+        "path": 1
+      },
+      {
+        "delay": 0.35,
+        "enemy": "tentacle",
+        "path": 1
+      },
+      {
+        "delay": 0.35,
+        "enemy": "tentacle",
+        "path": 1
+      },
+      {
+        "delay": 0.3,
+        "enemy": "armored",
+        "path": 0
+      },
+      {
+        "delay": 0.3,
+        "enemy": "armored",
+        "path": 1
+      },
+      {
+        "delay": 0.3,
+        "enemy": "heavyTank",
+        "path": 0
+      },
+      {
+        "delay": 0.3,
+        "enemy": "heavyTank",
+        "path": 1
+      },
+      {
+        "delay": 0.2,
+        "enemy": "swimmerShoal",
+        "path": 0
+      },
+      {
+        "delay": 0.2,
+        "enemy": "swimmerShoal",
+        "path": 1
+      },
+      {
+        "delay": 0.2,
+        "enemy": "swimmerShoal",
+        "path": 0
+      },
+      {
+        "delay": 0.2,
+        "enemy": "swimmerShoal",
+        "path": 1
+      },
+      {
+        "delay": 1.4,
+        "enemy": "finalBoss",
+        "path": 0
+      }
     ],
     [
-      { "delay": 1.2, "enemy": "abyssalBoss", "path": 0 },
-      { "delay": 0.3, "enemy": "abyssalBoss", "path": 1 },
-      { "delay": 0.3, "enemy": "tentacle", "path": 0 },
-      { "delay": 0.3, "enemy": "tentacle", "path": 0 },
-      { "delay": 0.3, "enemy": "tentacle", "path": 1 },
-      { "delay": 0.3, "enemy": "tentacle", "path": 1 },
-      { "delay": 0.15, "enemy": "swimmerShoal", "path": 0 },
-      { "delay": 0.15, "enemy": "swimmerShoal", "path": 1 },
-      { "delay": 0.15, "enemy": "swimmerShoal", "path": 0 },
-      { "delay": 0.15, "enemy": "swimmerShoal", "path": 1 },
-      { "delay": 0.15, "enemy": "swimmerShoal", "path": 0 },
-      { "delay": 0.15, "enemy": "swimmerShoal", "path": 1 },
-      { "delay": 0.15, "enemy": "swimmerShoal", "path": 0 },
-      { "delay": 0.15, "enemy": "swimmerShoal", "path": 1 },
-      { "delay": 0.4, "enemy": "heavyTank", "path": 0 },
-      { "delay": 0.4, "enemy": "heavyTank", "path": 1 }
+      {
+        "delay": 1.2,
+        "enemy": "abyssalBoss",
+        "path": 0
+      },
+      {
+        "delay": 0.3,
+        "enemy": "abyssalBoss",
+        "path": 1
+      },
+      {
+        "delay": 0.3,
+        "enemy": "tentacle",
+        "path": 0
+      },
+      {
+        "delay": 0.3,
+        "enemy": "tentacle",
+        "path": 0
+      },
+      {
+        "delay": 0.3,
+        "enemy": "tentacle",
+        "path": 1
+      },
+      {
+        "delay": 0.3,
+        "enemy": "tentacle",
+        "path": 1
+      },
+      {
+        "delay": 0.15,
+        "enemy": "swimmerShoal",
+        "path": 0
+      },
+      {
+        "delay": 0.15,
+        "enemy": "swimmerShoal",
+        "path": 1
+      },
+      {
+        "delay": 0.15,
+        "enemy": "swimmerShoal",
+        "path": 0
+      },
+      {
+        "delay": 0.15,
+        "enemy": "swimmerShoal",
+        "path": 1
+      },
+      {
+        "delay": 0.15,
+        "enemy": "swimmerShoal",
+        "path": 0
+      },
+      {
+        "delay": 0.15,
+        "enemy": "swimmerShoal",
+        "path": 1
+      },
+      {
+        "delay": 0.15,
+        "enemy": "swimmerShoal",
+        "path": 0
+      },
+      {
+        "delay": 0.15,
+        "enemy": "swimmerShoal",
+        "path": 1
+      },
+      {
+        "delay": 0.4,
+        "enemy": "heavyTank",
+        "path": 0
+      },
+      {
+        "delay": 0.4,
+        "enemy": "heavyTank",
+        "path": 1
+      }
     ]
   ],
   "obstacles": [
-    { "x": 5, "y": 2, "kind": "coral" },
-    { "x": 1, "y": 5, "kind": "coral" },
-    { "x": 9, "y": 5, "kind": "coral" },
-    { "x": 4, "y": 5, "kind": "water" },
-    { "x": 6, "y": 5, "kind": "water" },
-    { "x": 2, "y": 7, "kind": "water" },
-    { "x": 8, "y": 7, "kind": "water" },
-    { "x": 3, "y": 11, "kind": "coral" },
-    { "x": 7, "y": 11, "kind": "coral" },
-    { "x": 1, "y": 12, "kind": "water" },
-    { "x": 9, "y": 12, "kind": "water" },
-    { "x": 4, "y": 12, "kind": "rock", "destructible": true, "hp": 70, "reward": 25 },
-    { "x": 6, "y": 12, "kind": "rock", "destructible": true, "hp": 70, "reward": 25 }
-  ]
+    {
+      "x": 5,
+      "y": 2,
+      "kind": "coral"
+    },
+    {
+      "x": 1,
+      "y": 5,
+      "kind": "coral"
+    },
+    {
+      "x": 9,
+      "y": 5,
+      "kind": "coral"
+    },
+    {
+      "x": 4,
+      "y": 5,
+      "kind": "water"
+    },
+    {
+      "x": 6,
+      "y": 5,
+      "kind": "water"
+    },
+    {
+      "x": 2,
+      "y": 7,
+      "kind": "water"
+    },
+    {
+      "x": 8,
+      "y": 7,
+      "kind": "water"
+    },
+    {
+      "x": 3,
+      "y": 11,
+      "kind": "coral"
+    },
+    {
+      "x": 7,
+      "y": 11,
+      "kind": "coral"
+    },
+    {
+      "x": 1,
+      "y": 12,
+      "kind": "water"
+    },
+    {
+      "x": 9,
+      "y": 12,
+      "kind": "water"
+    },
+    {
+      "x": 4,
+      "y": 12,
+      "kind": "rock",
+      "destructible": true,
+      "hp": 70,
+      "reward": 25
+    },
+    {
+      "x": 6,
+      "y": 12,
+      "kind": "rock",
+      "destructible": true,
+      "hp": 70,
+      "reward": 25
+    }
+  ],
+  "challenges": {
+    "star2": {
+      "kind": "noUpgrade"
+    },
+    "star3": {
+      "kind": "destroyAllDestr"
+    }
+  }
 }

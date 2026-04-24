@@ -550,5 +550,14 @@
       "y": 13,
       "kind": "column"
     }
-  ]
+  ],
+  "challenges": {
+    "star2": {
+      "kind": "maxTowers",
+      "n": 12
+    },
+    "star3": {
+      "kind": "heroSurvives"
+    }
+  }
 }

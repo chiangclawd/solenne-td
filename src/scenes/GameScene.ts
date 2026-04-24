@@ -16,6 +16,9 @@ import type { LevelData } from '../game/Level.ts';
 import { DialogueBox } from '../ui/DialogueBox.ts';
 import { recordCompletion, getStars } from '../storage/SaveData.ts';
 import type { Achievement } from '../game/Achievements.ts';
+import type { ChallengeState } from '../game/Challenges.ts';
+import type { ChallengeFlags } from '../storage/SaveData.ts';
+import { evaluateChallenge, makeInitialState, describeChallenge, legacyStarFlags } from '../game/Challenges.ts';
 import type { SceneContext } from './SceneContext.ts';
 import type { Difficulty } from '../storage/SaveData.ts';
 import { generateEndlessWave } from '../game/WaveGenerator.ts';
@@ -136,6 +139,18 @@ export class GameScene extends BaseScene {
    * behind the 88%-opaque victory wash like the fleeting 3.5s toasts did.
    */
   private unlockedThisLevel: Achievement[] = [];
+  /**
+   * v2.3 A1 — runtime challenge tracker. Mutated by event hooks (tower build,
+   * upgrade, sell, destructible break, etc.) during play; read once at
+   * triggerWin() to decide which of the 3 challenge stars were earned.
+   */
+  private challengeState: ChallengeState;
+  /**
+   * Flags earned on the MOST RECENT run. Snapshot at triggerWin for the end
+   * overlay to render tick marks. Distinct from save.challengeFlags which is
+   * the accumulated best across all runs.
+   */
+  private lastRunFlags: ChallengeFlags = [false, false, false];
   /** Enemy-on-hero damage accumulator (per-enemy grace window). */
   private heroContactDamageTimer = 0;
 
@@ -209,6 +224,10 @@ export class GameScene extends BaseScene {
     this.state = new GameState(boostedGold, boostedLives);
     this.waveMgr = new WaveManager(this.waves, this.paths);
     this.weather = new Weather(level.world);
+    // Challenge state initialized with destructible count so destroyAllDestr
+    // has a denominator. Updated every time destructibles are broken.
+    const destrCount = (level.obstacles ?? []).filter((o) => o.destructible).length;
+    this.challengeState = makeInitialState(destrCount);
   }
 
   private buildWave(wave: import('../game/Level.ts').WaveData): Wave {
@@ -284,6 +303,9 @@ export class GameScene extends BaseScene {
     this.towers.push(new Tower(tx, ty, T, cfg));
     this.occupiedTiles.add(key);
     this.ctx.save.stats.totalTowersBuilt++;
+    // Challenge tracking — count tower builds per id for towerForbidden / maxTowers.
+    this.challengeState.towerBuildsById[this.selectedTowerId] =
+      (this.challengeState.towerBuildsById[this.selectedTowerId] ?? 0) + 1;
     const unlocked = this.ctx.achievements.check(this.ctx.save, { type: 'towerPlaced', towerId: this.selectedTowerId });
     if (unlocked.length > 0) this.ctx.audio.achievement();
     this.ctx.audio.place();
@@ -313,6 +335,11 @@ export class GameScene extends BaseScene {
     this.unlockedThisLevel = [];
     this.unlockedTower = null;
     this.unlockedHero = null;
+    // Reset challenge tracker too — denominator stays (original destructible
+    // count in level), all counters reset to 0.
+    const destrCount = (this.level.obstacles ?? []).filter((o) => o.destructible).length;
+    this.challengeState = makeInitialState(destrCount);
+    this.lastRunFlags = [false, false, false];
     // Rebuild destructibles + obstacleTiles from level definition
     this.destructibles.length = 0;
     for (const ob of this.level.obstacles ?? []) {
@@ -330,6 +357,11 @@ export class GameScene extends BaseScene {
     if (this.state.status !== 'idle') return;
     if (this.state.waveIndex >= this.waveMgr.totalWaves()) return;
     this.waveMgr.startWave(this.state.waveIndex);
+    // Challenge tracking — stamp start time on wave 1 kickoff so timeLimit
+    // challenge can evaluate elapsed play time.
+    if (this.state.waveIndex === 0 && this.challengeState.startMs === 0) {
+      this.challengeState.startMs = Date.now();
+    }
     this.state.status = 'playing';
     this.ctx.audio.waveStart();
     const total = this.isEndless ? '無盡' : `${this.waveMgr.totalWaves()}`;
@@ -356,10 +388,25 @@ export class GameScene extends BaseScene {
 
   private triggerWin(): void {
     const ratio = this.state.lives / this.level.startingLives;
-    const stars = ratio >= 1 ? 3 : ratio >= 0.5 ? 2 : 1;
+    // v2.3 A1 — evaluate the 3 challenge stars. Star 1 = completion (always).
+    // Stars 2/3 from level.challenges spec, or legacy ratio-based fallback.
+    const star1 = true;
+    let star2: boolean;
+    let star3: boolean;
+    if (this.level.challenges) {
+      const ctx = { selectedHeroId: this.selectedHeroId };
+      star2 = evaluateChallenge(this.level.challenges.star2, this.challengeState, ctx);
+      star3 = evaluateChallenge(this.level.challenges.star3, this.challengeState, ctx);
+    } else {
+      const legacy = legacyStarFlags(ratio);
+      star2 = legacy[1];
+      star3 = legacy[2];
+    }
+    this.lastRunFlags = [star1, star2, star3];
+    const stars = (star1 ? 1 : 0) + (star2 ? 1 : 0) + (star3 ? 1 : 0);
     this.spawnStarRain(60 + stars * 20);
     const wasAlreadyCompleted = this.ctx.save.levelProgress[this.level.id]?.completed === true;
-    recordCompletion(this.ctx.save, this.level.id, stars, this.difficulty);
+    recordCompletion(this.ctx.save, this.level.id, stars, this.difficulty, this.lastRunFlags);
     // First-time unlock detection (tower + hero)
     if (!wasAlreadyCompleted) {
       const newUnlock = unlockTriggeredBy(this.level.id);
@@ -510,8 +557,14 @@ export class GameScene extends BaseScene {
     } else if (this.goldPulse > 0) this.goldPulse = Math.max(0, this.goldPulse - dt);
     if (this.state.lives !== this.lastLives) {
       this.lifePulse = 0.5;
+      // Challenge tracking — any lives decrease breaks noLivesLost.
+      if (this.state.lives < this.lastLives) this.challengeState.livesLostThisRun = true;
       this.lastLives = this.state.lives;
     } else if (this.lifePulse > 0) this.lifePulse = Math.max(0, this.lifePulse - dt);
+    // Challenge tracking — detect hero dying (alive=false with respawn timer running).
+    if (this.hero && !this.hero.alive && this.hero.respawnRemaining > 0) {
+      this.challengeState.heroDiedThisRun = true;
+    }
     // Star rain update
     for (let i = this.starRain.length - 1; i >= 0; i--) {
       const s = this.starRain[i];
@@ -716,6 +769,8 @@ export class GameScene extends BaseScene {
           });
           this.obstacleTiles.delete(`${d.tileX},${d.tileY}`);
           this.destructibles.splice(i, 1);
+          // Challenge tracking — count destructibles broken for destroyAllDestr.
+          this.challengeState.destructiblesBroken++;
           this.ctx.audio.explosion();
         }
       }
@@ -1456,6 +1511,27 @@ export class GameScene extends BaseScene {
     r.drawTextScreenCenter('✕ 返回選單', cx + bw / 2, y + bh / 2, '#fff', 15, true);
   }
 
+  /**
+   * Build 3 human-readable strings for the end-overlay challenge block.
+   * Star 1 is always "通關"; stars 2/3 come from level.challenges or the
+   * legacy lives-ratio fallback. Helper names are passed in so the
+   * Chinese descriptions read naturally ("不建造「加農砲」" not ...id).
+   */
+  private getChallengeDescriptions(): [string, string, string] {
+    const s1 = '通關';
+    if (this.level.challenges) {
+      const towerName = (id: string) => TOWER_TYPES[id]?.name ?? id;
+      const heroName = (id: import('../game/Heroes.ts').HeroId) => getHero(id).name;
+      return [
+        s1,
+        describeChallenge(this.level.challenges.star2, { towerName, heroName }),
+        describeChallenge(this.level.challenges.star3, { towerName, heroName }),
+      ];
+    }
+    // Legacy levels — describe the ratio thresholds so UI still makes sense.
+    return [s1, '保留 50% 以上生命', '零失血通關'];
+  }
+
   private renderEndOverlay(r: import('../engine/Renderer.ts').Renderer, vw: number, vh: number): void {
     const isWin = this.state.status === 'won';
     r.drawScreenRect(0, 0, vw, vh, 'rgba(5, 8, 16, 0.88)');
@@ -1488,30 +1564,54 @@ export class GameScene extends BaseScene {
     r.drawTextScreenCenter(this.level.name, vw / 2, vh / 2 - 100, COLORS.text, 14);
 
     if (isWin) {
-      const stars = getStars(this.ctx.save, this.level.id);
-      // Animated stars
+      // Animated stars reflect THIS RUN's earned flags so the player gets
+      // immediate feedback on which challenges they met. Lifetime accumulated
+      // best is referenced in the small text below.
+      const flags = this.lastRunFlags;
+      const earnedThisRun = flags.filter(Boolean).length;
       const starSpacing = 48;
       const starCount = 3;
       const startX = vw / 2 - (starSpacing * (starCount - 1)) / 2;
       for (let i = 0; i < starCount; i++) {
-        const earned = i < stars;
+        const earned = flags[i];
         const pulse = earned ? (1 + Math.sin(this.elapsed * 4 + i * 0.5) * 0.1) : 1;
         r.drawTextScreenCenter(earned ? '★' : '☆', startX + i * starSpacing, vh / 2 - 60,
           earned ? '#ffd166' : '#4a5568', 36 * pulse, true);
       }
+      const allTimeBest = getStars(this.ctx.save, this.level.id);
       r.drawTextScreenCenter(
-        `擊殺 ${this.state.kills}  ·  剩餘 ${this.state.lives}/${this.level.startingLives}  ·  ${this.diffMod.label}`,
+        `本場 ${earnedThisRun}/3 ★  ·  歷史最佳 ${allTimeBest}/3 ★  ·  ${this.diffMod.label}`,
         vw / 2, vh / 2 - 14, COLORS.text, 12,
       );
     } else {
       r.drawTextScreenCenter('基地失守。撤退。', vw / 2, vh / 2 - 48, COLORS.textDim, 14);
     }
 
+    // v2.3 A1 — challenge summary rows (win only). 3 rows × 18px showing
+    // description + ✓/✗ from this run. Sits between stats and unlock banners.
+    let challengeBlockH = 0;
+    if (isWin) {
+      const rowH = 18;
+      const chX = 28;
+      let chY = vh / 2 + 8;
+      const descs = this.getChallengeDescriptions();
+      for (let i = 0; i < 3; i++) {
+        const earned = this.lastRunFlags[i];
+        const tickIcon = earned ? '✓' : '✗';
+        const tickColor = earned ? '#6ee17a' : '#ff6b6b';
+        const labelColor = earned ? '#ffd166' : '#9aa5b8';
+        r.drawTextScreen(tickIcon, chX, chY + 3, tickColor, 15, true);
+        r.drawTextScreen(descs[i], chX + 18, chY + 3, labelColor, 12, true);
+        chY += rowH;
+      }
+      challengeBlockH = rowH * 3 + 4;
+    }
+
     // Unlock banners (between stats and buttons) — tower + hero stack
     let unlockBannerH = 0;
     const bannerSingleH = 82;
     const bannerW = vw - 48;
-    let bannerY = vh / 2 + 10;
+    let bannerY = vh / 2 + 10 + challengeBlockH;
     if (isWin && this.unlockedTower) {
       const ubX = 24;
       const ubY = bannerY;
@@ -1580,7 +1680,7 @@ export class GameScene extends BaseScene {
 
     const bw = 240, bh = 46, gap = 10;
     const cx = (vw - bw) / 2;
-    let y = vh / 2 + 26 + unlockBannerH + (unlockBannerH > 0 ? 8 : 0);
+    let y = vh / 2 + 26 + challengeBlockH + unlockBannerH + (unlockBannerH > 0 ? 8 : 0);
 
     const nextLevel = isWin ? this.nextLevelOrNull() : null;
     if (nextLevel) {
@@ -1927,6 +2027,7 @@ export class GameScene extends BaseScene {
           if (this.state.gold >= cost) {
             this.state.gold -= cost;
             t.upgrade();
+            this.challengeState.anyTowerUpgraded = true;
             this.ctx.audio.upgrade();
           }
         }
@@ -1934,6 +2035,7 @@ export class GameScene extends BaseScene {
       }
       if (this.sellBtn && this.inside(screenX, screenY, this.sellBtn)) {
         const t = this.selectedExisting;
+        this.challengeState.anyTowerSold = true;
         this.state.gold += t.sellValue(this.metaMod.sellBonus);
         const idx = this.towers.indexOf(t);
         if (idx >= 0) this.towers.splice(idx, 1);
@@ -2010,6 +2112,9 @@ export class GameScene extends BaseScene {
     this.towers.push(new Tower(tx, ty, T, cfg));
     this.occupiedTiles.add(key);
     this.ctx.save.stats.totalTowersBuilt++;
+    // Challenge tracking — count tower builds per id for towerForbidden / maxTowers.
+    this.challengeState.towerBuildsById[this.selectedTowerId] =
+      (this.challengeState.towerBuildsById[this.selectedTowerId] ?? 0) + 1;
     const unlocked = this.ctx.achievements.check(this.ctx.save, { type: 'towerPlaced', towerId: this.selectedTowerId });
     if (unlocked.length > 0) this.ctx.audio.achievement();
     this.ctx.audio.place();

@@ -1,6 +1,7 @@
 import type { LevelData } from './Level.ts';
 import { ENEMY_TYPES } from '../data/enemies.ts';
 import { TOWER_TYPES } from '../data/towers.ts';
+import type { ChallengeSpec, LevelChallenges } from './Challenges.ts';
 
 export const LEVEL_IDS = [
   'level-01', 'level-02', 'level-03', 'level-04', 'level-05',
@@ -77,5 +78,52 @@ function validate(data: LevelData): void {
         }
       }
     }
+  }
+  // Optional v2.3 A1 challenges block — only validate shape if present.
+  if (data.challenges) {
+    validateChallenges(data.challenges, data);
+  }
+}
+
+const CHALLENGE_KINDS: ReadonlySet<string> = new Set([
+  'noLivesLost', 'heroSurvives', 'noHero', 'heroRequired',
+  'towerForbidden', 'maxTowers', 'noSell', 'noUpgrade',
+  'destroyAllDestr', 'timeLimit',
+]);
+
+function validateChallenges(ch: LevelChallenges, data: LevelData): void {
+  if (!ch.star2 || !ch.star3) {
+    throw new Error('Level.challenges needs both star2 and star3 specs');
+  }
+  validateChallengeSpec(ch.star2, 'star2', data);
+  validateChallengeSpec(ch.star3, 'star3', data);
+  // Logical conflict check — catch author mistakes early.
+  const conflicts = [
+    ch.star2.kind === 'noHero' && (ch.star3.kind === 'heroSurvives' || ch.star3.kind === 'heroRequired'),
+    ch.star3.kind === 'noHero' && (ch.star2.kind === 'heroSurvives' || ch.star2.kind === 'heroRequired'),
+  ];
+  if (conflicts.some(Boolean)) {
+    throw new Error(`Level.challenges star2+star3 conflict (noHero vs heroSurvives/heroRequired)`);
+  }
+}
+
+function validateChallengeSpec(spec: ChallengeSpec, label: string, data: LevelData): void {
+  if (!CHALLENGE_KINDS.has(spec.kind)) {
+    throw new Error(`${label} has unknown challenge kind: ${spec.kind}`);
+  }
+  if (spec.kind === 'towerForbidden') {
+    if (!TOWER_TYPES[spec.id]) throw new Error(`${label} towerForbidden references unknown tower: ${spec.id}`);
+    if (!data.availableTowers.includes(spec.id)) {
+      throw new Error(`${label} towerForbidden references tower "${spec.id}" not in availableTowers (forbidding something the player couldn't build is a no-op)`);
+    }
+  }
+  if (spec.kind === 'maxTowers' && (typeof spec.n !== 'number' || spec.n < 1)) {
+    throw new Error(`${label} maxTowers.n must be >= 1`);
+  }
+  if (spec.kind === 'timeLimit' && (typeof spec.seconds !== 'number' || spec.seconds < 10)) {
+    throw new Error(`${label} timeLimit.seconds must be >= 10`);
+  }
+  if (spec.kind === 'heroRequired' && !['kieran', 'vasya', 'pip'].includes(spec.id)) {
+    throw new Error(`${label} heroRequired.id must be a valid HeroId`);
   }
 }

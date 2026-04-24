@@ -221,6 +221,46 @@ export const ACHIEVEMENTS: readonly Achievement[] = [
       );
     },
   },
+  // ---- v2.3 A1 challenge-based achievements ----
+  {
+    id: 'perfectionist',
+    title: '完美主義',
+    description: '10 關達成 Star 3（完美型挑戰）。',
+    icon: '✦',
+    check: (s) => {
+      let count = 0;
+      for (const id in s.levelProgress) {
+        if (s.levelProgress[id].challengeFlags?.[2]) count++;
+      }
+      return count >= 10;
+    },
+  },
+  {
+    id: 'half_challenges',
+    title: '半數挑戰',
+    description: '累計在 14 關達成 Star 2（限制型挑戰）。',
+    icon: '◆',
+    check: (s) => {
+      let count = 0;
+      for (const id in s.levelProgress) {
+        if (s.levelProgress[id].challengeFlags?.[1]) count++;
+      }
+      return count >= 14;
+    },
+  },
+  {
+    id: 'border_perfect',
+    title: '邊境滿分',
+    description: '世界一（L1-L5）全部 3 顆挑戰星全收集。',
+    icon: '◎',
+    check: (s) => {
+      const ids = ['level-01', 'level-02', 'level-03', 'level-04', 'level-05'];
+      return ids.every((id) => {
+        const f = s.levelProgress[id]?.challengeFlags;
+        return !!f && f[0] && f[1] && f[2];
+      });
+    },
+  },
 ];
 
 export interface UnlockedNotice {

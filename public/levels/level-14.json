@@ -573,5 +573,14 @@
       "y": 8,
       "kind": "rock"
     }
-  ]
+  ],
+  "challenges": {
+    "star2": {
+      "kind": "towerForbidden",
+      "id": "frostTower"
+    },
+    "star3": {
+      "kind": "noLivesLost"
+    }
+  }
 }

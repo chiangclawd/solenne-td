@@ -540,5 +540,14 @@
       "y": 7,
       "kind": "deadTree"
     }
-  ]
+  ],
+  "challenges": {
+    "star2": {
+      "kind": "maxTowers",
+      "n": 12
+    },
+    "star3": {
+      "kind": "noLivesLost"
+    }
+  }
 }
