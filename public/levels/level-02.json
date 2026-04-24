@@ -100,7 +100,7 @@
       }
     ]
   ],
-  "startingGold": 220,
+  "startingGold": 200,
   "startingLives": 12,
   "availableTowers": [
     "cannon",

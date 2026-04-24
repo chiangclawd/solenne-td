@@ -45,10 +45,14 @@ interface Floater { x: number; y: number; vx: number; vy: number; text: string; 
 const T = TILE_SIZE;
 const SPEEDS: readonly number[] = [1, 2, 3];
 
+// v2.2 difficulty re-balance — baseline levels were too soft, so we push every
+// tier harder. Normal now gets a ~12% HP / 6% speed bump; Hard and Heroic
+// scale up proportionally. Reward multipliers trimmed so kills-to-economy
+// stays lean even while HP climbs.
 const DIFF_MOD: Record<Difficulty, { hp: number; speed: number; reward: number; label: string; color: string }> = {
-  normal: { hp: 1.0, speed: 1.0, reward: 1.0, label: 'Normal', color: '#6ee17a' },
-  hard:   { hp: 1.35, speed: 1.15, reward: 0.9, label: 'Hard',   color: '#ffd166' },
-  heroic: { hp: 1.7, speed: 1.3,  reward: 0.75, label: 'Heroic', color: '#ff6b6b' },
+  normal: { hp: 1.12, speed: 1.06, reward: 0.95, label: 'Normal', color: '#6ee17a' },
+  hard:   { hp: 1.55, speed: 1.22, reward: 0.80, label: 'Hard',   color: '#ffd166' },
+  heroic: { hp: 2.00, speed: 1.40, reward: 0.70, label: 'Heroic', color: '#ff6b6b' },
 };
 
 function bgmForWorld(world: number): import('../engine/AudioManager.ts').BgmTrack {

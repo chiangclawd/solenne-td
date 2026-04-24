@@ -106,8 +106,8 @@
       }
     ]
   ],
-  "startingGold": 210,
-  "startingLives": 14,
+  "startingGold": 190,
+  "startingLives": 13,
   "availableTowers": [
     "cannon",
     "quickShot",
