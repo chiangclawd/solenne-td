@@ -5,31 +5,71 @@ import type { AssetName } from '../assets.ts';
 import type { ArmorType } from './ArmorTypes.ts';
 import { counterMultiplier } from './ArmorTypes.ts';
 
+/**
+ * Per-tier tower stats. Anything that affects firing behavior lives here
+ * so that branches can diverge (e.g. AOE splash vs. armor-pierce).
+ */
 export interface TowerLevel {
   cost: number;
   range: number;
   damage: number;
   fireRate: number;
   projectileSpeed: number;
-}
-
-export interface TowerConfig {
-  id: string;
-  name: string;
-  levels: readonly TowerLevel[];
-  turretSprite: AssetName;
-  projectileSprite: AssetName;
   splashRadius?: number;
   slowDuration?: number;
   slowFactor?: number;
   chainCount?: number;
   chainRange?: number;
-  /** AP rounds — bypass enemy damageResist. */
-  pierceResist?: boolean;
-  /** Armor types this tower deals +40% damage against. */
-  counters?: readonly ArmorType[];
+  /** AP rounds — bypass enemy damageResist entirely. */
+  armorPierce?: boolean;
+  /** Multiplier on top of base counter bonus (default implicit 1.4). */
+  counterBonus?: number;
+  /**
+   * Projectiles fired per trigger. Each spawns with a small angle offset.
+   * Good for "double-tap" (quickShot 雙管) or "shotgun" (machineGun 散彈).
+   */
+  multiShot?: number;
 }
 
+export type BranchId = 'A' | 'B';
+
+export interface TowerBranch {
+  id: BranchId;
+  name: string;
+  description: string;
+  /** Accent colour for UI tint + turret visual distinction. */
+  color: string;
+  /** Exactly 3 entries — Lv3, Lv4, Lv5 on this branch. */
+  levels: readonly [TowerLevel, TowerLevel, TowerLevel];
+}
+
+export interface TowerConfig {
+  id: string;
+  name: string;
+  description?: string;
+  turretSprite: AssetName;
+  projectileSprite: AssetName;
+  counters?: readonly ArmorType[];
+  /** Always 2 entries — Lv1, Lv2 (shared before the branch choice). */
+  baseLevels: readonly [TowerLevel, TowerLevel];
+  branches: { A: TowerBranch; B: TowerBranch };
+}
+
+export interface TowerBuffs {
+  damageMul: number;
+  rangeMul: number;
+  fireRateMul: number;
+}
+
+/**
+ * Runtime tower instance. The `level` field is 0-based:
+ *   0 = Lv1 (baseLevels[0])
+ *   1 = Lv2 (baseLevels[1])
+ *   2 = Lv3 (branches[branch].levels[0])
+ *   3 = Lv4 (branches[branch].levels[1])
+ *   4 = Lv5 (branches[branch].levels[2])
+ * `branch` is null until the player commits the Lv2 → Lv3 upgrade.
+ */
 export class Tower {
   readonly tileX: number;
   readonly tileY: number;
@@ -37,13 +77,13 @@ export class Tower {
   readonly y: number;
   readonly config: TowerConfig;
   level: number;
+  branch: BranchId | null;
   totalInvested: number;
   turretRotation: number;
-  /** Seconds since firing, drives recoil animation (decays to 0). */
   fireAnim: number;
-  /** Seconds since placement / upgrade, drives pop-in scale. */
   buildAnim: number;
   private cooldown: number;
+  private idleScanPhase: number;
 
   constructor(tileX: number, tileY: number, tileSize: number, config: TowerConfig) {
     this.tileX = tileX;
@@ -52,39 +92,88 @@ export class Tower {
     this.y = tileY * tileSize + tileSize / 2;
     this.config = config;
     this.level = 0;
-    this.totalInvested = config.levels[0].cost;
+    this.branch = null;
+    this.totalInvested = config.baseLevels[0].cost;
     this.cooldown = 0;
-    // Stagger initial rotation so multiple towers don't all look alike
     this.turretRotation = Math.random() * Math.PI * 2;
     this.fireAnim = 0;
     this.buildAnim = 1;
     this.idleScanPhase = Math.random() * Math.PI * 2;
   }
 
-  /** Drifts when no target is in range, purely visual flavor. */
-  private idleScanPhase: number;
-
   currentLevel(): TowerLevel {
-    return this.config.levels[this.level];
+    if (this.level <= 1) return this.config.baseLevels[this.level];
+    if (!this.branch) {
+      // Shouldn't happen: level >= 2 without a branch means a logic error.
+      return this.config.baseLevels[1];
+    }
+    return this.config.branches[this.branch].levels[this.level - 2];
   }
 
   canUpgrade(): boolean {
-    return this.level < this.config.levels.length - 1;
+    // Can upgrade if below Lv5 (level index 4).
+    return this.level < 4;
   }
 
-  nextUpgradeCost(): number {
-    return this.canUpgrade() ? this.config.levels[this.level + 1].cost : 0;
+  /**
+   * True iff the next upgrade requires the player to CHOOSE a branch
+   * (Lv2 → Lv3). Used by the UI to draw two buttons instead of one.
+   */
+  isAtBranchPoint(): boolean {
+    return this.level === 1;
   }
 
+  /**
+   * Cost of continuing on the current branch. For the branch-point
+   * (Lv2→Lv3), returns A's cost since both branches share cost by design;
+   * pass the chosen branch to `upgradeToBranch` for actual commit.
+   */
+  nextUpgradeCost(branch?: BranchId): number {
+    if (!this.canUpgrade()) return 0;
+    if (this.level === 1) {
+      const b = branch ?? 'A';
+      return this.config.branches[b].levels[0].cost;
+    }
+    // On a branch already — must continue with current branch.
+    if (!this.branch) return 0;
+    return this.config.branches[this.branch].levels[this.level - 1].cost;
+  }
+
+  /**
+   * Base upgrade — used for Lv1→Lv2. For Lv2→Lv3 the UI calls
+   * `upgradeToBranch('A' | 'B')`.
+   */
   upgrade(): void {
     if (!this.canUpgrade()) return;
-    this.level++;
-    this.totalInvested += this.currentLevel().cost;
-    this.buildAnim = 1; // retrigger build anim on upgrade
+    if (this.level === 1) return; // branch required at branch point
+    if (this.level === 0) {
+      this.level = 1;
+      this.totalInvested += this.config.baseLevels[1].cost;
+    } else {
+      // Continue on current branch
+      if (!this.branch) return;
+      this.level++;
+      this.totalInvested += this.config.branches[this.branch].levels[this.level - 2].cost;
+    }
+    this.buildAnim = 1;
+  }
+
+  /** Lv2 → Lv3 branch selection. */
+  upgradeToBranch(branch: BranchId): void {
+    if (this.level !== 1) return;
+    this.branch = branch;
+    this.level = 2;
+    this.totalInvested += this.config.branches[branch].levels[0].cost;
+    this.buildAnim = 1;
   }
 
   sellValue(bonus = 0): number {
     return Math.floor(this.totalInvested * (0.5 + bonus));
+  }
+
+  /** Visible range (used by GameScene for rendering range circles). */
+  effectiveRange(rangeMul: number = 1): number {
+    return this.currentLevel().range * rangeMul;
   }
 
   update(
@@ -128,38 +217,43 @@ export class Tower {
     this.turretRotation = Math.atan2(tp.y - this.y, tp.x - this.x) + Math.PI / 2;
 
     if (this.cooldown === 0) {
-      // Counter bonus: +40% dmg vs armor types this tower counters
-      const counterMul = counterMultiplier(this.config.counters, target.armorType);
+      // Apply counter multiplier (with per-tier optional bonus override).
+      const counterMul = counterMultiplier(
+        this.config.counters,
+        target.armorType,
+        lv.counterBonus,
+      );
       const damage = lv.damage * buffs.damageMul * counterMul;
-      projectiles.push(new Projectile(
-        { x: this.x, y: this.y },
-        target,
-        {
-          damage,
-          speed: lv.projectileSpeed,
-          sprite: this.config.projectileSprite,
-          splashRadius: this.config.splashRadius ?? 0,
-          slowDuration: this.config.slowDuration ?? 0,
-          slowFactor: this.config.slowFactor ?? 1,
-          chainCount: this.config.chainCount ?? 0,
-          chainRange: this.config.chainRange ?? 0,
-          chainSegments: this.config.chainCount ? chainSegments : undefined,
-          armorPierce: this.config.pierceResist ?? false,
-        },
-      ));
+      const shotCount = Math.max(1, lv.multiShot ?? 1);
+      // Multi-shot: spawn N projectiles with a small angular spread so the
+      // visual "burst" is readable. All home on the same primary target
+      // (homing keeps damage predictable vs scattered misses).
+      for (let i = 0; i < shotCount; i++) {
+        const spreadRad = shotCount > 1 ? (i - (shotCount - 1) / 2) * 0.08 : 0;
+        const dx = tp.x - this.x;
+        const dy = tp.y - this.y;
+        const baseAng = Math.atan2(dy, dx);
+        const ang = baseAng + spreadRad;
+        const offsetR = 6; // small barrel offset
+        projectiles.push(new Projectile(
+          { x: this.x + Math.cos(ang) * offsetR, y: this.y + Math.sin(ang) * offsetR },
+          target,
+          {
+            damage,
+            speed: lv.projectileSpeed,
+            sprite: this.config.projectileSprite,
+            splashRadius: lv.splashRadius ?? 0,
+            slowDuration: lv.slowDuration ?? 0,
+            slowFactor: lv.slowFactor ?? 1,
+            chainCount: lv.chainCount ?? 0,
+            chainRange: lv.chainRange ?? 0,
+            chainSegments: lv.chainCount ? chainSegments : undefined,
+            armorPierce: lv.armorPierce ?? false,
+          },
+        ));
+      }
       this.cooldown = 1 / (lv.fireRate * buffs.fireRateMul);
       this.fireAnim = 1;
     }
   }
-
-  /** Visible range (used by GameScene for rendering range circles). */
-  effectiveRange(rangeMul: number = 1): number {
-    return this.currentLevel().range * rangeMul;
-  }
-}
-
-export interface TowerBuffs {
-  damageMul: number;
-  rangeMul: number;
-  fireRateMul: number;
 }

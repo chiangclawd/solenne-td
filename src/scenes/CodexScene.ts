@@ -206,27 +206,33 @@ export class CodexScene extends BaseScene {
     r.drawTextScreen(cfg.name, x + 76, y + 12, titleColor, 14, true);
     if (unlocked) {
       r.drawTextScreen(TOWER_DESC[id] ?? '', x + 76, y + 32, COLORS.text, 10);
-      const base = cfg.levels[0];
-      const max = cfg.levels[cfg.levels.length - 1];
+      const base = cfg.baseLevels[0];
+      // Show Lv1 baseline + both branch max tiers side-by-side so codex
+      // makes the A/B strategic split visible.
       r.drawTextScreen(
         `Lv1: ${base.cost}g · DMG ${base.damage} · RNG ${(base.range / T).toFixed(1)}t · ${base.fireRate.toFixed(1)}/s`,
-        x + 12, y + 72, COLORS.textDim, 10,
+        x + 12, y + 52, COLORS.textDim, 10,
       );
+      const brA = cfg.branches.A;
+      const brB = cfg.branches.B;
+      const maxA = brA.levels[brA.levels.length - 1];
+      const maxB = brB.levels[brB.levels.length - 1];
+      r.drawTextScreen(`🟠 ${brA.name}`, x + 12, y + 72, brA.color, 11, true);
       r.drawTextScreen(
-        `Lv3: ${max.cost}g · DMG ${max.damage} · RNG ${(max.range / T).toFixed(1)}t · ${max.fireRate.toFixed(1)}/s`,
-        x + 12, y + 90, '#ffd166', 10,
+        `Lv5A: ${maxA.cost}g · DMG ${maxA.damage}${maxA.splashRadius ? ` · AOE ${(maxA.splashRadius/T).toFixed(1)}t` : ''}${maxA.multiShot ? ` · ×${maxA.multiShot}` : ''}`,
+        x + 12, y + 86, '#cbd2de', 9,
       );
-      const tags: string[] = [];
-      if (cfg.splashRadius) tags.push('AOE 濺射');
-      if (cfg.slowDuration) tags.push(`減速 ${Math.round((1 - (cfg.slowFactor ?? 1)) * 100)}%`);
-      if (cfg.pierceResist) tags.push('穿甲');
-      if (tags.length) r.drawTextScreen(tags.join(' · '), x + 12, y + 108, '#6ec8ff', 9, true);
+      r.drawTextScreen(`🔵 ${brB.name}`, x + 12, y + 100, brB.color, 11, true);
+      r.drawTextScreen(
+        `Lv5B: ${maxB.cost}g · DMG ${maxB.damage}${maxB.armorPierce ? ' · 破甲' : ''}${maxB.splashRadius ? ` · AOE ${(maxB.splashRadius/T).toFixed(1)}t` : ''}`,
+        x + 12, y + 114, '#cbd2de', 9,
+      );
       // Counters — show on the right side as icons so players learn the type chart
       if (cfg.counters && cfg.counters.length > 0) {
         const counterIcons = cfg.counters.map((t) => ARMOR_INFO[t].icon).join(' ');
         const txt = `克制  ${counterIcons}`;
         const tw = r.measureTextScreen(txt, 10, true);
-        r.drawTextScreen(txt, x + w - tw - 12, y + 108, '#ffd166', 10, true);
+        r.drawTextScreen(txt, x + w - tw - 12, y + 52, '#ffd166', 10, true);
       }
     } else {
       // Locked: show unlock hint instead of stats
