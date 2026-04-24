@@ -112,6 +112,19 @@ const RAW_TOWERS: Record<string, RawTowerConfig> = {
       { cost: 200, range: T * 3.8, damage: 72, fireRate: 2.0, projectileSpeed: 520 },
     ],
   },
+  // World 6 — heavy-AOE anti-armor / anti-shield artillery
+  torpedoTower: {
+    name: '深海魚雷塔 (AOE)',
+    turretSprite: 'turretMissile',
+    projectileSprite: 'projectileMissile',
+    splashRadius: T * 1.5,
+    counters: ['armored', 'shielded'],
+    levels: [
+      { cost: 180, range: T * 2.8, damage: 95,  fireRate: 0.85, projectileSpeed: 240 },
+      { cost: 220, range: T * 3.0, damage: 150, fireRate: 0.95, projectileSpeed: 260 },
+      { cost: 280, range: T * 3.3, damage: 230, fireRate: 1.1,  projectileSpeed: 280 },
+    ],
+  },
 };
 
 export const TOWER_TYPES: Record<string, TowerConfig> = Object.fromEntries(
@@ -121,5 +134,5 @@ export const TOWER_TYPES: Record<string, TowerConfig> = Object.fromEntries(
 export const TOWER_ORDER: readonly string[] = [
   'cannon', 'quickShot', 'machineGun', 'frostTower',
   'sniper', 'missileLauncher', 'heavyCannon',
-  'tesla', 'lightTower',
+  'tesla', 'lightTower', 'torpedoTower',
 ];

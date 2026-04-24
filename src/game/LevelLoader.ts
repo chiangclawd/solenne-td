@@ -8,6 +8,7 @@ export const LEVEL_IDS = [
   'level-11', 'level-12', 'level-13',
   'level-14', 'level-15', 'level-16', 'level-17', 'level-18',
   'level-19', 'level-20', 'level-21', 'level-22', 'level-23',
+  'level-24',
 ] as const;
 export type LevelId = typeof LEVEL_IDS[number];
 

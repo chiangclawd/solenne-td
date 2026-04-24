@@ -56,6 +56,12 @@ export const TOWER_UNLOCKS: readonly TowerUnlock[] = [
     towerName: '聖光塔',
     tagline: '無視敵方護甲減免',
   },
+  {
+    towerId: 'torpedoTower',
+    afterLevelId: 'level-23',
+    towerName: '深海魚雷塔',
+    tagline: '巨大 AOE · 克制重甲與護盾',
+  },
 ];
 
 export function isTowerUnlocked(save: SaveData, towerId: string): boolean {

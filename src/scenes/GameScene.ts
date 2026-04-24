@@ -56,7 +56,8 @@ function bgmForWorld(world: number): import('../engine/AudioManager.ts').BgmTrac
   if (world === 2) return 'world2';
   if (world === 3) return 'world3';
   if (world === 4) return 'world4';
-  return 'world5';
+  if (world === 5) return 'world5';
+  return 'world6';
 }
 
 export class GameScene extends BaseScene {

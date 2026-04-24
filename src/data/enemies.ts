@@ -61,4 +61,21 @@ export const ENEMY_TYPES: Record<string, EnemyConfig> = {
     hp: 1300, speed: 28, radius: 24, reward: 180, sprite: 'enemyVoidBoss', spriteSize: T * 1.5,
     damageResist: 0.25, armorType: 'shielded',
   },
+
+  // World 6 — Seabed Fissure (abyssal aftermath)
+  tentacle: {
+    hp: 340, speed: 45, radius: 16, reward: 42, sprite: 'enemyTentacle', spriteSize: T * 1.1,
+    damageResist: 0.20, armorType: 'armored',
+  },
+  swimmerShoal: {
+    hp: 20, speed: 180, radius: 7, reward: 4, sprite: 'enemySwimmer', spriteSize: T * 0.5,
+    armorType: 'light',
+  },
+  abyssalBoss: {
+    hp: 1500, speed: 30, radius: 25, reward: 220, sprite: 'enemyAbyssalBoss', spriteSize: T * 1.55,
+    damageResist: 0.30, armorType: 'shielded',
+    onDeathSpawn: [
+      { type: 'tentacle', count: 3, delay: 0.15 },
+    ],
+  },
 };

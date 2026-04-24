@@ -31,6 +31,9 @@ const ENEMY_INFO: { id: string; label: string; desc: string; tier: string }[] = 
   { id: 'finalBoss', label: '最終 Boss', desc: '鐵潮首腦。HP 900。', tier: 'Boss' },
   { id: 'glacialBoss', label: '冰原 Boss', desc: '世界 4 Boss · HP 780。', tier: 'Boss' },
   { id: 'voidBoss', label: '虛空 Boss', desc: '世界 5 Boss · HP 1300，15% 傷害減免。', tier: 'Boss' },
+  { id: 'tentacle', label: '觸手怪', desc: '世界 6 · 重甲深海爬行者。死了會再生，警覺性高。', tier: '高級' },
+  { id: 'swimmerShoal', label: '群游魚', desc: '世界 6 · 極快輕裝。一批十隻像暴雨一樣湧。', tier: '中級' },
+  { id: 'abyssalBoss', label: '深淵之主', desc: '世界 6 Boss · HP 1500，死亡時分裂出 3 隻觸手。', tier: 'Boss' },
 ];
 
 const TOWER_DESC: Record<string, string> = {
@@ -43,6 +46,7 @@ const TOWER_DESC: Record<string, string> = {
   frostTower: '冰霜塔 · 附加減速。攻擊力極低但控場必備。',
   tesla: '特斯拉塔 · 鏈狀閃電，擊中後跳至最多 2 個目標（遞減傷害）。',
   lightTower: '聖光塔 · 攻擊無視敵方護甲減免。對幽影與虛空 Boss 必備。',
+  torpedoTower: '深海魚雷塔 · 世界 6 解鎖。巨大 AOE，克制重甲與護盾。最強反 Boss 火力。',
 };
 
 export class CodexScene extends BaseScene {

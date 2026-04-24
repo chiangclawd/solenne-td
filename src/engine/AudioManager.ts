@@ -6,7 +6,7 @@
  * All generated at runtime; no external audio files.
  */
 
-export type BgmTrack = 'menu' | 'world1' | 'world2' | 'world3' | 'world4' | 'world5' | 'victory' | 'none';
+export type BgmTrack = 'menu' | 'world1' | 'world2' | 'world3' | 'world4' | 'world5' | 'world6' | 'victory' | 'none';
 
 interface BgmVoice {
   stop(atTime: number): void;
@@ -441,6 +441,20 @@ const BGM_PRESETS: Record<Exclude<BgmTrack, 'none'>, BgmPreset> = {
     arpGain: 0.09,
     shimmer: true,
     shimmerGain: 0.07,
+  },
+  world6: {
+    // Abyssal — slow, deep, aquatic dread. Minor 7 + suspended chords evoke
+    // the seabed. Lower root than W5 for "pressure" feel.
+    bpm: 76,
+    root: 98.0, // G2 — deep, submerged
+    chords: [[0, 3, 7, 10], [-2, 3, 7], [0, 5, 10], [-5, 0, 3, 7]],
+    padGain: 0.22,
+    bassGain: 0.24,
+    arp: true,
+    arpOctave: 2,
+    arpGain: 0.06,
+    shimmer: true,
+    shimmerGain: 0.10, // heavier shimmer = bubble/current ambience
   },
   victory: {
     bpm: 88,

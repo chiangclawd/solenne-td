@@ -16,6 +16,8 @@ export function drawObstacle(ctx: Ctx, kind: string, cx: number, cy: number, siz
     case 'ruin': paintRuin(ctx, cx, cy, size); break;
     case 'deadTree': paintDeadTree(ctx, cx, cy, size); break;
     case 'iceRock': paintIceRock(ctx, cx, cy, size); break;
+    case 'water': paintWater(ctx, cx, cy, size, age); break;
+    case 'coral': paintCoral(ctx, cx, cy, size, age); break;
     default: paintRock(ctx, cx, cy, size);
   }
 }
@@ -440,4 +442,104 @@ function paintIceRock(ctx: Ctx, cx: number, cy: number, T: number): void {
   ctx.strokeStyle = '#e0f4ff';
   ctx.lineWidth = 0.6;
   ctx.stroke();
+}
+
+// ---- Water (world 6) — animated pool, blocks tower placement ----
+function paintWater(ctx: Ctx, cx: number, cy: number, T: number, age: number): void {
+  const halfT = T * 0.5;
+  // Base deep teal fill with animated swirl
+  const baseGrad = ctx.createRadialGradient(cx, cy, 2, cx, cy, halfT + 2);
+  baseGrad.addColorStop(0, '#2a6878');
+  baseGrad.addColorStop(0.7, '#143848');
+  baseGrad.addColorStop(1, '#061c28');
+  ctx.fillStyle = baseGrad;
+  ctx.fillRect(cx - halfT, cy - halfT, T, T);
+
+  // Animated wave lines
+  ctx.strokeStyle = 'rgba(140, 200, 220, 0.45)';
+  ctx.lineWidth = 0.8;
+  const waveOffset = (age * 0.8) % (Math.PI * 2);
+  for (let i = 0; i < 3; i++) {
+    const y = cy - halfT * 0.5 + (i * T) / 3 + Math.sin(age * 1.2 + i) * 1;
+    ctx.beginPath();
+    const steps = 8;
+    for (let s = 0; s <= steps; s++) {
+      const x = cx - halfT + (T * s) / steps;
+      const wy = y + Math.sin((s / steps) * Math.PI * 2 + waveOffset + i) * 1.2;
+      if (s === 0) ctx.moveTo(x, wy);
+      else ctx.lineTo(x, wy);
+    }
+    ctx.stroke();
+  }
+
+  // Scattered glints (bright specks)
+  ctx.fillStyle = 'rgba(255,255,255,0.35)';
+  for (let i = 0; i < 4; i++) {
+    const px = cx + Math.cos(age * 0.3 + i * 1.5) * halfT * 0.6;
+    const py = cy + Math.sin(age * 0.4 + i * 1.5) * halfT * 0.6;
+    const sparkle = 0.3 + Math.sin(age * 3 + i) * 0.3;
+    ctx.globalAlpha = Math.max(0, sparkle);
+    ctx.beginPath();
+    ctx.arc(px, py, 0.8, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  ctx.globalAlpha = 1;
+
+  // Tile border (darker) so adjacent water tiles blend naturally
+  ctx.strokeStyle = 'rgba(0, 16, 24, 0.5)';
+  ctx.lineWidth = 1;
+  ctx.strokeRect(cx - halfT, cy - halfT, T, T);
+}
+
+// ---- Coral (world 6) — decorative obstacle ----
+function paintCoral(ctx: Ctx, cx: number, cy: number, T: number, age: number): void {
+  // Shadow
+  ctx.fillStyle = 'rgba(0, 0, 0, 0.35)';
+  ctx.beginPath();
+  ctx.ellipse(cx + 2, cy + T * 0.32, T * 0.26, T * 0.08, 0, 0, Math.PI * 2);
+  ctx.fill();
+
+  const sway = Math.sin(age * 1.5) * 0.8;
+
+  // Main coral column (pink-orange gradient)
+  const grad = ctx.createLinearGradient(cx, cy - T * 0.3, cx, cy + T * 0.3);
+  grad.addColorStop(0, '#ff8a8a');
+  grad.addColorStop(0.5, '#ff6b6b');
+  grad.addColorStop(1, '#a02828');
+  ctx.fillStyle = grad;
+  ctx.beginPath();
+  ctx.moveTo(cx - 4 + sway * 0.3, cy + T * 0.3);
+  ctx.quadraticCurveTo(cx - 5 + sway, cy, cx - 2 + sway, cy - T * 0.25);
+  ctx.quadraticCurveTo(cx + sway, cy - T * 0.4, cx + 2 + sway, cy - T * 0.25);
+  ctx.quadraticCurveTo(cx + 5 + sway, cy, cx + 4 + sway * 0.3, cy + T * 0.3);
+  ctx.closePath();
+  ctx.fill();
+  ctx.strokeStyle = '#4a1010';
+  ctx.lineWidth = 0.7;
+  ctx.stroke();
+
+  // Branches
+  ctx.strokeStyle = '#ff8a8a';
+  ctx.lineWidth = 2;
+  ctx.lineCap = 'round';
+  // Left branch
+  ctx.beginPath();
+  ctx.moveTo(cx - 2 + sway, cy - T * 0.1);
+  ctx.lineTo(cx - 7 + sway * 1.5, cy - T * 0.25);
+  ctx.stroke();
+  // Right branch
+  ctx.beginPath();
+  ctx.moveTo(cx + 2 + sway, cy - T * 0.15);
+  ctx.lineTo(cx + 7 + sway * 1.5, cy - T * 0.3);
+  ctx.stroke();
+
+  // White polyp dots
+  ctx.fillStyle = '#ffd0d0';
+  for (let i = 0; i < 4; i++) {
+    const px = cx + sway + (i - 1.5) * 1.5;
+    const py = cy - T * 0.2 + (i % 2) * 4;
+    ctx.beginPath();
+    ctx.arc(px, py, 0.9, 0, Math.PI * 2);
+    ctx.fill();
+  }
 }
