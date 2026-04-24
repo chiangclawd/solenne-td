@@ -14,7 +14,7 @@ import { MainMenuScene } from './scenes/MainMenuScene.ts';
 import { AchievementTracker } from './game/Achievements.ts';
 import type { SceneContext } from './scenes/SceneContext.ts';
 
-const VERSION = '2.0.0';
+const VERSION = '2.1.0';
 
 const canvas = document.getElementById('game-canvas') as HTMLCanvasElement | null;
 if (!canvas) throw new Error('#game-canvas element not found');
@@ -99,7 +99,13 @@ async function main(): Promise<void> {
     sceneManager.current?.onHover?.(ev.screenX, ev.screenY, ev.world.x, ev.world.y);
   });
   input.onRelease((ev) => {
-    sceneManager.current?.onRelease?.(ev.screenX, ev.screenY, ev.world.x, ev.world.y);
+    sceneManager.current?.onRelease?.(ev.screenX, ev.screenY, ev.world.x, ev.world.y, ev.didDrag);
+  });
+  input.onDrag((ev) => {
+    sceneManager.current?.onDrag?.(ev.dy, ev.dx, ev.dt);
+  });
+  input.onWheel((deltaY) => {
+    sceneManager.current?.onWheel?.(deltaY);
   });
 
   loop.start();

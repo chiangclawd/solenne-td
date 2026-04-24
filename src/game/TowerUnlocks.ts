@@ -54,7 +54,7 @@ export const TOWER_UNLOCKS: readonly TowerUnlock[] = [
     towerId: 'lightTower',
     afterLevelId: 'level-18',
     towerName: '聖光塔',
-    tagline: '對具傷害減免敵人 +30%',
+    tagline: '無視敵方護甲減免',
   },
 ];
 

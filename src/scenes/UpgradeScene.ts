@@ -19,6 +19,11 @@ export class UpgradeScene extends BaseScene {
   private resetBtn: Rect | null = null;
   private cardActions: CardAction[] = [];
   private scrollY = 0;
+  private scrollVelocity = 0;
+  private contentHeight = 0;
+  private viewportHeight = 0;
+  private isDragging = false;
+  private lastInertiaT = 0;
   private elapsed = 0;
   private flashUpgradeId: string | null = null;
   private flashTime = 0;
@@ -33,7 +38,29 @@ export class UpgradeScene extends BaseScene {
     if (this.flashTime > 0) this.flashTime = Math.max(0, this.flashTime - dt);
   }
 
+  private stepInertia(): void {
+    const now = performance.now();
+    const realDt = this.lastInertiaT === 0 ? 0 : (now - this.lastInertiaT) / 1000;
+    this.lastInertiaT = now;
+    if (realDt <= 0 || realDt > 0.25) return;
+    if (this.isDragging) return;
+    if (Math.abs(this.scrollVelocity) > 20) {
+      this.scrollY += this.scrollVelocity * realDt;
+      this.scrollVelocity *= Math.pow(0.012, realDt);
+      this.clampScroll();
+    } else {
+      this.scrollVelocity = 0;
+    }
+  }
+
+  private clampScroll(): void {
+    const max = Math.max(0, this.contentHeight - this.viewportHeight);
+    if (this.scrollY < 0) this.scrollY = 0;
+    else if (this.scrollY > max) this.scrollY = max;
+  }
+
   render(): void {
+    this.stepInertia();
     const r = this.ctx.renderer;
     r.beginFrame();
     r.beginScreen();
@@ -69,6 +96,7 @@ export class UpgradeScene extends BaseScene {
     // Cards area (scrollable)
     const contentY = 116;
     const contentH = vh - contentY - 12;
+    this.viewportHeight = contentH;
     const dpr = window.devicePixelRatio || 1;
     r.ctx.save();
     r.ctx.beginPath();
@@ -80,20 +108,35 @@ export class UpgradeScene extends BaseScene {
     const cardGap = 8;
     const cardX = 12;
     const cardW = vw - 24;
-    let y = contentY + 8 - this.scrollY;
+    const contentStart = contentY + 8;
+    let y = contentStart - this.scrollY;
+    const viewTop = contentY;
+    const viewBottom = contentY + contentH;
 
     for (const u of META_UPGRADES) {
-      this.renderCard(r, u, cardX, y, cardW, cardH);
+      // Cull cards fully offscreen. Still advance y and renderCard when in view.
+      if (y + cardH >= viewTop && y <= viewBottom) {
+        this.renderCard(r, u, cardX, y, cardW, cardH);
+      } else {
+        // Still register the action rect so buy button hit-test works if partially shown
+        // (but since culled means fully outside, it's safe to skip)
+      }
       y += cardH + cardGap;
     }
 
-    // Clamp scroll
-    const contentBottom = y + this.scrollY;
-    const maxScroll = Math.max(0, contentBottom - (contentY + contentH));
-    if (this.scrollY > maxScroll) this.scrollY = maxScroll;
-    if (this.scrollY < 0) this.scrollY = 0;
+    this.contentHeight = (y + this.scrollY) - contentStart;
+    this.clampScroll();
 
     r.ctx.restore();
+
+    // Scrollbar indicator
+    if (this.contentHeight > this.viewportHeight) {
+      const trackH = this.viewportHeight - 16;
+      const thumbH = Math.max(36, trackH * (this.viewportHeight / this.contentHeight));
+      const thumbY = contentY + 8 + (trackH - thumbH) * (this.scrollY / (this.contentHeight - this.viewportHeight));
+      r.drawScreenRoundedRect(vw - 6, contentY + 8, 3, trackH, 1.5, 'rgba(255,255,255,0.05)');
+      r.drawScreenRoundedRect(vw - 6, thumbY, 3, thumbH, 1.5, 'rgba(255,215,100,0.5)');
+    }
   }
 
   private renderCard(
@@ -164,6 +207,9 @@ export class UpgradeScene extends BaseScene {
   }
 
   onTap(screenX: number, screenY: number): void {
+    this.scrollVelocity = 0;
+    this.isDragging = false;
+    // Fixed-position controls fire immediately
     if (this.backBtn && this.inside(screenX, screenY, this.backBtn)) {
       this.ctx.audio.click();
       this.ctx.persistSave();
@@ -178,6 +224,12 @@ export class UpgradeScene extends BaseScene {
       }
       return;
     }
+    // Scrollable card actions wait for release (to prevent accidental buy during drag)
+  }
+
+  override onRelease(screenX: number, screenY: number, _wx: number, _wy: number, didDrag?: boolean): void {
+    this.isDragging = false;
+    if (didDrag) return;
     for (const a of this.cardActions) {
       if (this.inside(screenX, screenY, a.rect)) {
         const res = tryBuyNextTier(this.ctx.save, a.upgradeId);
@@ -193,10 +245,22 @@ export class UpgradeScene extends BaseScene {
         return;
       }
     }
-    // Scroll with tap (top half = up, bottom = down)
-    const vh = this.ctx.renderer.vh();
-    if (screenY > vh * 0.7) this.scrollY += 150;
-    else if (screenY < vh * 0.3 && screenY > 120) this.scrollY = Math.max(0, this.scrollY - 150);
+  }
+
+  override onDrag(dy: number, _dx: number, dt: number): void {
+    this.isDragging = true;
+    this.scrollY -= dy;
+    const instant = dt > 0 ? -dy / dt : 0;
+    this.scrollVelocity = this.scrollVelocity * 0.4 + instant * 0.6;
+    if (this.scrollVelocity > 3500) this.scrollVelocity = 3500;
+    else if (this.scrollVelocity < -3500) this.scrollVelocity = -3500;
+    this.clampScroll();
+  }
+
+  override onWheel(deltaY: number): void {
+    this.scrollY += deltaY * 0.5;
+    this.scrollVelocity = 0;
+    this.clampScroll();
   }
 
   override onExit(): void {

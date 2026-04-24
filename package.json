@@ -1,7 +1,7 @@
 {
   "name": "solenne-td",
   "private": true,
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "索倫的最後防線 · 23-level TS + Canvas tower defense",
   "type": "module",
   "scripts": {

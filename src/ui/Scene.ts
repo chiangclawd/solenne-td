@@ -8,7 +8,21 @@ export interface Scene {
   onTap(screenX: number, screenY: number, worldX: number, worldY: number): void;
   onHover?(screenX: number, screenY: number, worldX: number, worldY: number): void;
   onHoverEnd?(): void;
-  onRelease?(screenX: number, screenY: number, worldX: number, worldY: number): void;
+  /** Fires on pointerup. didDrag=true if the pointer moved > threshold since pointerdown. */
+  onRelease?(
+    screenX: number,
+    screenY: number,
+    worldX: number,
+    worldY: number,
+    didDrag?: boolean,
+  ): void;
+  /**
+   * Fires every pointermove while pressed. `dy`/`dx` = CSS-pixel delta since the
+   * last move; `dt` = seconds since the last move (use for velocity calc).
+   */
+  onDrag?(dy: number, dx: number, dt: number): void;
+  /** Fires on mouse/trackpad wheel events over the canvas. */
+  onWheel?(deltaY: number): void;
 }
 
 export abstract class BaseScene implements Scene {
@@ -25,7 +39,15 @@ export abstract class BaseScene implements Scene {
   abstract onTap(screenX: number, screenY: number, worldX: number, worldY: number): void;
   onHover?(_screenX: number, _screenY: number, _worldX: number, _worldY: number): void;
   onHoverEnd?(): void;
-  onRelease?(_screenX: number, _screenY: number, _worldX: number, _worldY: number): void;
+  onRelease?(
+    _screenX: number,
+    _screenY: number,
+    _worldX: number,
+    _worldY: number,
+    _didDrag?: boolean,
+  ): void;
+  onDrag?(_dy: number, _dx: number, _dt: number): void;
+  onWheel?(_deltaY: number): void;
 
   protected inside(x: number, y: number, r: { x: number; y: number; w: number; h: number }): boolean {
     return x >= r.x && x <= r.x + r.w && y >= r.y && y <= r.y + r.h;

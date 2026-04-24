@@ -30,6 +30,8 @@ export interface ProjectileOptions {
   chainCount?: number;
   chainRange?: number;
   chainSegments?: ChainSegment[];
+  /** AP rounds — bypass enemy damageResist entirely. */
+  armorPierce?: boolean;
 }
 
 export class Projectile {
@@ -44,6 +46,7 @@ export class Projectile {
   readonly slowFactor: number;
   readonly chainCount: number;
   readonly chainRange: number;
+  readonly armorPierce: boolean;
   private readonly chainSegments: ChainSegment[] | null;
   alive: boolean;
   rotation: number;
@@ -61,6 +64,7 @@ export class Projectile {
     this.chainCount = opts.chainCount ?? 0;
     this.chainRange = opts.chainRange ?? 0;
     this.chainSegments = opts.chainSegments ?? null;
+    this.armorPierce = opts.armorPierce ?? false;
     this.alive = true;
     this.rotation = 0;
   }
@@ -94,7 +98,7 @@ export class Projectile {
         const p = e.position();
         const d = Math.hypot(p.x - this.x, p.y - this.y);
         if (d <= this.splashRadius + e.radius) {
-          e.takeDamage(this.damage);
+          e.takeDamage(this.damage, this.armorPierce);
           if (this.slowDuration > 0) e.applySlow(this.slowDuration, this.slowFactor);
         }
       }
@@ -108,7 +112,7 @@ export class Projectile {
     }
 
     // Single-target + optional chain
-    this.target.takeDamage(this.damage);
+    this.target.takeDamage(this.damage, this.armorPierce);
     if (this.slowDuration > 0) {
       this.target.applySlow(this.slowDuration, this.slowFactor);
       effects.push({
@@ -142,7 +146,7 @@ export class Projectile {
           x2: bp.x, y2: bp.y,
           life: 0.18, maxLife: 0.18,
         });
-        best.takeDamage(dmg);
+        best.takeDamage(dmg, this.armorPierce);
         hit.add(best);
         from = best;
         dmg *= 0.8;

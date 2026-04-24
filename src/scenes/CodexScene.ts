@@ -5,6 +5,7 @@ import { ENEMY_TYPES } from '../data/enemies.ts';
 import { ACHIEVEMENTS } from '../game/Achievements.ts';
 import { drawTowerIconScreen, drawEnemyIconScreen } from '../graphics/SpritePainter.ts';
 import { isTowerUnlocked, unlockHint } from '../game/TowerUnlocks.ts';
+import { ARMOR_INFO } from '../game/ArmorTypes.ts';
 import { COLORS, TILE_SIZE } from '../config.ts';
 
 interface Rect { x: number; y: number; w: number; h: number }
@@ -41,7 +42,7 @@ const TOWER_DESC: Record<string, string> = {
   heavyCannon: '重砲 · AOE 濺射大範圍。近距離強力。',
   frostTower: '冰霜塔 · 附加減速。攻擊力極低但控場必備。',
   tesla: '特斯拉塔 · 鏈狀閃電，擊中後跳至最多 2 個目標（遞減傷害）。',
-  lightTower: '聖光塔 · 對具傷害減免敵人造成 +30% 傷害。對幽影/Boss 必備。',
+  lightTower: '聖光塔 · 攻擊無視敵方護甲減免。對幽影與虛空 Boss 必備。',
 };
 
 export class CodexScene extends BaseScene {
@@ -49,15 +50,39 @@ export class CodexScene extends BaseScene {
   private tabBtns: { rect: Rect; tab: Tab }[] = [];
   private tab: Tab = 'towers';
   private scrollY = 0;
-  private lastTapY = 0;
-  private dragStartY = 0;
-  private dragging = false;
+  private scrollVelocity = 0;
+  private contentHeight = 0;
+  private viewportHeight = 0;
+  private isDragging = false;
+  private lastInertiaT = 0;
 
-  update(_dt: number): void {
-    this.ctx.renderer.updateShake(_dt);
+  update(dt: number): void {
+    this.ctx.renderer.updateShake(dt);
+  }
+
+  private stepInertia(): void {
+    const now = performance.now();
+    const realDt = this.lastInertiaT === 0 ? 0 : (now - this.lastInertiaT) / 1000;
+    this.lastInertiaT = now;
+    if (realDt <= 0 || realDt > 0.25) return;
+    if (this.isDragging) return;
+    if (Math.abs(this.scrollVelocity) > 20) {
+      this.scrollY += this.scrollVelocity * realDt;
+      this.scrollVelocity *= Math.pow(0.012, realDt);
+      this.clampScroll();
+    } else {
+      this.scrollVelocity = 0;
+    }
+  }
+
+  private clampScroll(): void {
+    const max = Math.max(0, this.contentHeight - this.viewportHeight);
+    if (this.scrollY < 0) this.scrollY = 0;
+    else if (this.scrollY > max) this.scrollY = max;
   }
 
   render(): void {
+    this.stepInertia();
     const r = this.ctx.renderer;
     r.beginFrame();
     r.beginScreen();
@@ -95,6 +120,7 @@ export class CodexScene extends BaseScene {
     // Content clipped area
     const contentY = tabY + tabH + 12;
     const contentH = vh - contentY - 12;
+    this.viewportHeight = contentH;
     r.drawScreenRoundedRect(12, contentY, vw - 24, contentH, 10, 'rgba(10,16,32,0.6)');
 
     r.ctx.save();
@@ -105,30 +131,48 @@ export class CodexScene extends BaseScene {
 
     const innerX = 24;
     const innerW = vw - 48;
-    let y = contentY + 16 - this.scrollY;
+    const contentStart = contentY + 16;
+    let y = contentStart - this.scrollY;
+    const viewTop = contentY;
+    const viewBottom = contentY + contentH;
 
     if (this.tab === 'towers') {
+      const towerCardH = 124 + 10;
       for (const id of TOWER_ORDER) {
         const cfg = TOWER_TYPES[id];
         if (!cfg) continue;
-        y = this.renderTowerCard(r, innerX, y, innerW, id, cfg);
+        if (y + towerCardH >= viewTop && y <= viewBottom) {
+          this.renderTowerCard(r, innerX, y, innerW, id, cfg);
+        }
+        y += towerCardH;
       }
     } else if (this.tab === 'enemies') {
+      const enemyCardH = 96 + 8;
       for (const info of ENEMY_INFO) {
         const cfg = ENEMY_TYPES[info.id];
         if (!cfg) continue;
-        y = this.renderEnemyCard(r, innerX, y, innerW, info, cfg);
+        if (y + enemyCardH >= viewTop && y <= viewBottom) {
+          this.renderEnemyCard(r, innerX, y, innerW, info, cfg);
+        }
+        y += enemyCardH;
       }
     } else {
-      y = this.renderAchievements(r, innerX, y, innerW);
+      y = this.renderAchievements(r, innerX, y, innerW, viewTop, viewBottom);
     }
 
-    // Update scroll bounds
-    const overflow = (y + this.scrollY) - (contentY + contentH - 16);
-    if (overflow < 0) this.scrollY = 0;
-    else if (this.scrollY > overflow) this.scrollY = overflow;
+    this.contentHeight = (y + this.scrollY) - contentStart;
+    this.clampScroll();
 
     r.ctx.restore();
+
+    // Scrollbar indicator
+    if (this.contentHeight > this.viewportHeight) {
+      const trackH = this.viewportHeight - 16;
+      const thumbH = Math.max(36, trackH * (this.viewportHeight / this.contentHeight));
+      const thumbY = contentY + 8 + (trackH - thumbH) * (this.scrollY / (this.contentHeight - this.viewportHeight));
+      r.drawScreenRoundedRect(vw - 10, contentY + 8, 3, trackH, 1.5, 'rgba(255,255,255,0.05)');
+      r.drawScreenRoundedRect(vw - 10, thumbY, 3, thumbH, 1.5, 'rgba(255,215,100,0.5)');
+    }
   }
 
   private renderTowerCard(
@@ -171,7 +215,15 @@ export class CodexScene extends BaseScene {
       const tags: string[] = [];
       if (cfg.splashRadius) tags.push('AOE 濺射');
       if (cfg.slowDuration) tags.push(`減速 ${Math.round((1 - (cfg.slowFactor ?? 1)) * 100)}%`);
+      if (cfg.pierceResist) tags.push('穿甲');
       if (tags.length) r.drawTextScreen(tags.join(' · '), x + 12, y + 108, '#6ec8ff', 9, true);
+      // Counters — show on the right side as icons so players learn the type chart
+      if (cfg.counters && cfg.counters.length > 0) {
+        const counterIcons = cfg.counters.map((t) => ARMOR_INFO[t].icon).join(' ');
+        const txt = `克制  ${counterIcons}`;
+        const tw = r.measureTextScreen(txt, 10, true);
+        r.drawTextScreen(txt, x + w - tw - 12, y + 108, '#ffd166', 10, true);
+      }
     } else {
       // Locked: show unlock hint instead of stats
       r.drawTextScreen('未解鎖', x + 76, y + 32, '#ff9f43', 11, true);
@@ -205,7 +257,7 @@ export class CodexScene extends BaseScene {
     info: { id: string; label: string; desc: string; tier: string },
     cfg: import('../game/Enemy.ts').EnemyConfig,
   ): number {
-    const cardH = 82;
+    const cardH = 96;
     r.drawScreenRoundedRect(x, y, w, cardH, 8, 'rgba(14,22,40,0.9)');
     r.drawScreenRoundedRectOutline(x, y, w, cardH, 8, '#22304a', 1);
 
@@ -213,39 +265,60 @@ export class CodexScene extends BaseScene {
     r.drawScreenRect(x + 10, y + 10, iconSize, iconSize, 'rgba(255,255,255,0.04)');
     drawEnemyIconScreen(r.ctx, cfg.sprite, x + 13, y + 13, iconSize - 6);
 
+    // Armor-type badge on top-right of icon
+    const armorType = cfg.armorType ?? 'light';
+    const armor = ARMOR_INFO[armorType];
+    r.drawScreenCircle(x + 10 + iconSize - 8, y + 18, 9, armor.color);
+    r.drawTextScreenCenter(armor.icon, x + 10 + iconSize - 8, y + 18, '#0a0f1a', 10, true);
+
     r.drawTextScreen(info.label, x + 70, y + 10, '#ffd166', 13, true);
     r.drawTextScreen(`[${info.tier}]`, x + 70 + r.measureTextScreen(info.label, 13, true) + 8, y + 11, COLORS.textDim, 10);
     r.drawTextScreen(info.desc, x + 70, y + 30, COLORS.text, 10);
+
+    // Stats row
     r.drawTextScreen(
       `HP ${cfg.hp} · 速度 ${cfg.speed} · 獎勵 ${cfg.reward}g`,
       x + 70, y + 52, '#6ec8ff', 10,
     );
+    // Armor row — type + resist %
+    const resistPct = Math.round((cfg.damageResist ?? 0) * 100);
+    const armorLine = resistPct > 0
+      ? `${armor.icon} ${armor.label} · 減傷 ${resistPct}%`
+      : `${armor.icon} ${armor.label}`;
+    r.drawTextScreen(armorLine, x + 70, y + 72, armor.color, 10, true);
     return y + cardH + 8;
   }
 
   private renderAchievements(
     r: import('../engine/Renderer.ts').Renderer,
     x: number, y: number, w: number,
+    viewTop = -Infinity, viewBottom = Infinity,
   ): number {
+    const cardH = 60;
+    const stride = cardH + 6;
     for (const a of ACHIEVEMENTS) {
-      const unlocked = !!this.ctx.save.achievements[a.id];
-      const cardH = 60;
-      r.drawScreenRoundedRect(x, y, w, cardH, 8, unlocked ? 'rgba(35,55,38,0.9)' : 'rgba(14,22,40,0.7)');
-      r.drawScreenRoundedRectOutline(x, y, w, cardH, 8, unlocked ? '#6ee17a' : '#22304a', 1);
-      r.drawTextScreenCenter(a.icon, x + 26, y + cardH / 2, unlocked ? '#ffd166' : '#4a5568', 22, true);
-      r.drawTextScreen(a.title, x + 60, y + 10, unlocked ? '#ffd166' : COLORS.textDim, 13, true);
-      r.drawTextScreen(a.description, x + 60, y + 32, unlocked ? COLORS.text : COLORS.textDim, 10);
-      if (unlocked) {
-        r.drawTextScreen('✓', x + w - 26, y + 22, '#6ee17a', 18, true);
-      } else {
-        r.drawTextScreen('🔒', x + w - 30, y + 22, COLORS.textDim, 14);
+      // Cull offscreen
+      if (y + cardH >= viewTop && y <= viewBottom) {
+        const unlocked = !!this.ctx.save.achievements[a.id];
+        r.drawScreenRoundedRect(x, y, w, cardH, 8, unlocked ? 'rgba(35,55,38,0.9)' : 'rgba(14,22,40,0.7)');
+        r.drawScreenRoundedRectOutline(x, y, w, cardH, 8, unlocked ? '#6ee17a' : '#22304a', 1);
+        r.drawTextScreenCenter(a.icon, x + 26, y + cardH / 2, unlocked ? '#ffd166' : '#4a5568', 22, true);
+        r.drawTextScreen(a.title, x + 60, y + 10, unlocked ? '#ffd166' : COLORS.textDim, 13, true);
+        r.drawTextScreen(a.description, x + 60, y + 32, unlocked ? COLORS.text : COLORS.textDim, 10);
+        if (unlocked) {
+          r.drawTextScreen('✓', x + w - 26, y + 22, '#6ee17a', 18, true);
+        } else {
+          r.drawTextScreen('🔒', x + w - 30, y + 22, COLORS.textDim, 14);
+        }
       }
-      y += cardH + 6;
+      y += stride;
     }
     return y;
   }
 
   onTap(screenX: number, screenY: number): void {
+    this.scrollVelocity = 0;
+    this.isDragging = false;
     if (this.backBtn && this.inside(screenX, screenY, this.backBtn)) {
       this.ctx.audio.click();
       this.ctx.transition(new MainMenuScene(this.ctx));
@@ -256,14 +329,30 @@ export class CodexScene extends BaseScene {
         this.ctx.audio.click();
         this.tab = b.tab;
         this.scrollY = 0;
+        this.scrollVelocity = 0;
         return;
       }
     }
-    // Simple scroll-by-tap (tap near top scrolls up, near bottom down)
-    const vh = this.ctx.renderer.vh();
-    if (screenY > vh * 0.65) this.scrollY += 140;
-    else if (screenY < vh * 0.25) this.scrollY = Math.max(0, this.scrollY - 140);
-    // Silence unused fields
-    void this.lastTapY; void this.dragStartY; void this.dragging;
+    // Card area: drag to scroll, nothing selectable here
+  }
+
+  override onRelease(): void {
+    this.isDragging = false;
+  }
+
+  override onDrag(dy: number, _dx: number, dt: number): void {
+    this.isDragging = true;
+    this.scrollY -= dy;
+    const instant = dt > 0 ? -dy / dt : 0;
+    this.scrollVelocity = this.scrollVelocity * 0.4 + instant * 0.6;
+    if (this.scrollVelocity > 3500) this.scrollVelocity = 3500;
+    else if (this.scrollVelocity < -3500) this.scrollVelocity = -3500;
+    this.clampScroll();
+  }
+
+  override onWheel(deltaY: number): void {
+    this.scrollY += deltaY * 0.5;
+    this.scrollVelocity = 0;
+    this.clampScroll();
   }
 }

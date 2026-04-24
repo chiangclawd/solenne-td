@@ -42,6 +42,24 @@ export class Path {
     return tiles;
   }
 
+  /**
+   * Chebyshev (chess-board) distance in tiles from (tileX, tileY) to the
+   * nearest path tile. Returns 0 if the tile itself is on the path.
+   */
+  static tileDistanceToPath(tileX: number, tileY: number, pathTiles: Set<string>): number {
+    if (pathTiles.has(`${tileX},${tileY}`)) return 0;
+    let best = Infinity;
+    for (const key of pathTiles) {
+      const [sx, sy] = key.split(',');
+      const d = Math.max(Math.abs(Number(sx) - tileX), Math.abs(Number(sy) - tileY));
+      if (d < best) {
+        best = d;
+        if (best === 1) return 1;
+      }
+    }
+    return best === Infinity ? 99 : best;
+  }
+
   pointAt(distance: number): WorldPoint {
     const d = Math.max(0, Math.min(this.totalLength, distance));
     for (let i = 0; i < this.segmentLengths.length; i++) {

@@ -2,6 +2,8 @@ import type { Enemy } from './Enemy.ts';
 import { Projectile } from './Projectile.ts';
 import type { ChainSegment } from './Projectile.ts';
 import type { AssetName } from '../assets.ts';
+import type { ArmorType } from './ArmorTypes.ts';
+import { counterMultiplier } from './ArmorTypes.ts';
 
 export interface TowerLevel {
   cost: number;
@@ -22,7 +24,10 @@ export interface TowerConfig {
   slowFactor?: number;
   chainCount?: number;
   chainRange?: number;
+  /** AP rounds — bypass enemy damageResist. */
   pierceResist?: boolean;
+  /** Armor types this tower deals +40% damage against. */
+  counters?: readonly ArmorType[];
 }
 
 export class Tower {
@@ -123,8 +128,9 @@ export class Tower {
     this.turretRotation = Math.atan2(tp.y - this.y, tp.x - this.x) + Math.PI / 2;
 
     if (this.cooldown === 0) {
-      let damage = lv.damage * buffs.damageMul;
-      if (this.config.pierceResist) damage *= 1.3;
+      // Counter bonus: +40% dmg vs armor types this tower counters
+      const counterMul = counterMultiplier(this.config.counters, target.armorType);
+      const damage = lv.damage * buffs.damageMul * counterMul;
       projectiles.push(new Projectile(
         { x: this.x, y: this.y },
         target,
@@ -138,6 +144,7 @@ export class Tower {
           chainCount: this.config.chainCount ?? 0,
           chainRange: this.config.chainRange ?? 0,
           chainSegments: this.config.chainCount ? chainSegments : undefined,
+          armorPierce: this.config.pierceResist ?? false,
         },
       ));
       this.cooldown = 1 / (lv.fireRate * buffs.fireRateMul);

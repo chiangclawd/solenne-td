@@ -219,7 +219,7 @@ export class MainMenuScene extends BaseScene {
     }
     if (this.endlessBtn && this.inside(screenX, screenY, this.endlessBtn)) {
       this.ctx.audio.click();
-      this.ctx.transition(new GameScene(this.ctx, generateEndlessLevel()));
+      this.ctx.transition(new GameScene(this.ctx, generateEndlessLevel(), null));
       return;
     }
     if (this.upgradeBtn && this.inside(screenX, screenY, this.upgradeBtn)) {

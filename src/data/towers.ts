@@ -10,6 +10,7 @@ const RAW_TOWERS: Record<string, RawTowerConfig> = {
     name: '加農砲',
     turretSprite: 'turretCannon',
     projectileSprite: 'projectileBullet',
+    counters: ['armored'],
     levels: [
       { cost: 50,  range: T * 2.5, damage: 18,  fireRate: 2.0, projectileSpeed: 300 },
       { cost: 60,  range: T * 2.7, damage: 30,  fireRate: 2.4, projectileSpeed: 320 },
@@ -20,6 +21,7 @@ const RAW_TOWERS: Record<string, RawTowerConfig> = {
     name: '速射槍',
     turretSprite: 'turretMG',
     projectileSprite: 'projectileBullet',
+    counters: ['light'],
     levels: [
       { cost: 40,  range: T * 2.0, damage: 8,   fireRate: 4.0, projectileSpeed: 340 },
       { cost: 50,  range: T * 2.1, damage: 14,  fireRate: 4.5, projectileSpeed: 360 },
@@ -30,6 +32,7 @@ const RAW_TOWERS: Record<string, RawTowerConfig> = {
     name: '機槍塔',
     turretSprite: 'turretMG',
     projectileSprite: 'projectileBullet',
+    counters: ['light', 'flying'],
     levels: [
       { cost: 85,  range: T * 2.3, damage: 12,  fireRate: 6.0, projectileSpeed: 360 },
       { cost: 100, range: T * 2.4, damage: 18,  fireRate: 7.0, projectileSpeed: 380 },
@@ -40,6 +43,7 @@ const RAW_TOWERS: Record<string, RawTowerConfig> = {
     name: '狙擊塔',
     turretSprite: 'turretCannon',
     projectileSprite: 'projectileBullet',
+    counters: ['armored', 'ethereal'],
     levels: [
       { cost: 110, range: T * 4.5, damage: 70,  fireRate: 0.7, projectileSpeed: 520 },
       { cost: 130, range: T * 5.0, damage: 110, fireRate: 0.8, projectileSpeed: 560 },
@@ -51,6 +55,7 @@ const RAW_TOWERS: Record<string, RawTowerConfig> = {
     turretSprite: 'turretMissile',
     projectileSprite: 'projectileMissile',
     splashRadius: T * 0.9,
+    counters: ['flying', 'armored'],
     levels: [
       { cost: 130, range: T * 3.5, damage: 45,  fireRate: 0.9, projectileSpeed: 220 },
       { cost: 160, range: T * 3.7, damage: 70,  fireRate: 1.0, projectileSpeed: 240 },
@@ -62,6 +67,7 @@ const RAW_TOWERS: Record<string, RawTowerConfig> = {
     turretSprite: 'turretMissile',
     projectileSprite: 'projectileMissile',
     splashRadius: T * 1.2,
+    counters: ['armored', 'shielded'],
     levels: [
       { cost: 160, range: T * 2.0, damage: 85,  fireRate: 1.0, projectileSpeed: 280 },
       { cost: 200, range: T * 2.1, damage: 130, fireRate: 1.1, projectileSpeed: 300 },
@@ -74,6 +80,7 @@ const RAW_TOWERS: Record<string, RawTowerConfig> = {
     projectileSprite: 'projectileBullet',
     slowDuration: 1.5,
     slowFactor: 0.4,
+    // No counters — utility / crowd-control specialist
     levels: [
       { cost: 80,  range: T * 2.2, damage: 4,   fireRate: 2.0, projectileSpeed: 320 },
       { cost: 100, range: T * 2.4, damage: 8,   fireRate: 2.4, projectileSpeed: 340 },
@@ -86,6 +93,7 @@ const RAW_TOWERS: Record<string, RawTowerConfig> = {
     projectileSprite: 'projectileBullet',
     chainCount: 2,
     chainRange: T * 1.8,
+    counters: ['flying', 'shielded'],
     levels: [
       { cost: 140, range: T * 2.4, damage: 22, fireRate: 2.2, projectileSpeed: 480 },
       { cost: 180, range: T * 2.6, damage: 38, fireRate: 2.6, projectileSpeed: 520 },
@@ -97,6 +105,7 @@ const RAW_TOWERS: Record<string, RawTowerConfig> = {
     turretSprite: 'turretLight',
     projectileSprite: 'projectileBullet',
     pierceResist: true,
+    counters: ['ethereal', 'shielded'],
     levels: [
       { cost: 120, range: T * 3.2, damage: 28, fireRate: 1.6, projectileSpeed: 440 },
       { cost: 150, range: T * 3.5, damage: 46, fireRate: 1.8, projectileSpeed: 480 },

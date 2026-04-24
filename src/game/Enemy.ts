@@ -1,5 +1,6 @@
 import type { Path } from './Path.ts';
 import type { WorldPoint } from '../engine/Renderer.ts';
+import type { ArmorType } from './ArmorTypes.ts';
 
 export interface OnDeathSpawn {
   type: string;
@@ -22,6 +23,8 @@ export interface EnemyConfig {
   sprite: string;
   spriteSize: number;
   damageResist?: number;
+  /** Category used by tower `counters` to grant +40% damage. Default: 'light'. */
+  armorType?: ArmorType;
   onDeathSpawn?: readonly OnDeathSpawn[];
   healsNearby?: HealAura;
 }
@@ -36,6 +39,7 @@ export class Enemy {
   readonly sprite: string;
   readonly spriteSize: number;
   readonly damageResist: number;
+  readonly armorType: ArmorType;
   readonly onDeathSpawn: readonly OnDeathSpawn[];
   readonly healsNearby: HealAura | null;
   progress: number;
@@ -66,6 +70,7 @@ export class Enemy {
     this.sprite = config.sprite;
     this.spriteSize = config.spriteSize;
     this.damageResist = config.damageResist ?? 0;
+    this.armorType = config.armorType ?? 'light';
     this.onDeathSpawn = config.onDeathSpawn ?? [];
     this.healsNearby = config.healsNearby ?? null;
     this.progress = startProgress;
@@ -83,8 +88,12 @@ export class Enemy {
     this.healTimer = 0;
   }
 
-  takeDamage(amount: number): void {
-    const effective = amount * (1 - this.damageResist);
+  /**
+   * Apply damage, respecting the enemy's damageResist unless the attacker
+   * explicitly pierces armor (AP rounds, holy damage, etc.).
+   */
+  takeDamage(amount: number, armorPierce = false): void {
+    const effective = armorPierce ? amount : amount * (1 - this.damageResist);
     this.hp -= effective;
     this.hitFlash = 0.12;
     this.damageTakenThisTick += effective;

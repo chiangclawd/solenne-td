@@ -41,6 +41,8 @@ export interface SaveData {
   endlessHighScore?: EndlessScore;
   /** Meta-progression: map of upgrade id → current tier (0-3). */
   metaUpgrades?: Record<string, number>;
+  /** Last hero the player selected (UI default on next level start). */
+  selectedHero?: string;
 }
 
 const SAVE_KEY = 'td-solenne-save-v1';
@@ -96,7 +98,11 @@ function migrate(parsed: Partial<SaveData> & { version?: number }): SaveData {
   const settings = { ...base.settings, ...(parsed.settings ?? {}) };
   const stats = { ...base.stats, ...(parsed.stats ?? {}) };
   const achievements = (parsed.achievements ?? {}) as Record<string, { unlockedAt: number }>;
-  return { version: 2, levelProgress, settings, achievements, stats };
+  const out: SaveData = { version: 2, levelProgress, settings, achievements, stats };
+  if (parsed.endlessHighScore) out.endlessHighScore = parsed.endlessHighScore;
+  if (parsed.metaUpgrades) out.metaUpgrades = parsed.metaUpgrades;
+  if (typeof parsed.selectedHero === 'string') out.selectedHero = parsed.selectedHero;
+  return out;
 }
 
 export function persistSave(data: SaveData): void {

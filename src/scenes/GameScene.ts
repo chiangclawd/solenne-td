@@ -21,6 +21,12 @@ import { generateEndlessWave } from '../game/WaveGenerator.ts';
 import { upgradeValue } from '../game/MetaUpgrades.ts';
 import { isTowerUnlocked, unlockTriggeredBy } from '../game/TowerUnlocks.ts';
 import type { TowerUnlock } from '../game/TowerUnlocks.ts';
+import { getHero, heroUnlockTriggeredBy } from '../game/Heroes.ts';
+import type { HeroDef, HeroId, HeroSkill } from '../game/Heroes.ts';
+import { ARMOR_INFO } from '../game/ArmorTypes.ts';
+import { Hero, frontlineBuffForTileDist } from '../game/Hero.ts';
+import type { HeroImpactFx } from '../game/Hero.ts';
+import { drawHero, drawHeroIconScreen } from '../graphics/HeroPainter.ts';
 import {
   drawTowerBase, drawTowerTurret, drawEnemy, drawProjectile,
   drawTowerIconScreen, drawEnemyIconScreen,
@@ -106,6 +112,18 @@ export class GameScene extends BaseScene {
   private dragFromSelector = false;
   /** If this win triggered a tower unlock, stored here to show on end overlay. */
   private unlockedTower: TowerUnlock | null = null;
+  /** Hero state — null if player chose no hero or endless mode. */
+  private readonly selectedHeroId: HeroId | null;
+  private readonly heroDef: HeroDef | null;
+  private hero: Hero | null = null;
+  /** True while waiting for player to tap a tile to deploy the hero. */
+  private heroDeployMode = false;
+  /** Visual FX queue populated by hero skill activations. */
+  private readonly heroFx: HeroImpactFx[] = [];
+  /** If this win triggered a hero unlock, stored for end overlay. */
+  private unlockedHero: HeroDef | null = null;
+  /** Enemy-on-hero damage accumulator (per-enemy grace window). */
+  private heroContactDamageTimer = 0;
 
   // Transient UI rects
   private nextWaveBtn: Rect | null = null;
@@ -121,13 +139,16 @@ export class GameScene extends BaseScene {
   private upgradeBtn: Rect | null = null;
   private sellBtn: Rect | null = null;
   private closePanelBtn: Rect | null = null;
+  private skillHudRects: { skill: HeroSkill; rect: Rect }[] = [];
 
-  constructor(ctx: SceneContext, level: LevelData) {
+  constructor(ctx: SceneContext, level: LevelData, heroId: HeroId | null = null) {
     super(ctx);
     this.level = level;
     this.isEndless = level.endless === true;
     this.difficulty = ctx.save.settings.difficulty;
     this.diffMod = DIFF_MOD[this.difficulty];
+    this.selectedHeroId = heroId;
+    this.heroDef = heroId ? getHero(heroId) : null;
     this.metaMod = {
       startGold: upgradeValue(ctx.save, 'startGold'),
       startLives: upgradeValue(ctx.save, 'startLives'),
@@ -186,7 +207,12 @@ export class GameScene extends BaseScene {
     this.ctx.renderer.setShakeEnabled(this.ctx.save.settings.screenShake);
     if (this.level.intro && this.level.intro.length > 0) {
       this.state.status = 'intro';
-      this.dialogue.show(this.level.intro, () => { this.state.status = 'idle'; });
+      this.dialogue.show(this.level.intro, () => {
+        this.state.status = 'idle';
+        if (this.heroDef && !this.hero) this.heroDeployMode = true;
+      });
+    } else if (this.heroDef && !this.hero) {
+      this.heroDeployMode = true;
     }
   }
 
@@ -256,6 +282,9 @@ export class GameScene extends BaseScene {
     this.paused = false;
     this.speedIdx = 0;
     this.ctx.setSpeed(SPEEDS[this.speedIdx]);
+    this.hero = null;
+    this.heroFx.length = 0;
+    this.heroDeployMode = this.heroDef !== null;
     if (this.isEndless) {
       // Regenerate starting wave
       this.waves.length = 0;
@@ -297,10 +326,12 @@ export class GameScene extends BaseScene {
     this.spawnStarRain(60 + stars * 20);
     const wasAlreadyCompleted = this.ctx.save.levelProgress[this.level.id]?.completed === true;
     recordCompletion(this.ctx.save, this.level.id, stars, this.difficulty);
-    // First-time unlock detection
+    // First-time unlock detection (tower + hero)
     if (!wasAlreadyCompleted) {
       const newUnlock = unlockTriggeredBy(this.level.id);
       if (newUnlock) this.unlockedTower = newUnlock;
+      const newHero = heroUnlockTriggeredBy(this.level.id);
+      if (newHero) this.unlockedHero = newHero;
     }
     this.ctx.save.stats.totalWavesSurvived += this.waveMgr.totalWaves();
     this.ctx.persistSave();
@@ -362,6 +393,43 @@ export class GameScene extends BaseScene {
     return this.ctx.levels[idx + 1] ?? null;
   }
 
+  /**
+   * Merge base (meta upgrade) buffs with hero-driven per-tower buffs:
+   *   - Kieran passive aura (in range): +15% damage, +10% fire rate
+   *   - Kieran rally active (global):   +40% damage, +25% fire rate
+   *   - Pip emergencyBuild (in range):  +50% fire rate
+   */
+  private computeTowerBuffs(
+    t: Tower,
+    base: { damageMul: number; rangeMul: number; fireRateMul: number },
+  ): { damageMul: number; rangeMul: number; fireRateMul: number } {
+    if (!this.hero || !this.hero.alive) return base;
+    let dmg = base.damageMul;
+    let rate = base.fireRateMul;
+    const h = this.hero;
+
+    if (h.def.id === 'kieran' && h.def.passive.auraRadius > 0) {
+      const rad = h.auraRadius();
+      if ((t.x - h.x) ** 2 + (t.y - h.y) ** 2 <= rad * rad) {
+        // Base: +15% dmg, +10% rate — scaled by frontline strength
+        dmg *= 1 + 0.15 * h.frontline.strengthMul;
+        rate *= 1 + 0.10 * h.frontline.strengthMul;
+      }
+    }
+    if (h.isEffectActive('rally')) {
+      dmg *= 1.40;
+      rate *= 1.25;
+    }
+    if (h.isEffectActive('emergencyBuild')) {
+      const def = h.def.skills.find((s) => s.id === 'emergencyBuild');
+      const radius = (def?.radius ?? 120) * h.frontline.radiusMul;
+      if ((t.x - h.x) ** 2 + (t.y - h.y) ** 2 <= radius * radius) {
+        rate *= 1.5;
+      }
+    }
+    return { damageMul: dmg, rangeMul: base.rangeMul, fireRateMul: rate };
+  }
+
   override update(dt: number): void {
     this.elapsed += dt;
     this.ctx.renderer.updateShake(dt);
@@ -410,13 +478,54 @@ export class GameScene extends BaseScene {
         }
       }
       for (const e of this.enemies) e.update(dt, this.enemies);
+
+      // Hero tick (before towers so buffs are known this frame)
+      if (this.hero) {
+        this.hero.update(dt, this.enemies, this.projectiles, this.chainSegments);
+        // Pip passive slow aura — refreshing slow every frame on enemies inside
+        if (this.hero.alive && this.hero.def.id === 'pip' && this.hero.def.passive.auraRadius > 0) {
+          const rad = this.hero.auraRadius();
+          const r2 = rad * rad;
+          const slowAmount = 0.18 * this.hero.frontline.strengthMul; // scales with frontline
+          for (const e of this.enemies) {
+            if (!e.alive) continue;
+            const p = e.position();
+            if ((p.x - this.hero.x) ** 2 + (p.y - this.hero.y) ** 2 <= r2) {
+              e.applySlow(0.1, Math.max(0.1, 1 - slowAmount));
+            }
+          }
+        }
+        // Contact damage — enemies near alive hero damage it on a tick
+        if (this.hero.alive) {
+          this.heroContactDamageTimer += dt;
+          if (this.heroContactDamageTimer >= 0.5) {
+            this.heroContactDamageTimer -= 0.5;
+            const contactR2 = 24 * 24;
+            let touches = 0;
+            for (const e of this.enemies) {
+              if (!e.alive) continue;
+              const p = e.position();
+              if ((p.x - this.hero.x) ** 2 + (p.y - this.hero.y) ** 2 <= contactR2) {
+                touches++;
+              }
+            }
+            if (touches > 0) this.hero.takeDamage(8 * Math.min(3, touches));
+          }
+        }
+      }
+
       const projectilesBefore = this.projectiles.length;
-      const buffs = {
+      // Base tower buffs (meta upgrades)
+      const baseBuffs = {
         damageMul: this.metaMod.damageMul,
         rangeMul: this.metaMod.rangeMul,
         fireRateMul: this.metaMod.fireRateMul,
       };
-      for (const t of this.towers) t.update(dt, this.enemies, this.projectiles, this.chainSegments, buffs);
+      // Per-tower buffs factor in hero auras + actives
+      for (const t of this.towers) {
+        const buffs = this.computeTowerBuffs(t, baseBuffs);
+        t.update(dt, this.enemies, this.projectiles, this.chainSegments, buffs);
+      }
       // Muzzle flash for any tower that fired
       for (let i = projectilesBefore; i < this.projectiles.length; i++) {
         const p = this.projectiles[i];
@@ -570,6 +679,10 @@ export class GameScene extends BaseScene {
       this.chainSegments[i].life -= dt;
       if (this.chainSegments[i].life <= 0) this.chainSegments.splice(i, 1);
     }
+    for (let i = this.heroFx.length - 1; i >= 0; i--) {
+      this.heroFx[i].life -= dt;
+      if (this.heroFx[i].life <= 0) this.heroFx.splice(i, 1);
+    }
     this.particles.update(dt);
     this.screenParticles.update(dt);
     this.weather.update(dt);
@@ -660,8 +773,51 @@ export class GameScene extends BaseScene {
       }
     }
 
+    // Hero deploy ghost — hovering a valid tile during deploy mode
+    if (this.heroDeployMode && this.heroDef && this.hoverTile) {
+      const { x: tx, y: ty } = this.hoverTile;
+      const key = `${tx},${ty}`;
+      const invalid = this.pathTiles.has(key) || this.occupiedTiles.has(key) || this.obstacleTiles.has(key);
+      const cx = tx * T + T / 2;
+      const cy = ty * T + T / 2;
+      const color = invalid ? 'rgba(255, 80, 80, 0.28)' : 'rgba(110, 200, 255, 0.3)';
+      r.drawRect(tx * T, ty * T, T, T, color);
+      const edge = invalid ? '#ff6b6b' : this.heroDef.color;
+      r.drawRect(tx * T, ty * T, T, 2, edge);
+      r.drawRect(tx * T, (ty + 1) * T - 2, T, 2, edge);
+      r.drawRect(tx * T, ty * T, 2, T, edge);
+      r.drawRect((tx + 1) * T - 2, ty * T, 2, T, edge);
+      if (!invalid) {
+        // Compute the frontline tier for this tile so players see the trade-off
+        const distToPath = Path.tileDistanceToPath(tx, ty, this.pathTiles);
+        const frontline = frontlineBuffForTileDist(distToPath);
+        const tierColor = frontline.tier === 'front' ? '#ff6b6b'
+          : frontline.tier === 'near' ? '#ffd166' : '#6ec8ff';
+        r.ctx.save();
+        r.ctx.globalAlpha = 0.7;
+        // Preview hero aura (scaled by frontline buff)
+        if (this.heroDef.passive.auraRadius > 0) {
+          const previewR = this.heroDef.passive.auraRadius * frontline.radiusMul;
+          r.drawCircleOutline(cx, cy, previewR, this.heroDef.color, 1.5);
+        }
+        r.ctx.restore();
+        // Tier label above tile (world-space)
+        r.ctx.save();
+        r.ctx.fillStyle = 'rgba(0,0,0,0.75)';
+        r.ctx.beginPath();
+        r.ctx.roundRect(tx * T - 4, ty * T - 16, T + 8, 14, 4);
+        r.ctx.fill();
+        r.ctx.fillStyle = tierColor;
+        r.ctx.font = 'bold 10px system-ui, sans-serif';
+        r.ctx.textAlign = 'center';
+        r.ctx.textBaseline = 'middle';
+        r.ctx.fillText(frontline.label, cx, ty * T - 9);
+        r.ctx.restore();
+      }
+    }
+
     // Placement ghost — hovering a tile with tower selected
-    if (this.hoverTile && !this.selectedExisting && this.state.status !== 'won' && this.state.status !== 'lost') {
+    if (!this.heroDeployMode && this.hoverTile && !this.selectedExisting && this.state.status !== 'won' && this.state.status !== 'lost') {
       const { x: tx, y: ty } = this.hoverTile;
       const key = `${tx},${ty}`;
       const cfg = TOWER_TYPES[this.selectedTowerId];
@@ -698,19 +854,51 @@ export class GameScene extends BaseScene {
         if (e.isSlowed()) {
           r.drawCircleOutline(p.x, p.y, e.radius + 3, 'rgba(110, 200, 255, 0.9)', 1.5);
         }
-        if (e.damageResist > 0.2) {
-          r.drawCircleOutline(p.x, p.y, e.radius + 1, 'rgba(200, 120, 255, 0.5)', 1);
+        // Armor indicator — ring thickness scales with resist level
+        if (e.damageResist >= 0.1) {
+          const lw = e.damageResist >= 0.25 ? 1.8 : 1;
+          r.drawCircleOutline(p.x, p.y, e.radius + 2, 'rgba(200, 120, 255, 0.55)', lw);
         }
         const ratio = Math.max(0, e.hp / e.hpMax);
         const bw = e.radius * 2;
         r.drawRect(p.x - e.radius, p.y - e.radius - 8, bw, 3, 'rgba(0,0,0,0.6)');
         const hpColor = ratio > 0.6 ? '#6ee17a' : ratio > 0.3 ? '#ffd166' : '#ff6b6b';
         r.drawRect(p.x - e.radius, p.y - e.radius - 8, bw * ratio, 3, hpColor);
+        // Small armor-type glyph next to HP bar for non-light enemies
+        if (e.armorType !== 'light') {
+          const info = ARMOR_INFO[e.armorType];
+          r.ctx.save();
+          r.ctx.fillStyle = info.color;
+          r.ctx.font = 'bold 9px system-ui, sans-serif';
+          r.ctx.textAlign = 'left';
+          r.ctx.textBaseline = 'alphabetic';
+          r.ctx.fillText(info.icon, p.x + e.radius + 2, p.y - e.radius - 5);
+          r.ctx.restore();
+        }
       }
+    }
+
+    // Hero (world-space, above enemies, under projectiles + FX)
+    if (this.hero) {
+      drawHero(r.ctx, this.hero, this.elapsed);
     }
 
     for (const p of this.projectiles) {
       drawProjectile(r.ctx, p.sprite, p.x, p.y, p.rotation);
+    }
+
+    // Hero skill FX (rally glow, grenade ring, flash burst, build zone)
+    for (const fx of this.heroFx) {
+      const t = fx.life / fx.maxLife;
+      const alpha = Math.max(0, t);
+      const rr = fx.radius * (fx.kind === 'heroFlash' ? (1.2 - t) : (0.4 + (1 - t) * 0.9));
+      r.ctx.save();
+      r.ctx.globalAlpha = alpha * 0.8;
+      r.drawCircleOutline(fx.x, fx.y, rr, fx.color, 3);
+      r.ctx.globalAlpha = alpha * 0.18;
+      r.drawCircle(fx.x, fx.y, rr, fx.color);
+      r.ctx.restore();
+      r.ctx.globalAlpha = 1;
     }
 
     // Particles (world space, on top of projectiles)
@@ -818,9 +1006,15 @@ export class GameScene extends BaseScene {
     this.sellBtn = null;
     this.closePanelBtn = null;
 
+    this.skillHudRects = [];
+
     if (hudVisible) {
       this.renderHUD(r, vw);
       this.renderNextWavePreview(r, vw);
+      if (this.heroDef) this.renderHeroHud(r, vw, vh);
+      if (this.heroDeployMode && this.state.status !== 'won' && this.state.status !== 'lost') {
+        this.renderDeployPrompt(r, vw, vh);
+      }
 
       if (this.state.status !== 'won' && this.state.status !== 'lost') {
         if (this.selectedExisting) {
@@ -1081,28 +1275,46 @@ export class GameScene extends BaseScene {
       r.drawTextScreenCenter('基地失守。撤退。', vw / 2, vh / 2 - 48, COLORS.textDim, 14);
     }
 
-    // Unlock banner (between stats and buttons)
+    // Unlock banners (between stats and buttons) — tower + hero stack
     let unlockBannerH = 0;
+    const bannerSingleH = 82;
+    const bannerW = vw - 48;
+    let bannerY = vh / 2 + 10;
     if (isWin && this.unlockedTower) {
-      unlockBannerH = 82;
       const ubX = 24;
-      const ubY = vh / 2 + 10;
-      const ubW = vw - 48;
-      // Pulsing gold border
+      const ubY = bannerY;
       const pulse = 0.6 + Math.sin(this.elapsed * 4) * 0.4;
       r.ctx.save();
       r.ctx.globalAlpha = pulse;
-      r.drawScreenRoundedRect(ubX, ubY, ubW, unlockBannerH, 10, '#3a2818');
-      r.drawScreenRoundedRectOutline(ubX, ubY, ubW, unlockBannerH, 10, '#ffd166', 2);
+      r.drawScreenRoundedRect(ubX, ubY, bannerW, bannerSingleH, 10, '#3a2818');
+      r.drawScreenRoundedRectOutline(ubX, ubY, bannerW, bannerSingleH, 10, '#ffd166', 2);
       r.ctx.restore();
-      // Left-side tower icon
       const iconSize = 50;
-      r.drawScreenRect(ubX + 8, ubY + (unlockBannerH - iconSize) / 2, iconSize, iconSize, 'rgba(255,255,255,0.05)');
-      drawTowerIconScreen(r.ctx, this.unlockedTower.towerId, ubX + 8, ubY + (unlockBannerH - iconSize) / 2, iconSize, 0);
-      // Text
+      r.drawScreenRect(ubX + 8, ubY + (bannerSingleH - iconSize) / 2, iconSize, iconSize, 'rgba(255,255,255,0.05)');
+      drawTowerIconScreen(r.ctx, this.unlockedTower.towerId, ubX + 8, ubY + (bannerSingleH - iconSize) / 2, iconSize, 0);
       r.drawTextScreen('🎁 新塔解鎖', ubX + iconSize + 20, ubY + 12, '#ffd166', 12, true);
       r.drawTextScreen(this.unlockedTower.towerName, ubX + iconSize + 20, ubY + 28, '#fff', 18, true);
       r.drawTextScreen(this.unlockedTower.tagline, ubX + iconSize + 20, ubY + 56, COLORS.textDim, 11);
+      unlockBannerH += bannerSingleH;
+      bannerY += bannerSingleH + 8;
+    }
+    if (isWin && this.unlockedHero) {
+      const ubX = 24;
+      const ubY = bannerY;
+      const def = this.unlockedHero;
+      const pulse = 0.6 + Math.sin(this.elapsed * 4 + 0.8) * 0.4;
+      r.ctx.save();
+      r.ctx.globalAlpha = pulse;
+      r.drawScreenRoundedRect(ubX, ubY, bannerW, bannerSingleH, 10, '#1e2c4a');
+      r.drawScreenRoundedRectOutline(ubX, ubY, bannerW, bannerSingleH, 10, def.color, 2);
+      r.ctx.restore();
+      const iconSize = 50;
+      r.drawScreenRect(ubX + 8, ubY + (bannerSingleH - iconSize) / 2, iconSize, iconSize, 'rgba(255,255,255,0.05)');
+      drawHeroIconScreen(r.ctx, def, ubX + 8, ubY + (bannerSingleH - iconSize) / 2, iconSize);
+      r.drawTextScreen('⚔ 新指揮官加入', ubX + iconSize + 20, ubY + 12, def.color, 12, true);
+      r.drawTextScreen(`${def.name} · ${def.title}`, ubX + iconSize + 20, ubY + 28, '#fff', 18, true);
+      r.drawTextScreen(def.tagline, ubX + iconSize + 20, ubY + 56, COLORS.textDim, 11);
+      unlockBannerH += bannerSingleH + 8;
     }
 
     const bw = 240, bh = 46, gap = 10;
@@ -1126,6 +1338,146 @@ export class GameScene extends BaseScene {
     this.endBackBtn = { x: cx, y, w: bw, h: bh };
     r.drawScreenRoundedRect(cx, y, bw, bh, 10, '#22304a');
     r.drawTextScreenCenter('✕ 返回選單', cx + bw / 2, y + bh / 2, '#fff', 14, true);
+  }
+
+  private renderHeroHud(
+    r: import('../engine/Renderer.ts').Renderer,
+    _vw: number,
+    _vh: number,
+  ): void {
+    if (!this.heroDef) return;
+    const def = this.heroDef;
+    const hero = this.hero;
+    const x = 8;
+    let y = 76;
+
+    // Portrait panel (slightly taller so frontline badge can sit under HP bar)
+    const panelW = 54;
+    const portraitH = 54;
+    const panelH = portraitH + 26; // extra 12px for frontline badge row
+    const alive = hero?.alive ?? true;
+    const bg = alive ? 'rgba(14,22,40,0.88)' : 'rgba(40,18,18,0.88)';
+    r.drawScreenRoundedRect(x, y, panelW, panelH, 8, bg);
+    r.drawScreenRoundedRectOutline(x, y, panelW, panelH, 8, def.color, 1.2);
+    drawHeroIconScreen(r.ctx, def, x + 3, y + 2, 48);
+    // HP bar under portrait
+    const hpY = y + portraitH;
+    const hpW = panelW - 8;
+    r.drawScreenRect(x + 4, hpY, hpW, 6, 'rgba(0,0,0,0.55)');
+    if (hero) {
+      const pct = alive ? hero.hp / def.maxHp : 0;
+      const color = pct > 0.6 ? '#6ee17a' : pct > 0.3 ? '#ffd166' : '#ff6b6b';
+      r.drawScreenRect(x + 4, hpY, hpW * pct, 6, color);
+      if (!alive) {
+        r.drawTextScreenCenter(
+          `${Math.ceil(hero.respawnRemaining)}s`,
+          x + panelW / 2, y + portraitH / 2,
+          '#ff8a8a', 16, true,
+        );
+      }
+      // Frontline tier badge under HP bar
+      const tier = hero.frontline.tier;
+      const tierColor = tier === 'front' ? '#ff6b6b' : tier === 'near' ? '#ffd166' : '#6ec8ff';
+      const tierLabel = tier === 'front' ? '◆ 前線' : tier === 'near' ? '◆ 前沿' : '◆ 後方';
+      r.drawTextScreenCenter(tierLabel, x + panelW / 2, hpY + 16, tierColor, 10, true);
+    } else {
+      // Not yet deployed — show dashed "not deployed"
+      r.drawTextScreenCenter('▼', x + panelW / 2, y + portraitH / 2, def.color, 20, true);
+    }
+
+    // Skill icons — vertical stack below portrait. Three visual states:
+    //   ready  → coloured bg, bright icon, coloured outline
+    //   active → fill with accent colour + pulsing outline + bright icon
+    //   on CD  → dim bg, dim icon (30%), MOBA-style radial sweep, seconds badge
+    y += panelH + 10;
+    const iconSize = 48;
+    const iconGap = 6;
+    const dpr = window.devicePixelRatio || 1;
+    for (let i = 0; i < def.skills.length; i++) {
+      const skill = def.skills[i];
+      const iy = y + i * (iconSize + iconGap);
+      const rect: Rect = { x, y: iy, w: iconSize, h: iconSize };
+      this.skillHudRects.push({ skill, rect });
+
+      const st = hero?.skillState(skill.id);
+      const onCd = !!st && st.cooldown > 0;
+      const active = !!st && st.activeRemaining > 0;
+      const ready = !!hero?.alive && !onCd;
+
+      // Base fill
+      const bgColor = active ? def.color : (ready ? '#22304a' : '#14202e');
+      r.drawScreenRoundedRect(rect.x, rect.y, rect.w, rect.h, 8, bgColor);
+
+      // Icon emoji — dim when on CD, bright otherwise
+      const iconAlpha = onCd ? 0.35 : 1.0;
+      r.ctx.save();
+      r.ctx.globalAlpha = iconAlpha;
+      r.drawTextScreenCenter(skill.icon, rect.x + rect.w / 2, rect.y + rect.h / 2, '#fff', 24);
+      r.ctx.restore();
+
+      // On CD: radial sweep (pie-chart depletion) + corner seconds badge
+      if (onCd && st) {
+        const pct = st.cooldown / skill.cooldown;
+        const cx = (rect.x + rect.w / 2) * dpr;
+        const cy = (rect.y + rect.h / 2) * dpr;
+        const radius = (rect.w / 2) * dpr * 1.05;
+        r.ctx.save();
+        r.ctx.fillStyle = 'rgba(0,0,0,0.55)';
+        r.ctx.beginPath();
+        r.ctx.moveTo(cx, cy);
+        // Sweep clockwise from -90° for `pct` of full circle
+        r.ctx.arc(cx, cy, radius, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * pct);
+        r.ctx.closePath();
+        r.ctx.fill();
+        r.ctx.restore();
+
+        // Corner badge with seconds
+        const badgeR = 11;
+        const bx = rect.x + rect.w - badgeR;
+        const by = rect.y + rect.h - badgeR;
+        r.drawScreenCircle(bx, by, badgeR, 'rgba(8,12,22,0.92)');
+        r.drawTextScreenCenter(`${Math.ceil(st.cooldown)}`, bx, by, '#fff', 11, true);
+      } else if (active) {
+        // Pulsing outline during active effect
+        const pulse = 0.6 + Math.sin(this.elapsed * 7) * 0.4;
+        r.ctx.save();
+        r.ctx.globalAlpha = pulse;
+        r.drawScreenRoundedRectOutline(rect.x - 2, rect.y - 2, rect.w + 4, rect.h + 4, 10, def.accent, 2.5);
+        r.ctx.restore();
+      } else if (ready) {
+        // Ready: coloured outline
+        r.drawScreenRoundedRectOutline(rect.x, rect.y, rect.w, rect.h, 8, def.color, 1.8);
+      } else {
+        // Hero dead — faint outline
+        r.drawScreenRoundedRectOutline(rect.x, rect.y, rect.w, rect.h, 8, 'rgba(255,255,255,0.08)', 1);
+      }
+    }
+  }
+
+  private renderDeployPrompt(
+    r: import('../engine/Renderer.ts').Renderer,
+    vw: number,
+    _vh: number,
+  ): void {
+    if (!this.heroDef) return;
+    const pulse = 0.8 + Math.sin(this.elapsed * 3) * 0.2;
+    const y = 64;
+    const boxW = Math.min(vw - 16, 340);
+    const boxX = (vw - boxW) / 2;
+    const boxH = 46; // taller for sub-hint
+    r.ctx.save();
+    r.ctx.globalAlpha = pulse;
+    r.drawScreenRoundedRect(boxX, y, boxW, boxH, 8, 'rgba(30,50,80,0.9)');
+    r.drawScreenRoundedRectOutline(boxX, y, boxW, boxH, 8, this.heroDef.color, 1.5);
+    r.ctx.restore();
+    r.drawTextScreenCenter(
+      `◆ 選擇 ${this.heroDef.name} 指揮官部署位置`,
+      vw / 2, y + 14, this.heroDef.accent, 13, true,
+    );
+    r.drawTextScreenCenter(
+      '越靠近路徑，光環與技能越強（但危險）',
+      vw / 2, y + 32, '#cbd2de', 10,
+    );
   }
 
   private renderTowerSelector(r: import('../engine/Renderer.ts').Renderer, vw: number, vh: number): void {
@@ -1259,7 +1611,7 @@ export class GameScene extends BaseScene {
       if (this.nextLevelBtn && this.inside(screenX, screenY, this.nextLevelBtn)) {
         this.ctx.audio.click();
         const next = this.nextLevelOrNull();
-        if (next) this.ctx.transition(new GameScene(this.ctx, next));
+        if (next) this.ctx.transition(new GameScene(this.ctx, next, this.selectedHeroId));
         return;
       }
       if (this.endRetryBtn && this.inside(screenX, screenY, this.endRetryBtn)) {
@@ -1282,6 +1634,23 @@ export class GameScene extends BaseScene {
 
     if (this.pauseBtn && this.inside(screenX, screenY, this.pauseBtn)) { this.ctx.audio.click(); this.paused = true; return; }
     if (this.speedBtn && this.inside(screenX, screenY, this.speedBtn)) { this.cycleSpeed(); return; }
+
+    // Hero skill icon taps (works regardless of tower selection)
+    for (const b of this.skillHudRects) {
+      if (this.inside(screenX, screenY, b.rect)) {
+        if (this.hero && this.hero.alive) {
+          const ok = this.hero.activateSkill(b.skill.id, this.enemies, this.effects, this.heroFx);
+          if (ok) {
+            this.ctx.audio.click();
+            if (b.skill.id === 'grenade') {
+              this.ctx.renderer.shake(0.25, 5);
+              this.ctx.audio.explosion();
+            }
+          }
+        }
+        return;
+      }
+    }
 
     if (this.selectedExisting) {
       if (this.upgradeBtn && this.inside(screenX, screenY, this.upgradeBtn)) {
@@ -1334,6 +1703,20 @@ export class GameScene extends BaseScene {
       return;
     }
     const key = `${tx},${ty}`;
+
+    // Hero deployment — consumes the tap if valid
+    if (this.heroDeployMode && this.heroDef) {
+      const blocked = this.pathTiles.has(key) || this.occupiedTiles.has(key) || this.obstacleTiles.has(key);
+      if (!blocked) {
+        const distToPath = Path.tileDistanceToPath(tx, ty, this.pathTiles);
+        const frontline = frontlineBuffForTileDist(distToPath);
+        this.hero = new Hero(this.heroDef, tx, ty, T, frontline);
+        this.heroDeployMode = false;
+        this.occupiedTiles.add(key);
+        this.ctx.audio.place();
+      }
+      return;
+    }
 
     const existing = this.towers.find((t) => t.tileX === tx && t.tileY === ty);
     if (existing) {

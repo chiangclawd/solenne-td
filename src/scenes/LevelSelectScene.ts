@@ -1,10 +1,11 @@
 import { BaseScene } from '../ui/Scene.ts';
 import { MainMenuScene } from './MainMenuScene.ts';
 import { GameScene } from './GameScene.ts';
+import { HeroSelectScene } from './HeroSelectScene.ts';
 import { SettingsScene } from './SettingsScene.ts';
 import { getStars, isUnlocked, totalStars, countCompleted } from '../storage/SaveData.ts';
-import { COLORS, TILE_SIZE, GRID_COLS, GRID_ROWS, WORLD_WIDTH, WORLD_HEIGHT } from '../config.ts';
-import { drawGrassTile, drawGoldFrame } from '../graphics/UIPainter.ts';
+import { COLORS } from '../config.ts';
+import { drawGoldFrame } from '../graphics/UIPainter.ts';
 
 // Lazy-load world cover banner with sequential WebP → PNG fallback.
 interface CoverState { extIdx: number; img: HTMLImageElement | null }
@@ -56,6 +57,15 @@ export class LevelSelectScene extends BaseScene {
   private backBtn: Rect | null = null;
   private settingsBtn: Rect | null = null;
   private elapsed = 0;
+  private scrollY = 0;
+  private contentHeight = 0;
+  private viewportHeight = 0;
+  /** Vertical scroll momentum (CSS px/s) — updated on drag, decayed on each render. */
+  private scrollVelocity = 0;
+  /** True while a finger/mouse drag is in progress — disables inertia. */
+  private isDragging = false;
+  /** performance.now() at last inertia step — used for rAF-rate inertia updates. */
+  private lastInertiaT = 0;
 
   override onEnter(): void {
     this.ctx.playBgm('menu');
@@ -66,17 +76,40 @@ export class LevelSelectScene extends BaseScene {
     this.ctx.renderer.updateShake(dt);
   }
 
+  /**
+   * Apply scroll inertia using wall-clock delta so it runs at full rAF rate
+   * (120Hz on ProMotion displays) rather than being locked to 60Hz fixed-dt.
+   * Called from render() before drawing.
+   */
+  private stepInertia(): void {
+    const now = performance.now();
+    const realDt = this.lastInertiaT === 0 ? 0 : (now - this.lastInertiaT) / 1000;
+    this.lastInertiaT = now;
+    if (realDt <= 0 || realDt > 0.25) return; // skip absurd dt (tab-switch, etc.)
+    if (this.isDragging) return;
+    if (Math.abs(this.scrollVelocity) > 20) {
+      this.scrollY += this.scrollVelocity * realDt;
+      this.scrollVelocity *= Math.pow(0.012, realDt);
+      this.clampScroll();
+    } else {
+      this.scrollVelocity = 0;
+    }
+  }
+
+  private clampScroll(): void {
+    const max = Math.max(0, this.contentHeight - this.viewportHeight);
+    if (this.scrollY < 0) this.scrollY = 0;
+    else if (this.scrollY > max) this.scrollY = max;
+  }
+
   render(): void {
+    // Inertia integration first so scrollY reflects latest physics this frame
+    this.stepInertia();
+
     const r = this.ctx.renderer;
     r.beginFrame();
-    r.beginWorld();
-    for (let gy = 0; gy < GRID_ROWS; gy++) {
-      for (let gx = 0; gx < GRID_COLS; gx++) {
-        drawGrassTile(r.ctx, gx * TILE_SIZE, gy * TILE_SIZE, TILE_SIZE, 'grass');
-      }
-    }
-    void WORLD_WIDTH; void WORLD_HEIGHT;
-
+    // Skip world-tile background — a near-opaque gradient overlays it anyway.
+    // Drawing 150 grass tiles per frame was a significant mobile perf hit.
     r.beginScreen();
     const vw = this.ctx.renderer.vw();
     const vh = this.ctx.renderer.vh();
@@ -116,7 +149,7 @@ export class LevelSelectScene extends BaseScene {
     r.drawScreenRoundedRect(24, panelY + 30, vw - 48, 6, 3, 'rgba(255,255,255,0.08)');
     r.drawScreenRoundedRect(24, panelY + 30, (vw - 48) * pct, 6, 3, '#ffd166');
 
-    // Level cards
+    // Level cards — scrollable region below the fixed header/progress bar
     this.cards = [];
 
     const cardW = 82, cardH = 102, gap = 8;
@@ -124,35 +157,52 @@ export class LevelSelectScene extends BaseScene {
     const rowWidth = cardW * cols + gap * (cols - 1);
     const startX = (vw - rowWidth) / 2;
 
-    let y = panelY + 62;
+    const contentTop = panelY + 62;        // where scrollable content begins
+    const footerH = 20;
+    const contentBottom = vh - footerH;
+    this.viewportHeight = contentBottom - contentTop;
+
+    // Clip to scrollable area so overflow is hidden
+    const dpr = window.devicePixelRatio || 1;
+    r.ctx.save();
+    r.ctx.beginPath();
+    r.ctx.rect(0, contentTop * dpr, vw * dpr, this.viewportHeight * dpr);
+    r.ctx.clip();
+
+    let y = contentTop - this.scrollY;
     const worlds = [1, 2, 3, 4, 5];
     const base = import.meta.env.BASE_URL;
+    // Viewport-culling Y bounds (in CSS coord; same space as running y cursor)
+    const viewTop = contentTop;
+    const viewBottom = contentTop + this.viewportHeight;
     for (const worldIdx of worlds) {
       const w = WORLD_NAMES[worldIdx];
-      // Optional cover banner (loaded from public/assets/covers/worldN.png if user provides)
       const cover = getCover(worldIdx, base);
       if (cover) {
         const bannerH = 54;
-        const dpr = window.devicePixelRatio || 1;
-        r.ctx.save();
-        r.ctx.beginPath();
-        r.ctx.roundRect(startX * dpr, y * dpr, rowWidth * dpr, bannerH * dpr, 6 * dpr);
-        r.ctx.clip();
-        r.ctx.drawImage(cover, startX * dpr, y * dpr, rowWidth * dpr, bannerH * dpr);
-        // Dark left-to-right fade for text contrast
-        const grad = r.ctx.createLinearGradient(startX * dpr, 0, (startX + rowWidth) * dpr, 0);
-        grad.addColorStop(0, 'rgba(5,8,20,0.85)');
-        grad.addColorStop(0.5, 'rgba(5,8,20,0.35)');
-        grad.addColorStop(1, 'rgba(5,8,20,0.1)');
-        r.ctx.fillStyle = grad;
-        r.ctx.fillRect(startX * dpr, y * dpr, rowWidth * dpr, bannerH * dpr);
-        r.ctx.restore();
-        r.drawTextScreen(w.name, startX + 10, y + 10, w.color, 16, true);
-        r.drawTextScreen(w.sub, startX + 10, y + 30, COLORS.textDim, 10);
+        // Skip draw if banner is entirely outside viewport
+        if (y + bannerH >= viewTop && y <= viewBottom) {
+          r.ctx.save();
+          r.ctx.beginPath();
+          r.ctx.roundRect(startX * dpr, y * dpr, rowWidth * dpr, bannerH * dpr, 6 * dpr);
+          r.ctx.clip();
+          r.ctx.drawImage(cover, startX * dpr, y * dpr, rowWidth * dpr, bannerH * dpr);
+          const grad = r.ctx.createLinearGradient(startX * dpr, 0, (startX + rowWidth) * dpr, 0);
+          grad.addColorStop(0, 'rgba(5,8,20,0.85)');
+          grad.addColorStop(0.5, 'rgba(5,8,20,0.35)');
+          grad.addColorStop(1, 'rgba(5,8,20,0.1)');
+          r.ctx.fillStyle = grad;
+          r.ctx.fillRect(startX * dpr, y * dpr, rowWidth * dpr, bannerH * dpr);
+          r.ctx.restore();
+          r.drawTextScreen(w.name, startX + 10, y + 10, w.color, 16, true);
+          r.drawTextScreen(w.sub, startX + 10, y + 30, COLORS.textDim, 10);
+        }
         y += bannerH + 8;
       } else {
-        r.drawTextScreen(`${w.name}`, startX, y, w.color, 13, true);
-        r.drawTextScreen(`· ${w.sub}`, startX + r.measureTextScreen(w.name, 13, true) + 6, y + 2, COLORS.textDim, 10);
+        if (y + 22 >= viewTop && y <= viewBottom) {
+          r.drawTextScreen(`${w.name}`, startX, y, w.color, 13, true);
+          r.drawTextScreen(`· ${w.sub}`, startX + r.measureTextScreen(w.name, 13, true) + 6, y + 2, COLORS.textDim, 10);
+        }
         y += 22;
       }
 
@@ -166,7 +216,11 @@ export class LevelSelectScene extends BaseScene {
         const rect: Rect = { x: cx, y: cy, w: cardW, h: cardH };
         const unlocked = isUnlocked(this.ctx.save, this.ctx.levels, level.id);
         const stars = getStars(this.ctx.save, level.id);
+        // Always push card rect (for tap hit-testing) even when culled
         this.cards.push({ rect, level, unlocked });
+
+        // Cull: skip rendering if card is entirely above viewport or below
+        if (cy + cardH < viewTop || cy > viewBottom) continue;
 
         const bg = unlocked ? (stars > 0 ? '#24354a' : '#1b2a42') : '#0f141e';
         r.drawScreenRoundedRect(cx, cy, cardW, cardH, 8, bg);
@@ -198,11 +252,33 @@ export class LevelSelectScene extends BaseScene {
       y += rowCount * (cardH + gap) + 12;
     }
 
-    // Footer hint
-    r.drawTextScreenCenter('點擊右上 ⚙ 切換難度', vw / 2, vh - 16, COLORS.textDim, 9);
+    // Record full content height (in unscrolled coords) for clamp
+    this.contentHeight = (y + this.scrollY) - contentTop;
+    this.clampScroll();
+
+    r.ctx.restore();
+
+    // Scrollbar (only if content overflows)
+    if (this.contentHeight > this.viewportHeight) {
+      const trackH = this.viewportHeight - 16;
+      const thumbH = Math.max(36, trackH * (this.viewportHeight / this.contentHeight));
+      const thumbY = contentTop + 8 + (trackH - thumbH) * (this.scrollY / (this.contentHeight - this.viewportHeight));
+      r.drawScreenRoundedRect(vw - 6, contentTop + 8, 3, trackH, 1.5, 'rgba(255,255,255,0.05)');
+      r.drawScreenRoundedRect(vw - 6, thumbY, 3, thumbH, 1.5, 'rgba(255,215,100,0.5)');
+    }
+
+    // Footer hint (fixed)
+    r.drawTextScreenCenter('點擊右上 ⚙ 切換難度 · 上下滑動捲動', vw / 2, vh - 16, COLORS.textDim, 9);
   }
 
+  /**
+   * Press begin — stop momentum, record the pressed target. Actual navigation
+   * fires on pointerup (in onRelease) only if the pointer didn't drag.
+   */
   onTap(screenX: number, screenY: number): void {
+    this.scrollVelocity = 0;
+    this.isDragging = false;
+    // Fixed-position controls (header) fire immediately since they don't scroll
     if (this.backBtn && this.inside(screenX, screenY, this.backBtn)) {
       this.ctx.audio.click();
       this.ctx.transition(new MainMenuScene(this.ctx));
@@ -213,12 +289,39 @@ export class LevelSelectScene extends BaseScene {
       this.ctx.transition(new SettingsScene(this.ctx));
       return;
     }
+  }
+
+  override onRelease(screenX: number, screenY: number, _wx: number, _wy: number, didDrag?: boolean): void {
+    this.isDragging = false;
+    if (didDrag) return;
     for (const c of this.cards) {
       if (c.unlocked && this.inside(screenX, screenY, c.rect)) {
         this.ctx.audio.click();
-        this.ctx.transition(new GameScene(this.ctx, c.level));
+        if (c.level.endless === true) {
+          this.ctx.transition(new GameScene(this.ctx, c.level, null));
+        } else {
+          this.ctx.transition(new HeroSelectScene(this.ctx, c.level));
+        }
         return;
       }
     }
+  }
+
+  override onDrag(dy: number, _dx: number, dt: number): void {
+    this.isDragging = true;
+    this.scrollY -= dy;
+    // Low-pass filter + real timing for stable, natural inertia
+    const instant = dt > 0 ? -dy / dt : 0;
+    this.scrollVelocity = this.scrollVelocity * 0.4 + instant * 0.6;
+    // Cap to avoid absurd velocity from a single large delta
+    if (this.scrollVelocity > 3500) this.scrollVelocity = 3500;
+    else if (this.scrollVelocity < -3500) this.scrollVelocity = -3500;
+    this.clampScroll();
+  }
+
+  override onWheel(deltaY: number): void {
+    this.scrollY += deltaY * 0.5;
+    this.scrollVelocity = 0;
+    this.clampScroll();
   }
 }
