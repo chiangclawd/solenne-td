@@ -2092,6 +2092,15 @@ export class GameScene extends BaseScene {
       }
       if (this.endBackBtn && this.inside(screenX, screenY, this.endBackBtn)) {
         this.ctx.audio.click();
+        // v2.6.1 D3 — first L28 win triggers the ending cinematic before
+        // returning to LevelSelect. seenOutro guards the replay.
+        const isCampaignFinale = this.level.id === 'level-28' && this.state.status === 'won';
+        if (isCampaignFinale && this.ctx.save.seenOutro !== true) {
+          import('./CinematicScene.ts').then(({ CinematicScene }) => {
+            this.ctx.transition(new CinematicScene(this.ctx, 'ending', () => new LevelSelectScene(this.ctx)));
+          });
+          return;
+        }
         this.ctx.transition(new LevelSelectScene(this.ctx));
         return;
       }

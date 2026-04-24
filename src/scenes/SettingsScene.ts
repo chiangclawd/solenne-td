@@ -22,6 +22,8 @@ export class SettingsScene extends BaseScene {
   private colorBlindBtn: Rect | null = null;
   private lowAnimBtn: Rect | null = null;
   private uiScaleBtns: { rect: Rect; scale: number }[] = [];
+  private replayIntroBtn: Rect | null = null;
+  private replayOutroBtn: Rect | null = null;
   private diffBtns: { rect: Rect; diff: Difficulty }[] = [];
 
   update(_dt: number): void {
@@ -132,6 +134,25 @@ export class SettingsScene extends BaseScene {
     }
     y += 44;
 
+    // v2.6.1 D3 — replay cinematic buttons
+    r.drawTextScreen('🎬 回顧動畫', panelX, y, '#ffd166', 13, true);
+    y += 22;
+    const cbBtnW = (panelW - 8) / 2;
+    const cbBtnH = 36;
+    this.replayIntroBtn = { x: panelX, y, w: cbBtnW, h: cbBtnH };
+    r.drawScreenRoundedRect(panelX, y, cbBtnW, cbBtnH, 7, '#22304a');
+    r.drawTextScreenCenter('▶ 開場', panelX + cbBtnW / 2, y + cbBtnH / 2, COLORS.text, 12, true);
+    const cbX2 = panelX + cbBtnW + 8;
+    const outroSeen = this.ctx.save.seenOutro === true;
+    this.replayOutroBtn = outroSeen ? { x: cbX2, y, w: cbBtnW, h: cbBtnH } : null;
+    r.drawScreenRoundedRect(cbX2, y, cbBtnW, cbBtnH, 7, outroSeen ? '#22304a' : '#0f141e');
+    r.drawTextScreenCenter(
+      outroSeen ? '▶ 結局' : '🔒 通關 L28 解鎖',
+      cbX2 + cbBtnW / 2, y + cbBtnH / 2,
+      outroSeen ? COLORS.text : '#7a8a9f', 11, true,
+    );
+    y += cbBtnH + 14;
+
     // Difficulty
     r.drawTextScreen('◆ 難度', panelX, y, '#ffd166', 13, true);
     y += 22;
@@ -216,6 +237,20 @@ export class SettingsScene extends BaseScene {
         this.ctx.audio.click();
         return;
       }
+    }
+    if (this.replayIntroBtn && this.inside(screenX, screenY, this.replayIntroBtn)) {
+      this.ctx.audio.click();
+      import('./CinematicScene.ts').then(({ CinematicScene }) => {
+        this.ctx.transition(new CinematicScene(this.ctx, 'opening', () => new SettingsScene(this.ctx)));
+      });
+      return;
+    }
+    if (this.replayOutroBtn && this.inside(screenX, screenY, this.replayOutroBtn)) {
+      this.ctx.audio.click();
+      import('./CinematicScene.ts').then(({ CinematicScene }) => {
+        this.ctx.transition(new CinematicScene(this.ctx, 'ending', () => new SettingsScene(this.ctx)));
+      });
+      return;
     }
 
     for (const b of this.diffBtns) {
