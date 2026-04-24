@@ -472,5 +472,14 @@
       "y": 14,
       "kind": "ruin"
     }
-  ]
+  ],
+  "challenges": {
+    "star2": {
+      "kind": "towerForbidden",
+      "id": "missileLauncher"
+    },
+    "star3": {
+      "kind": "noLivesLost"
+    }
+  }
 }

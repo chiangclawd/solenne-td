@@ -35,6 +35,8 @@ export interface Obstacle {
   reward?: number;
 }
 
+import type { LevelChallenges } from './Challenges.ts';
+
 export interface LevelData {
   id: string;
   name: string;
@@ -56,4 +58,10 @@ export interface LevelData {
   endless?: boolean;
   coverImage?: string;
   obstacles?: readonly Obstacle[];
+  /**
+   * Optional per-level star 2 / star 3 challenges (v2.3 A1). Star 1 is
+   * always "complete the level" and has no spec. If this field is absent,
+   * the loader falls back to the legacy livesRatio → stars mapping.
+   */
+  challenges?: LevelChallenges;
 }

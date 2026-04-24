@@ -1,9 +1,20 @@
 export type Difficulty = 'normal' | 'hard' | 'heroic';
 
+/** Tuple of which challenge stars the player has ever earned. */
+export type ChallengeFlags = readonly [boolean, boolean, boolean];
+
 export interface LevelProgress {
   bestStars: number;
   completed: boolean;
   bestStarsByDifficulty?: Partial<Record<Difficulty, number>>;
+  /**
+   * v2.3 A1: which of the 3 challenge stars has ever been earned on any run.
+   * Independent from bestStars (which just counts true flags). Accumulates
+   * across runs so players can earn stars one at a time.
+   */
+  challengeFlags?: ChallengeFlags;
+  /** Per-difficulty challenge flags so each difficulty's 3 stars track separately. */
+  challengeFlagsByDifficulty?: Partial<Record<Difficulty, ChallengeFlags>>;
 }
 
 export interface Settings {
@@ -100,6 +111,20 @@ function migrate(parsed: Partial<SaveData> & { version?: number }): SaveData {
   const settings = { ...base.settings, ...(parsed.settings ?? {}) };
   const stats = { ...base.stats, ...(parsed.stats ?? {}) };
   const achievements = (parsed.achievements ?? {}) as Record<string, { unlockedAt: number }>;
+  // v2.3 A1 — backfill challengeFlags for levels completed before the new
+  // system shipped. Trust old bestStars (if 3, assume flawless; else star 1 only).
+  // This preserves the old "I got 3 stars on L1" feeling — no regression.
+  for (const id in levelProgress) {
+    const p = levelProgress[id];
+    if (p.completed && !p.challengeFlags) {
+      const fallbackFlags: ChallengeFlags = p.bestStars >= 3
+        ? [true, true, true]
+        : p.bestStars >= 2
+          ? [true, true, false]
+          : [true, false, false];
+      p.challengeFlags = fallbackFlags;
+    }
+  }
   const out: SaveData = { version: 2, levelProgress, settings, achievements, stats };
   if (parsed.endlessHighScore) out.endlessHighScore = parsed.endlessHighScore;
   if (parsed.metaUpgrades) out.metaUpgrades = parsed.metaUpgrades;
@@ -121,15 +146,40 @@ export function recordCompletion(
   levelId: string,
   stars: number,
   difficulty: Difficulty = 'normal',
+  /** v2.3 A1: per-star boolean flags from this run; accumulates across runs. */
+  newFlags?: ChallengeFlags,
 ): void {
   const existing = save.levelProgress[levelId];
   const prevBest = existing?.bestStars ?? 0;
   const byDiff = { ...(existing?.bestStarsByDifficulty ?? {}) };
   byDiff[difficulty] = Math.max(byDiff[difficulty] ?? 0, stars);
+
+  // Accumulate star flags — once earned, kept forever. Separate tracking per
+  // difficulty so higher-diff runs don't auto-credit easy-diff challenges.
+  const prevFlags = existing?.challengeFlags ?? [false, false, false];
+  const mergedAllDiff: ChallengeFlags = newFlags
+    ? [
+        prevFlags[0] || newFlags[0],
+        prevFlags[1] || newFlags[1],
+        prevFlags[2] || newFlags[2],
+      ]
+    : prevFlags;
+  const flagsByDiff = { ...(existing?.challengeFlagsByDifficulty ?? {}) };
+  if (newFlags) {
+    const prevDiffFlags = flagsByDiff[difficulty] ?? [false, false, false];
+    flagsByDiff[difficulty] = [
+      prevDiffFlags[0] || newFlags[0],
+      prevDiffFlags[1] || newFlags[1],
+      prevDiffFlags[2] || newFlags[2],
+    ];
+  }
+
   save.levelProgress[levelId] = {
     bestStars: Math.max(prevBest, stars),
     completed: true,
     bestStarsByDifficulty: byDiff,
+    challengeFlags: mergedAllDiff,
+    challengeFlagsByDifficulty: flagsByDiff,
   };
   if (!existing?.completed) save.stats.levelsCompleted++;
 }

@@ -725,5 +725,14 @@
       "y": 14,
       "kind": "rock"
     }
-  ]
+  ],
+  "challenges": {
+    "star2": {
+      "kind": "heroRequired",
+      "id": "kieran"
+    },
+    "star3": {
+      "kind": "noLivesLost"
+    }
+  }
 }

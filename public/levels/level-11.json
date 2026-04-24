@@ -581,5 +581,14 @@
       "y": 8,
       "kind": "column"
     }
-  ]
+  ],
+  "challenges": {
+    "star2": {
+      "kind": "towerForbidden",
+      "id": "heavyCannon"
+    },
+    "star3": {
+      "kind": "noLivesLost"
+    }
+  }
 }

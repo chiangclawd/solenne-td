@@ -597,5 +597,14 @@
       "y": 14,
       "kind": "rock"
     }
-  ]
+  ],
+  "challenges": {
+    "star2": {
+      "kind": "maxTowers",
+      "n": 10
+    },
+    "star3": {
+      "kind": "destroyAllDestr"
+    }
+  }
 }

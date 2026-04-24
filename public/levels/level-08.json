@@ -527,5 +527,13 @@
       "y": 10,
       "kind": "ruin"
     }
-  ]
+  ],
+  "challenges": {
+    "star2": {
+      "kind": "noSell"
+    },
+    "star3": {
+      "kind": "destroyAllDestr"
+    }
+  }
 }

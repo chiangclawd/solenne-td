@@ -730,5 +730,14 @@
       "y": 11,
       "kind": "column"
     }
-  ]
+  ],
+  "challenges": {
+    "star2": {
+      "kind": "towerForbidden",
+      "id": "sniper"
+    },
+    "star3": {
+      "kind": "noLivesLost"
+    }
+  }
 }

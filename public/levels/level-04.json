@@ -4,101 +4,518 @@
   "world": 1,
   "flavorText": "濃霧之下，老兵折翼。",
   "intro": [
-    { "speaker": "旁白", "text": "邊境林地。霧氣從樹冠間滲下，每一步都像踩在針尖上。", "color": "#9aa5b8" },
-    { "speaker": "瓦西亞中士", "text": "我排上的人……前天在這條林道折了三個。他們不會再開口了。", "color": "#ff9f43", "portrait": "vasya" },
-    { "speaker": "皮普工程師", "text": "中士，我很抱歉。但我們得在樹叢間佈防——他們會從側翼來。", "color": "#6ee17a", "portrait": "pip" },
-    { "speaker": "基蘭指揮官", "text": "瓦西亞，我需要你。把火力集中在東側。", "color": "#5eb8ff", "portrait": "kieran" },
-    { "speaker": "瓦西亞中士", "text": "明白。這次不會再有人走不出這片林子了。", "color": "#ff9f43", "portrait": "vasya" }
+    {
+      "speaker": "旁白",
+      "text": "邊境林地。霧氣從樹冠間滲下，每一步都像踩在針尖上。",
+      "color": "#9aa5b8"
+    },
+    {
+      "speaker": "瓦西亞中士",
+      "text": "我排上的人……前天在這條林道折了三個。他們不會再開口了。",
+      "color": "#ff9f43",
+      "portrait": "vasya"
+    },
+    {
+      "speaker": "皮普工程師",
+      "text": "中士，我很抱歉。但我們得在樹叢間佈防——他們會從側翼來。",
+      "color": "#6ee17a",
+      "portrait": "pip"
+    },
+    {
+      "speaker": "基蘭指揮官",
+      "text": "瓦西亞，我需要你。把火力集中在東側。",
+      "color": "#5eb8ff",
+      "portrait": "kieran"
+    },
+    {
+      "speaker": "瓦西亞中士",
+      "text": "明白。這次不會再有人走不出這片林子了。",
+      "color": "#ff9f43",
+      "portrait": "vasya"
+    }
   ],
   "outroWin": [
-    { "speaker": "瓦西亞中士", "text": "打退了。但我在他們的裝甲上看見了奇怪的紋路——不是索倫的金屬。", "color": "#ff9f43", "portrait": "vasya" },
-    { "speaker": "基蘭指揮官", "text": "記下來。這不是普通的侵略。", "color": "#5eb8ff", "portrait": "kieran" }
+    {
+      "speaker": "瓦西亞中士",
+      "text": "打退了。但我在他們的裝甲上看見了奇怪的紋路——不是索倫的金屬。",
+      "color": "#ff9f43",
+      "portrait": "vasya"
+    },
+    {
+      "speaker": "基蘭指揮官",
+      "text": "記下來。這不是普通的侵略。",
+      "color": "#5eb8ff",
+      "portrait": "kieran"
+    }
   ],
   "outroLose": [
-    { "speaker": "瓦西亞中士", "text": "又一次……林子吞掉了我的人。", "color": "#ff9f43", "portrait": "vasya" },
-    { "speaker": "基蘭指揮官", "text": "撤到河岸。重新部署。", "color": "#5eb8ff", "portrait": "kieran" }
+    {
+      "speaker": "瓦西亞中士",
+      "text": "又一次……林子吞掉了我的人。",
+      "color": "#ff9f43",
+      "portrait": "vasya"
+    },
+    {
+      "speaker": "基蘭指揮官",
+      "text": "撤到河岸。重新部署。",
+      "color": "#5eb8ff",
+      "portrait": "kieran"
+    }
   ],
   "paths": [
     [
-      { "x": 5, "y": -0.5 },
-      { "x": 5, "y": 3 },
-      { "x": 9, "y": 3 },
-      { "x": 9, "y": 8 },
-      { "x": 0, "y": 8 },
-      { "x": 0, "y": 13 },
-      { "x": 5, "y": 13 },
-      { "x": 5, "y": 15.5 }
+      {
+        "x": 5,
+        "y": -0.5
+      },
+      {
+        "x": 5,
+        "y": 3
+      },
+      {
+        "x": 9,
+        "y": 3
+      },
+      {
+        "x": 9,
+        "y": 8
+      },
+      {
+        "x": 0,
+        "y": 8
+      },
+      {
+        "x": 0,
+        "y": 13
+      },
+      {
+        "x": 5,
+        "y": 13
+      },
+      {
+        "x": 5,
+        "y": 15.5
+      }
     ]
   ],
   "startingGold": 220,
   "startingLives": 11,
-  "availableTowers": ["cannon", "quickShot", "machineGun", "frostTower", "sniper"],
+  "availableTowers": [
+    "cannon",
+    "quickShot",
+    "machineGun",
+    "frostTower",
+    "sniper"
+  ],
   "waves": [
     [
-      { "delay": 0.6, "enemy": "scout" }, { "delay": 0.6, "enemy": "scout" },
-      { "delay": 0.6, "enemy": "soldier" }, { "delay": 0.6, "enemy": "soldier" },
-      { "delay": 0.6, "enemy": "soldier" }, { "delay": 0.7, "enemy": "runner" },
-      { "delay": 0.7, "enemy": "runner" }, { "delay": 0.9, "enemy": "tank" },
-      { "delay": 0.9, "enemy": "tank" }
+      {
+        "delay": 0.6,
+        "enemy": "scout"
+      },
+      {
+        "delay": 0.6,
+        "enemy": "scout"
+      },
+      {
+        "delay": 0.6,
+        "enemy": "soldier"
+      },
+      {
+        "delay": 0.6,
+        "enemy": "soldier"
+      },
+      {
+        "delay": 0.6,
+        "enemy": "soldier"
+      },
+      {
+        "delay": 0.7,
+        "enemy": "runner"
+      },
+      {
+        "delay": 0.7,
+        "enemy": "runner"
+      },
+      {
+        "delay": 0.9,
+        "enemy": "tank"
+      },
+      {
+        "delay": 0.9,
+        "enemy": "tank"
+      }
     ],
     [
-      { "delay": 0.5, "enemy": "runner" }, { "delay": 0.5, "enemy": "runner" },
-      { "delay": 0.5, "enemy": "runner" }, { "delay": 0.5, "enemy": "runner" },
-      { "delay": 0.7, "enemy": "tank" }, { "delay": 0.7, "enemy": "tank" },
-      { "delay": 0.7, "enemy": "tank" }, { "delay": 0.9, "enemy": "armored" },
-      { "delay": 0.9, "enemy": "armored" }
+      {
+        "delay": 0.5,
+        "enemy": "runner"
+      },
+      {
+        "delay": 0.5,
+        "enemy": "runner"
+      },
+      {
+        "delay": 0.5,
+        "enemy": "runner"
+      },
+      {
+        "delay": 0.5,
+        "enemy": "runner"
+      },
+      {
+        "delay": 0.7,
+        "enemy": "tank"
+      },
+      {
+        "delay": 0.7,
+        "enemy": "tank"
+      },
+      {
+        "delay": 0.7,
+        "enemy": "tank"
+      },
+      {
+        "delay": 0.9,
+        "enemy": "armored"
+      },
+      {
+        "delay": 0.9,
+        "enemy": "armored"
+      }
     ],
     [
-      { "delay": 0.45, "enemy": "scout" }, { "delay": 0.45, "enemy": "soldier" },
-      { "delay": 0.45, "enemy": "scout" }, { "delay": 0.45, "enemy": "runner" },
-      { "delay": 0.45, "enemy": "scout" }, { "delay": 0.6, "enemy": "tank" },
-      { "delay": 0.6, "enemy": "tank" }, { "delay": 0.7, "enemy": "armored" },
-      { "delay": 0.7, "enemy": "armored" }, { "delay": 0.9, "enemy": "heavyTank" },
-      { "delay": 1.4, "enemy": "boss" }
+      {
+        "delay": 0.45,
+        "enemy": "scout"
+      },
+      {
+        "delay": 0.45,
+        "enemy": "soldier"
+      },
+      {
+        "delay": 0.45,
+        "enemy": "scout"
+      },
+      {
+        "delay": 0.45,
+        "enemy": "runner"
+      },
+      {
+        "delay": 0.45,
+        "enemy": "scout"
+      },
+      {
+        "delay": 0.6,
+        "enemy": "tank"
+      },
+      {
+        "delay": 0.6,
+        "enemy": "tank"
+      },
+      {
+        "delay": 0.7,
+        "enemy": "armored"
+      },
+      {
+        "delay": 0.7,
+        "enemy": "armored"
+      },
+      {
+        "delay": 0.9,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 1.4,
+        "enemy": "boss"
+      }
     ],
     [
-      { "delay": 0.4, "enemy": "runner" }, { "delay": 0.4, "enemy": "runner" },
-      { "delay": 0.4, "enemy": "scout" }, { "delay": 0.4, "enemy": "soldier" },
-      { "delay": 0.55, "enemy": "tank" }, { "delay": 0.55, "enemy": "tank" },
-      { "delay": 0.55, "enemy": "tank" }, { "delay": 0.7, "enemy": "armored" },
-      { "delay": 0.7, "enemy": "armored" }, { "delay": 0.7, "enemy": "heavyTank" },
-      { "delay": 0.7, "enemy": "heavyTank" },
-      { "delay": 1.3, "enemy": "boss" }, { "delay": 1.5, "enemy": "armoredBoss" }
+      {
+        "delay": 0.4,
+        "enemy": "runner"
+      },
+      {
+        "delay": 0.4,
+        "enemy": "runner"
+      },
+      {
+        "delay": 0.4,
+        "enemy": "scout"
+      },
+      {
+        "delay": 0.4,
+        "enemy": "soldier"
+      },
+      {
+        "delay": 0.55,
+        "enemy": "tank"
+      },
+      {
+        "delay": 0.55,
+        "enemy": "tank"
+      },
+      {
+        "delay": 0.55,
+        "enemy": "tank"
+      },
+      {
+        "delay": 0.7,
+        "enemy": "armored"
+      },
+      {
+        "delay": 0.7,
+        "enemy": "armored"
+      },
+      {
+        "delay": 0.7,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 0.7,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 1.3,
+        "enemy": "boss"
+      },
+      {
+        "delay": 1.5,
+        "enemy": "armoredBoss"
+      }
     ],
     [
-      { "delay": 0.9, "enemy": "boss" },
-      { "delay": 0.35, "enemy": "runner" }, { "delay": 0.35, "enemy": "runner" },
-      { "delay": 0.35, "enemy": "scout" }, { "delay": 0.35, "enemy": "scout" },
-      { "delay": 0.35, "enemy": "soldier" }, { "delay": 0.35, "enemy": "runner" },
-      { "delay": 0.5, "enemy": "tank" }, { "delay": 0.5, "enemy": "tank" },
-      { "delay": 0.5, "enemy": "armored" }, { "delay": 0.5, "enemy": "armored" },
-      { "delay": 0.5, "enemy": "heavyTank" }, { "delay": 0.5, "enemy": "heavyTank" },
-      { "delay": 1.6, "enemy": "boss" }, { "delay": 1.8, "enemy": "boss" }
+      {
+        "delay": 0.9,
+        "enemy": "boss"
+      },
+      {
+        "delay": 0.35,
+        "enemy": "runner"
+      },
+      {
+        "delay": 0.35,
+        "enemy": "runner"
+      },
+      {
+        "delay": 0.35,
+        "enemy": "scout"
+      },
+      {
+        "delay": 0.35,
+        "enemy": "scout"
+      },
+      {
+        "delay": 0.35,
+        "enemy": "soldier"
+      },
+      {
+        "delay": 0.35,
+        "enemy": "runner"
+      },
+      {
+        "delay": 0.5,
+        "enemy": "tank"
+      },
+      {
+        "delay": 0.5,
+        "enemy": "tank"
+      },
+      {
+        "delay": 0.5,
+        "enemy": "armored"
+      },
+      {
+        "delay": 0.5,
+        "enemy": "armored"
+      },
+      {
+        "delay": 0.5,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 0.5,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 1.6,
+        "enemy": "boss"
+      },
+      {
+        "delay": 1.8,
+        "enemy": "boss"
+      }
     ],
     [
-      { "delay": 0.9, "enemy": "armoredBoss" },
-      { "delay": 0.3, "enemy": "runner" }, { "delay": 0.3, "enemy": "runner" },
-      { "delay": 0.3, "enemy": "runner" }, { "delay": 0.3, "enemy": "scout" },
-      { "delay": 0.3, "enemy": "soldier" }, { "delay": 0.3, "enemy": "scout" },
-      { "delay": 0.3, "enemy": "runner" }, { "delay": 0.3, "enemy": "soldier" },
-      { "delay": 0.5, "enemy": "tank" }, { "delay": 0.5, "enemy": "tank" },
-      { "delay": 0.5, "enemy": "armored" }, { "delay": 0.5, "enemy": "armored" },
-      { "delay": 0.5, "enemy": "heavyTank" }, { "delay": 0.5, "enemy": "heavyTank" },
-      { "delay": 1.8, "enemy": "boss" }, { "delay": 2.0, "enemy": "boss" }
+      {
+        "delay": 0.9,
+        "enemy": "armoredBoss"
+      },
+      {
+        "delay": 0.3,
+        "enemy": "runner"
+      },
+      {
+        "delay": 0.3,
+        "enemy": "runner"
+      },
+      {
+        "delay": 0.3,
+        "enemy": "runner"
+      },
+      {
+        "delay": 0.3,
+        "enemy": "scout"
+      },
+      {
+        "delay": 0.3,
+        "enemy": "soldier"
+      },
+      {
+        "delay": 0.3,
+        "enemy": "scout"
+      },
+      {
+        "delay": 0.3,
+        "enemy": "runner"
+      },
+      {
+        "delay": 0.3,
+        "enemy": "soldier"
+      },
+      {
+        "delay": 0.5,
+        "enemy": "tank"
+      },
+      {
+        "delay": 0.5,
+        "enemy": "tank"
+      },
+      {
+        "delay": 0.5,
+        "enemy": "armored"
+      },
+      {
+        "delay": 0.5,
+        "enemy": "armored"
+      },
+      {
+        "delay": 0.5,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 0.5,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 1.8,
+        "enemy": "boss"
+      },
+      {
+        "delay": 2,
+        "enemy": "boss"
+      }
     ]
   ],
   "obstacles": [
-    { "x": 1, "y": 5, "kind": "tree", "destructible": true, "hp": 28, "reward": 8 },
-    { "x": 2, "y": 5, "kind": "tree", "destructible": true, "hp": 28, "reward": 8 },
-    { "x": 4, "y": 5, "kind": "rock", "destructible": true, "hp": 42, "reward": 14 },
-    { "x": 6, "y": 5, "kind": "ruin", "destructible": true, "hp": 32, "reward": 10 },
-    { "x": 7, "y": 5, "kind": "tree", "destructible": true, "hp": 28, "reward": 8 },
-    { "x": 2, "y": 10, "kind": "rock", "destructible": true, "hp": 42, "reward": 14 },
-    { "x": 3, "y": 10, "kind": "tree", "destructible": true, "hp": 28, "reward": 8 },
-    { "x": 5, "y": 10, "kind": "ruin", "destructible": true, "hp": 32, "reward": 10 },
-    { "x": 7, "y": 10, "kind": "tree", "destructible": true, "hp": 28, "reward": 8 },
-    { "x": 8, "y": 10, "kind": "rock", "destructible": true, "hp": 42, "reward": 14 },
-    { "x": 2, "y": 0, "kind": "tree" },
-    { "x": 7, "y": 14, "kind": "rock" }
-  ]
+    {
+      "x": 1,
+      "y": 5,
+      "kind": "tree",
+      "destructible": true,
+      "hp": 28,
+      "reward": 8
+    },
+    {
+      "x": 2,
+      "y": 5,
+      "kind": "tree",
+      "destructible": true,
+      "hp": 28,
+      "reward": 8
+    },
+    {
+      "x": 4,
+      "y": 5,
+      "kind": "rock",
+      "destructible": true,
+      "hp": 42,
+      "reward": 14
+    },
+    {
+      "x": 6,
+      "y": 5,
+      "kind": "ruin",
+      "destructible": true,
+      "hp": 32,
+      "reward": 10
+    },
+    {
+      "x": 7,
+      "y": 5,
+      "kind": "tree",
+      "destructible": true,
+      "hp": 28,
+      "reward": 8
+    },
+    {
+      "x": 2,
+      "y": 10,
+      "kind": "rock",
+      "destructible": true,
+      "hp": 42,
+      "reward": 14
+    },
+    {
+      "x": 3,
+      "y": 10,
+      "kind": "tree",
+      "destructible": true,
+      "hp": 28,
+      "reward": 8
+    },
+    {
+      "x": 5,
+      "y": 10,
+      "kind": "ruin",
+      "destructible": true,
+      "hp": 32,
+      "reward": 10
+    },
+    {
+      "x": 7,
+      "y": 10,
+      "kind": "tree",
+      "destructible": true,
+      "hp": 28,
+      "reward": 8
+    },
+    {
+      "x": 8,
+      "y": 10,
+      "kind": "rock",
+      "destructible": true,
+      "hp": 42,
+      "reward": 14
+    },
+    {
+      "x": 2,
+      "y": 0,
+      "kind": "tree"
+    },
+    {
+      "x": 7,
+      "y": 14,
+      "kind": "rock"
+    }
+  ],
+  "challenges": {
+    "star2": {
+      "kind": "towerForbidden",
+      "id": "sniper"
+    },
+    "star3": {
+      "kind": "destroyAllDestr"
+    }
+  }
 }

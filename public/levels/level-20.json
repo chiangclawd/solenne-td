@@ -541,5 +541,14 @@
       "y": 13,
       "kind": "rock"
     }
-  ]
+  ],
+  "challenges": {
+    "star2": {
+      "kind": "towerForbidden",
+      "id": "missileLauncher"
+    },
+    "star3": {
+      "kind": "destroyAllDestr"
+    }
+  }
 }

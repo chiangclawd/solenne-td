@@ -562,5 +562,14 @@
       "y": 14,
       "kind": "rock"
     }
-  ]
+  ],
+  "challenges": {
+    "star2": {
+      "kind": "towerForbidden",
+      "id": "sniper"
+    },
+    "star3": {
+      "kind": "noLivesLost"
+    }
+  }
 }
