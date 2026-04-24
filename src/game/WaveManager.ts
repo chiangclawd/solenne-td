@@ -11,22 +11,31 @@ export interface WaveEntry {
 
 export type Wave = readonly WaveEntry[];
 
+/**
+ * One per-path spawn stream built from a wave. Each path runs on its OWN
+ * timer so enemies on path 1 start spawning concurrently with path 0 —
+ * fixing the bug where multi-path levels felt like "path 1 is empty" because
+ * all path-0 entries had to drain before path-1 entries started their delays.
+ */
+interface PathStream {
+  path: number;
+  entries: readonly WaveEntry[];
+  cursor: number;
+  timer: number;
+}
+
 export class WaveManager {
   readonly waves: readonly Wave[];
   private readonly paths: readonly Path[];
-  private currentWaveIndex: number;
-  private entryIndex: number;
-  private timer: number;
   private spawning: boolean;
+  private streams: PathStream[];
 
   constructor(waves: readonly Wave[], paths: readonly Path[]) {
     if (paths.length === 0) throw new Error('WaveManager requires at least one path');
     this.waves = waves;
     this.paths = paths;
-    this.currentWaveIndex = 0;
-    this.entryIndex = 0;
-    this.timer = 0;
     this.spawning = false;
+    this.streams = [];
   }
 
   totalWaves(): number {
@@ -39,28 +48,45 @@ export class WaveManager {
 
   startWave(index: number): void {
     if (index < 0 || index >= this.waves.length) return;
-    this.currentWaveIndex = index;
-    this.entryIndex = 0;
-    this.timer = 0;
-    this.spawning = true;
+    this.streams = this.buildStreams(this.waves[index]);
+    this.spawning = this.streams.some((s) => s.entries.length > 0);
+  }
+
+  /**
+   * Partition a wave's entries by path index into independent streams.
+   * Preserves in-wave ordering within each stream (later entries on the same
+   * path still fire after earlier ones). Entries without a path field default
+   * to path 0. Out-of-range indices clamp to 0 — the level validator should
+   * catch those, but be defensive for generated/endless waves.
+   */
+  private buildStreams(wave: Wave): PathStream[] {
+    const byPath: WaveEntry[][] = this.paths.map(() => []);
+    for (const entry of wave) {
+      const pIdx = entry.path !== undefined && entry.path >= 0 && entry.path < this.paths.length
+        ? entry.path
+        : 0;
+      byPath[pIdx].push(entry);
+    }
+    return byPath.map((entries, path) => ({ path, entries, cursor: 0, timer: 0 }));
   }
 
   update(dt: number, onSpawn: (enemy: Enemy) => void): void {
     if (!this.spawning) return;
-    const wave = this.waves[this.currentWaveIndex];
-    this.timer += dt;
-    while (this.entryIndex < wave.length && this.timer >= wave[this.entryIndex].delay) {
-      const entry = wave[this.entryIndex];
-      this.timer -= entry.delay;
-      // Clamp path index to valid range — the validator should have caught
-      // out-of-bounds, but be defensive in case endless / generated waves slip
-      // through with no path assignment.
-      const pathIdx = entry.path !== undefined && entry.path < this.paths.length ? entry.path : 0;
-      onSpawn(new Enemy(this.paths[pathIdx], entry.enemy));
-      this.entryIndex++;
+    let anyPending = false;
+    for (const stream of this.streams) {
+      if (stream.cursor >= stream.entries.length) continue;
+      stream.timer += dt;
+      while (
+        stream.cursor < stream.entries.length &&
+        stream.timer >= stream.entries[stream.cursor].delay
+      ) {
+        const entry = stream.entries[stream.cursor];
+        stream.timer -= entry.delay;
+        onSpawn(new Enemy(this.paths[stream.path], entry.enemy));
+        stream.cursor++;
+      }
+      if (stream.cursor < stream.entries.length) anyPending = true;
     }
-    if (this.entryIndex >= wave.length) {
-      this.spawning = false;
-    }
+    if (!anyPending) this.spawning = false;
   }
 }
