@@ -94,23 +94,19 @@
   "paths": [
     [
       {
-        "x": -0.5,
-        "y": 6
+        "x": 2,
+        "y": -0.5
       },
       {
-        "x": 4,
-        "y": 6
+        "x": 2,
+        "y": 4
       },
       {
-        "x": 4,
-        "y": 2
+        "x": 7,
+        "y": 4
       },
       {
-        "x": 8,
-        "y": 2
-      },
-      {
-        "x": 8,
+        "x": 7,
         "y": 9
       },
       {
@@ -122,16 +118,16 @@
         "y": 13
       },
       {
-        "x": 9,
+        "x": 7,
         "y": 13
       },
       {
-        "x": 9,
+        "x": 7,
         "y": 15.5
       }
     ]
   ],
-  "startingGold": 250,
+  "startingGold": 260,
   "startingLives": 13,
   "availableTowers": [
     "cannon",
@@ -147,32 +143,58 @@
   "waves": [
     [
       {
-        "delay": 0.45,
+        "delay": 0.55,
+        "enemy": "soldier"
+      },
+      {
+        "delay": 0.55,
+        "enemy": "runner"
+      },
+      {
+        "delay": 0.55,
+        "enemy": "runner"
+      },
+      {
+        "delay": 0.55,
+        "enemy": "runner"
+      },
+      {
+        "delay": 0.7,
         "enemy": "wraith"
       },
       {
-        "delay": 0.45,
+        "delay": 0.7,
         "enemy": "wraith"
       },
       {
-        "delay": 0.45,
+        "delay": 0.7,
         "enemy": "wraith"
       },
       {
-        "delay": 0.45,
+        "delay": 0.9,
+        "enemy": "tank"
+      },
+      {
+        "delay": 0.9,
+        "enemy": "armored"
+      }
+    ],
+    [
+      {
+        "delay": 0.6,
         "enemy": "wraith"
       },
       {
         "delay": 0.6,
-        "enemy": "runner"
+        "enemy": "wraith"
       },
       {
         "delay": 0.6,
-        "enemy": "runner"
+        "enemy": "wraith"
       },
       {
         "delay": 0.6,
-        "enemy": "runner"
+        "enemy": "wraith"
       },
       {
         "delay": 0.7,
@@ -181,160 +203,68 @@
       {
         "delay": 0.7,
         "enemy": "armored"
-      }
-    ],
-    [
-      {
-        "delay": 0.4,
-        "enemy": "wraith"
       },
       {
-        "delay": 0.4,
-        "enemy": "wraith"
-      },
-      {
-        "delay": 0.4,
-        "enemy": "wraith"
-      },
-      {
-        "delay": 0.4,
-        "enemy": "wraith"
-      },
-      {
-        "delay": 0.4,
-        "enemy": "wraith"
-      },
-      {
-        "delay": 0.8,
-        "enemy": "splitter"
-      },
-      {
-        "delay": 0.8,
-        "enemy": "splitter"
-      },
-      {
-        "delay": 0.7,
+        "delay": 0.85,
         "enemy": "heavyTank"
       },
       {
-        "delay": 0.7,
-        "enemy": "heavyTank"
+        "delay": 0.4,
+        "enemy": "scout"
       },
       {
-        "delay": 0.7,
-        "enemy": "plane"
-      },
-      {
-        "delay": 0.7,
-        "enemy": "plane"
-      },
-      {
-        "delay": 1.5,
-        "enemy": "boss"
-      }
-    ],
-    [
-      {
-        "delay": 1,
-        "enemy": "splitter"
-      },
-      {
-        "delay": 1,
-        "enemy": "splitter"
-      },
-      {
-        "delay": 1,
-        "enemy": "splitter"
-      },
-      {
-        "delay": 0.45,
-        "enemy": "wraith"
-      },
-      {
-        "delay": 0.45,
-        "enemy": "wraith"
-      },
-      {
-        "delay": 0.45,
-        "enemy": "wraith"
-      },
-      {
-        "delay": 0.45,
-        "enemy": "wraith"
-      },
-      {
-        "delay": 0.7,
-        "enemy": "heavyTank"
-      },
-      {
-        "delay": 0.7,
-        "enemy": "heavyTank"
-      },
-      {
-        "delay": 0.7,
-        "enemy": "plane"
-      },
-      {
-        "delay": 0.7,
-        "enemy": "plane"
-      },
-      {
-        "delay": 0.7,
-        "enemy": "plane"
-      },
-      {
-        "delay": 2,
-        "enemy": "armoredBoss"
-      }
-    ],
-    [
-      {
-        "delay": 0.45,
+        "delay": 0.4,
         "enemy": "runner"
       },
       {
-        "delay": 0.45,
+        "delay": 0.4,
+        "enemy": "runner"
+      }
+    ],
+    [
+      {
+        "delay": 0.55,
         "enemy": "wraith"
       },
       {
-        "delay": 0.45,
-        "enemy": "frostRaider"
+        "delay": 0.55,
+        "enemy": "wraith"
       },
       {
-        "delay": 0.45,
+        "delay": 0.55,
+        "enemy": "wraith"
+      },
+      {
+        "delay": 0.6,
+        "enemy": "armored"
+      },
+      {
+        "delay": 0.6,
+        "enemy": "armored"
+      },
+      {
+        "delay": 0.7,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 0.7,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 0.35,
         "enemy": "runner"
       },
       {
-        "delay": 0.45,
-        "enemy": "wraith"
+        "delay": 0.35,
+        "enemy": "runner"
       },
       {
-        "delay": 0.7,
-        "enemy": "splitter"
+        "delay": 0.35,
+        "enemy": "scout"
       },
       {
-        "delay": 0.7,
-        "enemy": "splitter"
-      },
-      {
-        "delay": 0.7,
-        "enemy": "splitter"
-      },
-      {
-        "delay": 0.7,
-        "enemy": "healer"
-      },
-      {
-        "delay": 0.7,
-        "enemy": "healer"
-      },
-      {
-        "delay": 0.8,
-        "enemy": "plane"
-      },
-      {
-        "delay": 0.8,
-        "enemy": "plane"
+        "delay": 0.35,
+        "enemy": "soldier"
       },
       {
         "delay": 1.4,
@@ -343,59 +273,59 @@
     ],
     [
       {
-        "delay": 0.4,
-        "enemy": "runner"
-      },
-      {
-        "delay": 0.4,
+        "delay": 0.5,
         "enemy": "wraith"
       },
       {
-        "delay": 0.4,
-        "enemy": "frostRaider"
+        "delay": 0.5,
+        "enemy": "wraith"
       },
       {
-        "delay": 0.4,
+        "delay": 0.5,
+        "enemy": "wraith"
+      },
+      {
+        "delay": 0.5,
+        "enemy": "wraith"
+      },
+      {
+        "delay": 0.5,
+        "enemy": "armored"
+      },
+      {
+        "delay": 0.5,
+        "enemy": "armored"
+      },
+      {
+        "delay": 0.6,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 0.6,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 0.6,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 0.3,
         "enemy": "runner"
       },
       {
-        "delay": 0.6,
-        "enemy": "healer"
+        "delay": 0.3,
+        "enemy": "runner"
       },
       {
-        "delay": 0.6,
-        "enemy": "healer"
+        "delay": 0.3,
+        "enemy": "scout"
       },
       {
-        "delay": 0.6,
-        "enemy": "healer"
+        "delay": 0.3,
+        "enemy": "runner"
       },
       {
-        "delay": 0.6,
-        "enemy": "healer"
-      },
-      {
-        "delay": 0.7,
-        "enemy": "iceBeast"
-      },
-      {
-        "delay": 0.7,
-        "enemy": "iceBeast"
-      },
-      {
-        "delay": 0.7,
-        "enemy": "iceBeast"
-      },
-      {
-        "delay": 0.7,
-        "enemy": "plane"
-      },
-      {
-        "delay": 0.7,
-        "enemy": "plane"
-      },
-      {
-        "delay": 0.7,
+        "delay": 0.95,
         "enemy": "plane"
       },
       {
@@ -404,57 +334,41 @@
       },
       {
         "delay": 1.5,
-        "enemy": "armoredBoss"
+        "enemy": "boss"
       }
     ],
     [
+      {
+        "delay": 1,
+        "enemy": "boss"
+      },
       {
         "delay": 1.2,
         "enemy": "armoredBoss"
       },
       {
-        "delay": 1.4,
-        "enemy": "voidBoss"
-      },
-      {
-        "delay": 0.35,
-        "enemy": "runner"
-      },
-      {
-        "delay": 0.35,
+        "delay": 0.45,
         "enemy": "wraith"
       },
       {
-        "delay": 0.35,
-        "enemy": "frostRaider"
-      },
-      {
-        "delay": 0.35,
-        "enemy": "runner"
-      },
-      {
-        "delay": 0.35,
+        "delay": 0.45,
         "enemy": "wraith"
       },
       {
-        "delay": 0.35,
-        "enemy": "frostRaider"
+        "delay": 0.45,
+        "enemy": "wraith"
       },
       {
-        "delay": 0.35,
-        "enemy": "runner"
+        "delay": 0.45,
+        "enemy": "wraith"
       },
       {
-        "delay": 0.55,
-        "enemy": "splitter"
+        "delay": 0.45,
+        "enemy": "armored"
       },
       {
-        "delay": 0.55,
-        "enemy": "healer"
-      },
-      {
-        "delay": 0.55,
-        "enemy": "iceBeast"
+        "delay": 0.45,
+        "enemy": "armored"
       },
       {
         "delay": 0.55,
@@ -462,78 +376,190 @@
       },
       {
         "delay": 0.55,
-        "enemy": "splitter"
+        "enemy": "heavyTank"
       },
       {
-        "delay": 0.6,
+        "delay": 0.28,
+        "enemy": "runner"
+      },
+      {
+        "delay": 0.28,
+        "enemy": "runner"
+      },
+      {
+        "delay": 0.28,
+        "enemy": "scout"
+      },
+      {
+        "delay": 0.28,
+        "enemy": "soldier"
+      },
+      {
+        "delay": 0.8,
         "enemy": "plane"
       },
       {
-        "delay": 0.6,
+        "delay": 0.8,
         "enemy": "plane"
       },
       {
-        "delay": 0.6,
-        "enemy": "plane"
+        "delay": 1.6,
+        "enemy": "boss"
       },
       {
-        "delay": 0.6,
-        "enemy": "plane"
-      },
+        "delay": 1.8,
+        "enemy": "armoredBoss"
+      }
+    ],
+    [
       {
-        "delay": 2,
+        "delay": 0.9,
         "enemy": "armoredBoss"
       },
       {
-        "delay": 2.2,
-        "enemy": "finalBoss"
+        "delay": 1.1,
+        "enemy": "armoredBoss"
+      },
+      {
+        "delay": 0.4,
+        "enemy": "wraith"
+      },
+      {
+        "delay": 0.4,
+        "enemy": "wraith"
+      },
+      {
+        "delay": 0.4,
+        "enemy": "wraith"
+      },
+      {
+        "delay": 0.4,
+        "enemy": "wraith"
+      },
+      {
+        "delay": 0.4,
+        "enemy": "wraith"
+      },
+      {
+        "delay": 0.4,
+        "enemy": "armored"
+      },
+      {
+        "delay": 0.4,
+        "enemy": "armored"
+      },
+      {
+        "delay": 0.5,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 0.5,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 0.5,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 0.5,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 0.25,
+        "enemy": "runner"
+      },
+      {
+        "delay": 0.25,
+        "enemy": "runner"
+      },
+      {
+        "delay": 0.25,
+        "enemy": "scout"
+      },
+      {
+        "delay": 0.25,
+        "enemy": "runner"
+      },
+      {
+        "delay": 0.25,
+        "enemy": "soldier"
+      },
+      {
+        "delay": 0.75,
+        "enemy": "plane"
+      },
+      {
+        "delay": 0.75,
+        "enemy": "plane"
+      },
+      {
+        "delay": 0.75,
+        "enemy": "plane"
+      },
+      {
+        "delay": 1.8,
+        "enemy": "boss"
+      },
+      {
+        "delay": 2.1,
+        "enemy": "armoredBoss"
       }
     ]
   ],
   "obstacles": [
     {
-      "x": 6,
-      "y": 7,
-      "kind": "rock"
+      "x": 5,
+      "y": 2,
+      "kind": "crystal",
+      "destructible": true,
+      "hp": 40,
+      "reward": 14
+    },
+    {
+      "x": 5,
+      "y": 6,
+      "kind": "crystal",
+      "destructible": true,
+      "hp": 40,
+      "reward": 14
     },
     {
       "x": 5,
       "y": 11,
-      "kind": "totem"
+      "kind": "crystal",
+      "destructible": true,
+      "hp": 40,
+      "reward": 14
     },
     {
-      "x": 6,
-      "y": 11,
-      "kind": "totem"
+      "x": 1,
+      "y": 6,
+      "kind": "totem",
+      "destructible": true,
+      "hp": 50,
+      "reward": 18
     },
     {
-      "x": 4,
-      "y": 11,
-      "kind": "crystal"
-    },
-    {
-      "x": 2,
-      "y": 3,
-      "kind": "crystal"
+      "x": 9,
+      "y": 6,
+      "kind": "totem",
+      "destructible": true,
+      "hp": 50,
+      "reward": 18
     },
     {
       "x": 0,
-      "y": 12,
-      "kind": "crystal"
+      "y": 2,
+      "kind": "deadTree"
     },
     {
-      "x": 6,
-      "y": 4,
-      "kind": "rock"
+      "x": 9,
+      "y": 13,
+      "kind": "deadTree"
     },
     {
-      "x": 1,
-      "y": 1,
-      "kind": "totem"
-    },
-    {
-      "x": 1,
-      "y": 4,
+      "x": 3,
+      "y": 14,
       "kind": "rock"
     }
   ]

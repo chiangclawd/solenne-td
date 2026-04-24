@@ -76,56 +76,40 @@
   "paths": [
     [
       {
-        "x": 2,
+        "x": 1,
         "y": -0.5
       },
       {
-        "x": 2,
-        "y": 3
+        "x": 1,
+        "y": 5
       },
       {
-        "x": 8,
-        "y": 3
+        "x": 4,
+        "y": 5
       },
       {
-        "x": 8,
-        "y": 6
-      },
-      {
-        "x": 3,
-        "y": 6
-      },
-      {
-        "x": 3,
-        "y": 9
+        "x": 4,
+        "y": 10
       },
       {
         "x": 7,
-        "y": 9
+        "y": 10
       },
       {
         "x": 7,
-        "y": 11
+        "y": 14
       },
       {
-        "x": 1,
-        "y": 11
+        "x": 4,
+        "y": 14
       },
       {
-        "x": 1,
-        "y": 13
-      },
-      {
-        "x": 9,
-        "y": 13
-      },
-      {
-        "x": 9,
+        "x": 4,
         "y": 15.5
       }
     ]
   ],
-  "startingGold": 195,
+  "startingGold": 220,
   "startingLives": 11,
   "availableTowers": [
     "cannon",
@@ -139,367 +123,197 @@
   "waves": [
     [
       {
-        "delay": 0.36,
-        "enemy": "runner"
-      },
-      {
-        "delay": 0.36,
-        "enemy": "runner"
-      },
-      {
-        "delay": 0.36,
-        "enemy": "runner"
-      },
-      {
-        "delay": 0.36,
-        "enemy": "runner"
-      },
-      {
-        "delay": 0.36,
-        "enemy": "runner"
-      },
-      {
-        "delay": 0.36,
-        "enemy": "runner"
-      },
-      {
-        "delay": 0.36,
+        "delay": 0.55,
         "enemy": "soldier"
       },
       {
-        "delay": 0.36,
+        "delay": 0.55,
         "enemy": "soldier"
       },
       {
-        "delay": 0.36,
-        "enemy": "soldier"
+        "delay": 0.55,
+        "enemy": "runner"
       },
       {
-        "delay": 0.36,
-        "enemy": "soldier"
+        "delay": 0.55,
+        "enemy": "runner"
       },
       {
-        "delay": 0.36,
-        "enemy": "soldier"
+        "delay": 0.55,
+        "enemy": "runner"
       },
       {
-        "delay": 0.63,
+        "delay": 0.75,
+        "enemy": "tank"
+      },
+      {
+        "delay": 0.75,
+        "enemy": "tank"
+      },
+      {
+        "delay": 0.85,
         "enemy": "armored"
       },
       {
-        "delay": 0.63,
+        "delay": 0.85,
         "enemy": "armored"
-      },
-      {
-        "delay": 0.63,
-        "enemy": "armored"
-      },
-      {
-        "delay": 0.63,
-        "enemy": "armored"
-      },
-      {
-        "delay": 0.72,
-        "enemy": "plane"
-      },
-      {
-        "delay": 0.72,
-        "enemy": "plane"
-      },
-      {
-        "delay": 0.72,
-        "enemy": "plane"
-      },
-      {
-        "delay": 1.3,
-        "enemy": "boss"
       }
     ],
     [
       {
-        "delay": 0.36,
+        "delay": 0.45,
+        "enemy": "runner"
+      },
+      {
+        "delay": 0.45,
+        "enemy": "runner"
+      },
+      {
+        "delay": 0.45,
+        "enemy": "runner"
+      },
+      {
+        "delay": 0.45,
         "enemy": "scout"
       },
       {
-        "delay": 0.36,
+        "delay": 0.45,
         "enemy": "scout"
       },
       {
-        "delay": 0.36,
+        "delay": 0.45,
         "enemy": "scout"
       },
       {
-        "delay": 0.36,
-        "enemy": "scout"
+        "delay": 0.65,
+        "enemy": "tank"
       },
       {
-        "delay": 0.36,
-        "enemy": "scout"
-      },
-      {
-        "delay": 0.36,
-        "enemy": "scout"
-      },
-      {
-        "delay": 0.36,
-        "enemy": "scout"
-      },
-      {
-        "delay": 0.36,
-        "enemy": "scout"
-      },
-      {
-        "delay": 0.63,
-        "enemy": "heavyTank"
-      },
-      {
-        "delay": 0.63,
-        "enemy": "heavyTank"
-      },
-      {
-        "delay": 0.63,
-        "enemy": "heavyTank"
-      },
-      {
-        "delay": 0.63,
-        "enemy": "heavyTank"
-      },
-      {
-        "delay": 0.54,
+        "delay": 0.75,
         "enemy": "armored"
       },
       {
-        "delay": 0.54,
+        "delay": 0.75,
         "enemy": "armored"
       },
       {
-        "delay": 0.54,
-        "enemy": "armored"
+        "delay": 0.85,
+        "enemy": "heavyTank"
       },
       {
-        "delay": 0.63,
-        "enemy": "plane"
-      },
-      {
-        "delay": 0.63,
-        "enemy": "plane"
-      },
-      {
-        "delay": 0.63,
-        "enemy": "plane"
-      },
-      {
-        "delay": 0.63,
-        "enemy": "plane"
-      },
-      {
-        "delay": 1.3,
-        "enemy": "boss"
-      },
-      {
-        "delay": 1.3,
-        "enemy": "boss"
+        "delay": 0.85,
+        "enemy": "heavyTank"
       }
     ],
     [
       {
-        "delay": 0.9,
-        "enemy": "armoredBoss"
-      },
-      {
-        "delay": 0.36,
-        "enemy": "runner"
-      },
-      {
-        "delay": 0.36,
-        "enemy": "runner"
-      },
-      {
-        "delay": 0.36,
-        "enemy": "runner"
-      },
-      {
-        "delay": 0.36,
-        "enemy": "runner"
-      },
-      {
-        "delay": 0.36,
-        "enemy": "runner"
-      },
-      {
-        "delay": 0.36,
-        "enemy": "runner"
-      },
-      {
-        "delay": 0.36,
-        "enemy": "runner"
-      },
-      {
-        "delay": 0.54,
-        "enemy": "heavyTank"
-      },
-      {
-        "delay": 0.54,
-        "enemy": "heavyTank"
-      },
-      {
-        "delay": 0.54,
-        "enemy": "heavyTank"
-      },
-      {
-        "delay": 0.54,
-        "enemy": "armored"
-      },
-      {
-        "delay": 0.54,
-        "enemy": "armored"
-      },
-      {
-        "delay": 0.54,
-        "enemy": "plane"
-      },
-      {
-        "delay": 0.54,
-        "enemy": "plane"
-      },
-      {
-        "delay": 0.54,
-        "enemy": "plane"
-      },
-      {
-        "delay": 0.54,
-        "enemy": "plane"
-      },
-      {
-        "delay": 1.3,
-        "enemy": "boss"
-      },
-      {
-        "delay": 1.8,
-        "enemy": "armoredBoss"
-      }
-    ],
-    [
-      {
-        "delay": 0.41,
+        "delay": 0.4,
         "enemy": "scout"
       },
       {
-        "delay": 0.41,
-        "enemy": "scout"
+        "delay": 0.4,
+        "enemy": "runner"
       },
       {
-        "delay": 0.41,
+        "delay": 0.4,
         "enemy": "soldier"
       },
       {
-        "delay": 0.41,
+        "delay": 0.4,
         "enemy": "runner"
       },
       {
-        "delay": 0.41,
+        "delay": 0.4,
         "enemy": "scout"
       },
       {
-        "delay": 0.41,
-        "enemy": "soldier"
-      },
-      {
-        "delay": 0.41,
-        "enemy": "runner"
-      },
-      {
-        "delay": 0.63,
+        "delay": 0.6,
         "enemy": "armored"
       },
       {
-        "delay": 0.63,
+        "delay": 0.6,
         "enemy": "armored"
       },
       {
-        "delay": 0.63,
+        "delay": 0.6,
         "enemy": "armored"
       },
       {
-        "delay": 0.63,
+        "delay": 0.7,
         "enemy": "heavyTank"
       },
       {
-        "delay": 0.63,
+        "delay": 0.7,
         "enemy": "heavyTank"
       },
       {
-        "delay": 0.72,
-        "enemy": "plane"
+        "delay": 0.7,
+        "enemy": "heavyTank"
       },
       {
-        "delay": 0.72,
+        "delay": 0.95,
         "enemy": "plane"
       },
       {
         "delay": 1.4,
         "enemy": "boss"
+      },
+      {
+        "delay": 1.6,
+        "enemy": "boss"
       }
     ],
     [
       {
-        "delay": 0.36,
-        "enemy": "scout"
+        "delay": 0.5,
+        "enemy": "armored"
       },
       {
-        "delay": 0.36,
-        "enemy": "scout"
+        "delay": 0.5,
+        "enemy": "armored"
       },
       {
-        "delay": 0.36,
-        "enemy": "soldier"
+        "delay": 0.5,
+        "enemy": "armored"
       },
       {
-        "delay": 0.36,
+        "delay": 0.6,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 0.6,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 0.6,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 0.6,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 0.3,
         "enemy": "runner"
       },
       {
-        "delay": 0.36,
+        "delay": 0.3,
+        "enemy": "runner"
+      },
+      {
+        "delay": 0.3,
         "enemy": "scout"
       },
       {
-        "delay": 0.54,
-        "enemy": "heavyTank"
+        "delay": 0.3,
+        "enemy": "scout"
       },
       {
-        "delay": 0.54,
-        "enemy": "heavyTank"
-      },
-      {
-        "delay": 0.54,
-        "enemy": "heavyTank"
-      },
-      {
-        "delay": 0.54,
-        "enemy": "heavyTank"
-      },
-      {
-        "delay": 0.63,
-        "enemy": "heavyTank"
-      },
-      {
-        "delay": 0.63,
-        "enemy": "heavyTank"
-      },
-      {
-        "delay": 0.63,
-        "enemy": "heavyTank"
-      },
-      {
-        "delay": 0.63,
+        "delay": 0.85,
         "enemy": "plane"
       },
       {
-        "delay": 0.63,
-        "enemy": "plane"
-      },
-      {
-        "delay": 0.63,
+        "delay": 0.85,
         "enemy": "plane"
       },
       {
@@ -513,51 +327,125 @@
     ],
     [
       {
+        "delay": 1,
+        "enemy": "boss"
+      },
+      {
         "delay": 1.2,
         "enemy": "armoredBoss"
       },
       {
-        "delay": 1.4,
-        "enemy": "finalBoss"
-      },
-      {
-        "delay": 0.32,
-        "enemy": "scout"
-      },
-      {
-        "delay": 0.32,
-        "enemy": "scout"
-      },
-      {
-        "delay": 0.32,
-        "enemy": "soldier"
-      },
-      {
-        "delay": 0.32,
+        "delay": 0.3,
         "enemy": "runner"
       },
       {
-        "delay": 0.32,
+        "delay": 0.3,
         "enemy": "scout"
       },
       {
-        "delay": 0.32,
-        "enemy": "soldier"
-      },
-      {
-        "delay": 0.32,
+        "delay": 0.3,
         "enemy": "runner"
       },
       {
-        "delay": 0.32,
-        "enemy": "scout"
-      },
-      {
-        "delay": 0.32,
+        "delay": 0.3,
         "enemy": "soldier"
       },
       {
+        "delay": 0.3,
+        "enemy": "runner"
+      },
+      {
+        "delay": 0.3,
+        "enemy": "scout"
+      },
+      {
         "delay": 0.5,
+        "enemy": "armored"
+      },
+      {
+        "delay": 0.5,
+        "enemy": "armored"
+      },
+      {
+        "delay": 0.55,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 0.55,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 0.55,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 0.8,
+        "enemy": "plane"
+      },
+      {
+        "delay": 0.8,
+        "enemy": "plane"
+      },
+      {
+        "delay": 0.8,
+        "enemy": "plane"
+      },
+      {
+        "delay": 1.6,
+        "enemy": "boss"
+      },
+      {
+        "delay": 1.8,
+        "enemy": "armoredBoss"
+      }
+    ],
+    [
+      {
+        "delay": 0.9,
+        "enemy": "armoredBoss"
+      },
+      {
+        "delay": 1.1,
+        "enemy": "armoredBoss"
+      },
+      {
+        "delay": 0.28,
+        "enemy": "runner"
+      },
+      {
+        "delay": 0.28,
+        "enemy": "scout"
+      },
+      {
+        "delay": 0.28,
+        "enemy": "runner"
+      },
+      {
+        "delay": 0.28,
+        "enemy": "soldier"
+      },
+      {
+        "delay": 0.28,
+        "enemy": "runner"
+      },
+      {
+        "delay": 0.28,
+        "enemy": "scout"
+      },
+      {
+        "delay": 0.28,
+        "enemy": "runner"
+      },
+      {
+        "delay": 0.28,
+        "enemy": "scout"
+      },
+      {
+        "delay": 0.42,
+        "enemy": "armored"
+      },
+      {
+        "delay": 0.42,
         "enemy": "armored"
       },
       {
@@ -566,7 +454,7 @@
       },
       {
         "delay": 0.5,
-        "enemy": "armored"
+        "enemy": "heavyTank"
       },
       {
         "delay": 0.5,
@@ -574,27 +462,23 @@
       },
       {
         "delay": 0.5,
-        "enemy": "armored"
-      },
-      {
-        "delay": 0.5,
         "enemy": "heavyTank"
       },
       {
-        "delay": 0.54,
+        "delay": 0.75,
         "enemy": "plane"
       },
       {
-        "delay": 0.54,
+        "delay": 0.75,
         "enemy": "plane"
       },
       {
-        "delay": 0.54,
+        "delay": 0.75,
         "enemy": "plane"
       },
       {
-        "delay": 0.54,
-        "enemy": "plane"
+        "delay": 1.8,
+        "enemy": "boss"
       },
       {
         "delay": 2,
@@ -602,71 +486,69 @@
       },
       {
         "delay": 2.2,
-        "enemy": "finalBoss"
+        "enemy": "armoredBoss"
       }
     ]
   ],
   "obstacles": [
     {
-      "x": 9,
-      "y": 10,
-      "kind": "ruin"
-    },
-    {
-      "x": 1,
-      "y": 9,
-      "kind": "ruin"
-    },
-    {
-      "x": 9,
-      "y": 8,
-      "kind": "ruin"
-    },
-    {
-      "x": 9,
-      "y": 11,
-      "kind": "rock"
-    },
-    {
-      "x": 0,
-      "y": 9,
-      "kind": "ruin"
-    },
-    {
-      "x": 0,
+      "x": 2,
       "y": 2,
-      "kind": "ruin"
+      "kind": "column"
     },
     {
-      "x": 9,
-      "y": 9,
-      "kind": "rock"
+      "x": 2,
+      "y": 4,
+      "kind": "column"
     },
     {
-      "x": 0,
-      "y": 6,
-      "kind": "rock"
+      "x": 2,
+      "y": 7,
+      "kind": "column"
     },
     {
-      "x": 5,
-      "y": 1,
-      "kind": "ruin"
-    },
-    {
-      "x": 5,
+      "x": 6,
       "y": 5,
-      "kind": "column",
-      "destructible": true,
-      "hp": 55,
-      "reward": 25
+      "kind": "column"
     },
     {
-      "x": 4,
+      "x": 6,
+      "y": 8,
+      "kind": "column"
+    },
+    {
+      "x": 5,
+      "y": 3,
+      "kind": "ruin",
+      "destructible": true,
+      "hp": 40,
+      "reward": 12
+    },
+    {
+      "x": 5,
       "y": 12,
       "kind": "ruin",
       "destructible": true,
+      "hp": 40,
+      "reward": 12
+    },
+    {
+      "x": 3,
+      "y": 8,
+      "kind": "rock",
+      "destructible": true,
       "hp": 50,
-      "reward": 25
+      "reward": 16
+    },
+    {
+      "x": 8,
+      "y": 2,
+      "kind": "column"
+    },
+    {
+      "x": 8,
+      "y": 13,
+      "kind": "column"
     }
   ]
 }
