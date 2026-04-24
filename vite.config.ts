@@ -42,8 +42,42 @@ export default defineConfig({
         ],
       },
       workbox: {
-        globPatterns: ['**/*.{js,css,html,png,webp,json,svg,webmanifest}'],
+        // NOTE: html and levels/*.json are deliberately NOT precached — they
+        // go through runtimeCaching NetworkFirst below so fresh deployments
+        // (balance tweaks, new bundle hash) apply on the very next app open.
+        // Everything else is still precached so the shell loads instantly
+        // and the game works offline.
+        globPatterns: ['**/*.{js,css,png,webp,svg,webmanifest}'],
+        globIgnores: ['**/levels/*.json'],
         maximumFileSizeToCacheInBytes: 10 * 1024 * 1024,
+        // Fallback when a navigation request fails offline
+        navigateFallback: 'index.html',
+        navigateFallbackDenylist: [/^\/api\//],
+        runtimeCaching: [
+          {
+            // index.html and any navigation: try network first (2s timeout),
+            // fall back to cached shell. 2s keeps the offline launch snappy.
+            urlPattern: ({ request }) => request.mode === 'navigate',
+            handler: 'NetworkFirst',
+            options: {
+              cacheName: 'html-shell',
+              networkTimeoutSeconds: 2,
+              expiration: { maxEntries: 5, maxAgeSeconds: 60 * 60 * 24 * 30 },
+            },
+          },
+          {
+            // Level JSONs: try network first so re-balanced waves apply
+            // immediately. Falls back to last successful copy offline.
+            urlPattern: ({ url }) =>
+              url.pathname.includes('/levels/') && url.pathname.endsWith('.json'),
+            handler: 'NetworkFirst',
+            options: {
+              cacheName: 'levels-json',
+              networkTimeoutSeconds: 2,
+              expiration: { maxEntries: 60, maxAgeSeconds: 60 * 60 * 24 * 30 },
+            },
+          },
+        ],
       },
       devOptions: {
         enabled: true,
