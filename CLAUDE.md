@@ -65,3 +65,10 @@ solutions — checking it first saves re-debugging known issues.
 **After landing a new bug fix or architectural choice**, append a new
 entry to `docs/DEV_NOTES.md` in the matching section using the format:
 情境 / 根因 / 解法 / 教訓. Keep the file alive — terse notes beat none.
+
+**Before proposing new features**, check `docs/ROADMAP_SINGLEPLAYER.md`
+for the existing plan — it ranks 10+ milestones by ROI and explicitly
+lists things we're choosing NOT to do (online, gacha, multiplayer,
+localization). If the user's request maps to an existing milestone,
+implement it under that section's bucket. If it's truly new, propose
+adding a line to the roadmap before coding.
