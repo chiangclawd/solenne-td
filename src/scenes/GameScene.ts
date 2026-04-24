@@ -166,6 +166,9 @@ export class GameScene extends BaseScene {
   private endRetryBtn: Rect | null = null;
   private endBackBtn: Rect | null = null;
   private upgradeBtn: Rect | null = null;
+  /** Branch-selection buttons, only shown when tower is at Lv2 (branch point). */
+  private branchBtnA: Rect | null = null;
+  private branchBtnB: Rect | null = null;
   private sellBtn: Rect | null = null;
   private closePanelBtn: Rect | null = null;
   private skillHudRects: { skill: HeroSkill; rect: Rect }[] = [];
@@ -297,7 +300,7 @@ export class GameScene extends BaseScene {
     if (this.pathTiles.has(key) || this.occupiedTiles.has(key) || this.obstacleTiles.has(key)) return;
     const cfg = TOWER_TYPES[this.selectedTowerId];
     if (!cfg) return;
-    const cost = Math.round(cfg.levels[0].cost * (1 - this.metaMod.costDiscount));
+    const cost = Math.round(cfg.baseLevels[0].cost * (1 - this.metaMod.costDiscount));
     if (this.state.gold < cost) return;
     this.state.gold -= cost;
     this.towers.push(new Tower(tx, ty, T, cfg));
@@ -1069,7 +1072,7 @@ export class GameScene extends BaseScene {
       const cfg = TOWER_TYPES[this.selectedTowerId];
       const onPath = this.pathTiles.has(key);
       const occupied = this.occupiedTiles.has(key) || this.obstacleTiles.has(key);
-      const canAfford = cfg ? this.state.gold >= cfg.levels[0].cost : false;
+      const canAfford = cfg ? this.state.gold >= cfg.baseLevels[0].cost : false;
       const validSpot = !onPath && !occupied && canAfford;
       const cx = tx * T + T / 2;
       const cy = ty * T + T / 2;
@@ -1086,7 +1089,7 @@ export class GameScene extends BaseScene {
         drawTowerBase(r.ctx, cx, cy, T * 0.95);
         drawTowerTurret(r.ctx, cfg.id, cx, cy, 0, 0, 0, 0);
         r.ctx.restore();
-        r.drawCircleOutline(cx, cy, cfg.levels[0].range, 'rgba(110, 235, 140, 0.5)', 1.5);
+        r.drawCircleOutline(cx, cy, cfg.baseLevels[0].range, 'rgba(110, 235, 140, 0.5)', 1.5);
       }
     }
 
@@ -1275,6 +1278,8 @@ export class GameScene extends BaseScene {
     this.endRetryBtn = null;
     this.endBackBtn = null;
     this.upgradeBtn = null;
+    this.branchBtnA = null;
+    this.branchBtnB = null;
     this.sellBtn = null;
     this.closePanelBtn = null;
 
@@ -1870,7 +1875,7 @@ export class GameScene extends BaseScene {
       const rect: Rect = { x: bx, y: by, w: btnSize, h: btnSize + 4 };
       this.towerSelectorRects.push({ id, rect });
 
-      const rawCost = cfg.levels[0].cost;
+      const rawCost = cfg.baseLevels[0].cost;
       const baseCost = Math.round(rawCost * (1 - this.metaMod.costDiscount));
       const affordable = this.state.gold >= baseCost;
       const selected = id === this.selectedTowerId;
@@ -1895,27 +1900,87 @@ export class GameScene extends BaseScene {
     const t = this.selectedExisting;
     if (!t) return;
     const vh = this.ctx.renderer.vh();
-    const panelH = 128;
-    // Lift above iOS home indicator when needed (same adaptive offset as tower dock)
+    // Taller panel when at branch point (shows 2 big branch buttons).
+    const atBranch = t.isAtBranchPoint();
+    const panelH = atBranch ? 170 : 128;
     const sab = r.safeBottom();
     const panelY = vh - panelH - sab - 8;
     r.drawScreenRect(0, panelY, vw, panelH + sab + 8, 'rgba(8, 12, 22, 0.95)');
     r.drawScreenRect(0, panelY, vw, 2, 'rgba(255,215,100,0.4)');
 
     const lv = t.currentLevel();
-    const title = `${t.config.name} · Lv ${t.level + 1}`;
-    r.drawTextScreen(title, 16, panelY + 10, '#ffd166', 17, true);
+    // Level label — for Lv3+ show branch suffix (A/B with name).
+    const tierLabel = t.level < 2 || !t.branch
+      ? `Lv ${t.level + 1}`
+      : `Lv ${t.level + 1} · ${t.config.branches[t.branch].name}`;
+    const title = `${t.config.name} · ${tierLabel}`;
+    r.drawTextScreen(title, 16, panelY + 10, '#ffd166', 16, true);
+    const tags: string[] = [];
+    if (lv.splashRadius) tags.push('AOE');
+    if (lv.slowDuration) tags.push('SLOW');
+    if (lv.armorPierce) tags.push('破甲');
+    if (lv.multiShot && lv.multiShot > 1) tags.push(`×${lv.multiShot}`);
+    if (lv.chainCount) tags.push(`鏈×${lv.chainCount}`);
     r.drawTextScreen(
-      `DMG ${lv.damage}  ·  RNG ${(lv.range / T).toFixed(1)}t  ·  ${lv.fireRate.toFixed(1)}/s` +
-      (t.config.splashRadius ? `  · AOE` : '') +
-      (t.config.slowDuration ? `  · SLOW` : ''),
-      16, panelY + 36, COLORS.text, 13,
+      `DMG ${Math.round(lv.damage)}  ·  RNG ${(lv.range / T).toFixed(1)}t  ·  ${lv.fireRate.toFixed(1)}/s` +
+      (tags.length > 0 ? `  · ${tags.join(' · ')}` : ''),
+      16, panelY + 34, COLORS.text, 12,
     );
 
-    const bw = (vw - 32 - 16) / 3;
-    const bh = 46;
-    const by = panelY + 68;
+    // Clear branch buttons — only populated when at branch point.
+    this.branchBtnA = null;
+    this.branchBtnB = null;
+
     const padX = 16;
+    const bh = 46;
+
+    if (atBranch) {
+      // Two wide branch buttons stacked above the sell/close row.
+      const branchY = panelY + 56;
+      const branchBh = 54;
+      const branchBw = (vw - padX * 2 - 8) / 2;
+      const goldScale = 1 - this.metaMod.costDiscount;
+
+      const brA = t.config.branches.A;
+      const brB = t.config.branches.B;
+      const costA = Math.round(brA.levels[0].cost * goldScale);
+      const costB = Math.round(brB.levels[0].cost * goldScale);
+      const canA = this.state.gold >= costA;
+      const canB = this.state.gold >= costB;
+
+      this.branchBtnA = { x: padX, y: branchY, w: branchBw, h: branchBh };
+      r.drawScreenRoundedRect(padX, branchY, branchBw, branchBh, 9, canA ? '#3a2818' : '#22304a');
+      r.drawScreenRoundedRectOutline(padX, branchY, branchBw, branchBh, 9, brA.color, 2);
+      r.drawTextScreenCenter(`🟠 ${brA.name}`, padX + branchBw / 2, branchY + 14, brA.color, 13, true);
+      r.drawTextScreenCenter(brA.description, padX + branchBw / 2, branchY + 30, '#cbd2de', 9);
+      r.drawTextScreenCenter(`💰${costA}`, padX + branchBw / 2, branchY + 45, canA ? '#ffd166' : '#888', 12, true);
+
+      const bxB = padX + branchBw + 8;
+      this.branchBtnB = { x: bxB, y: branchY, w: branchBw, h: branchBh };
+      r.drawScreenRoundedRect(bxB, branchY, branchBw, branchBh, 9, canB ? '#1e2c4a' : '#22304a');
+      r.drawScreenRoundedRectOutline(bxB, branchY, branchBw, branchBh, 9, brB.color, 2);
+      r.drawTextScreenCenter(`🔵 ${brB.name}`, bxB + branchBw / 2, branchY + 14, brB.color, 13, true);
+      r.drawTextScreenCenter(brB.description, bxB + branchBw / 2, branchY + 30, '#cbd2de', 9);
+      r.drawTextScreenCenter(`💰${costB}`, bxB + branchBw / 2, branchY + 45, canB ? '#ffd166' : '#888', 12, true);
+
+      // Bottom row — sell + close (no plain upgrade button, branch buttons replace it)
+      const bw2 = (vw - padX * 2 - 8) / 2;
+      const by2 = branchY + branchBh + 10;
+      const sellVal = t.sellValue(this.metaMod.sellBonus);
+      this.sellBtn = { x: padX, y: by2, w: bw2, h: bh * 0.8 };
+      r.drawScreenRoundedRect(padX, by2, bw2, bh * 0.8, 9, '#22304a');
+      r.drawTextScreenCenter(`出售  +💰${sellVal}`, padX + bw2 / 2, by2 + (bh * 0.8) / 2, '#ffd166', 13, true);
+      const closeX2 = padX + bw2 + 8;
+      this.closePanelBtn = { x: closeX2, y: by2, w: bw2, h: bh * 0.8 };
+      r.drawScreenRoundedRect(closeX2, by2, bw2, bh * 0.8, 9, '#1a1a22');
+      r.drawTextScreenCenter('✕ 關閉', closeX2 + bw2 / 2, by2 + (bh * 0.8) / 2, '#fff', 13, true);
+      this.upgradeBtn = null;
+      return;
+    }
+
+    // Normal (non-branch-point) layout: 3 small buttons row.
+    const bw = (vw - 32 - 16) / 3;
+    const by = panelY + 68;
 
     const canUp = t.canUpgrade();
     const upCost = Math.round(t.nextUpgradeCost() * (1 - this.metaMod.costDiscount));
@@ -1923,7 +1988,9 @@ export class GameScene extends BaseScene {
     this.upgradeBtn = { x: padX, y: by, w: bw, h: bh };
     r.drawScreenRoundedRect(padX, by, bw, bh, 9, canAfford ? '#2c8cc7' : '#22304a');
     if (canUp) {
-      r.drawTextScreenCenter(`⬆ 升級`, padX + bw / 2, by + bh / 2 - 8, '#fff', 14, true);
+      const branchTint = t.branch ? t.config.branches[t.branch].color : '#5eb8ff';
+      r.drawScreenRoundedRectOutline(padX, by, bw, bh, 9, branchTint, 1.5);
+      r.drawTextScreenCenter('⬆ 升級', padX + bw / 2, by + bh / 2 - 8, '#fff', 14, true);
       r.drawTextScreenCenter(`💰${upCost}`, padX + bw / 2, by + bh / 2 + 11, canAfford ? '#ffd166' : '#888', 14, true);
     } else {
       r.drawTextScreenCenter('滿級', padX + bw / 2, by + bh / 2, '#ffd166', 16, true);
@@ -2020,6 +2087,29 @@ export class GameScene extends BaseScene {
     }
 
     if (this.selectedExisting) {
+      // Branch-point buttons — Lv2 → Lv3 choosing A or B.
+      if (this.branchBtnA && this.inside(screenX, screenY, this.branchBtnA)) {
+        const t = this.selectedExisting;
+        const cost = Math.round(t.nextUpgradeCost('A') * (1 - this.metaMod.costDiscount));
+        if (this.state.gold >= cost) {
+          this.state.gold -= cost;
+          t.upgradeToBranch('A');
+          this.challengeState.anyTowerUpgraded = true;
+          this.ctx.audio.upgrade();
+        }
+        return;
+      }
+      if (this.branchBtnB && this.inside(screenX, screenY, this.branchBtnB)) {
+        const t = this.selectedExisting;
+        const cost = Math.round(t.nextUpgradeCost('B') * (1 - this.metaMod.costDiscount));
+        if (this.state.gold >= cost) {
+          this.state.gold -= cost;
+          t.upgradeToBranch('B');
+          this.challengeState.anyTowerUpgraded = true;
+          this.ctx.audio.upgrade();
+        }
+        return;
+      }
       if (this.upgradeBtn && this.inside(screenX, screenY, this.upgradeBtn)) {
         const t = this.selectedExisting;
         if (t.canUpgrade()) {
@@ -2106,7 +2196,7 @@ export class GameScene extends BaseScene {
     if (this.pathTiles.has(key) || this.occupiedTiles.has(key) || this.obstacleTiles.has(key)) return;
     const cfg = TOWER_TYPES[this.selectedTowerId];
     if (!cfg) return;
-    const baseCost = Math.round(cfg.levels[0].cost * (1 - this.metaMod.costDiscount));
+    const baseCost = Math.round(cfg.baseLevels[0].cost * (1 - this.metaMod.costDiscount));
     if (this.state.gold < baseCost) return;
     this.state.gold -= baseCost;
     this.towers.push(new Tower(tx, ty, T, cfg));

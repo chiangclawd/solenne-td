@@ -55,13 +55,17 @@ export const ARMOR_INFO: Record<ArmorType, ArmorTypeInfo> = {
 
 /**
  * Compute the counter multiplier for a given tower vs enemy pairing.
- * Returns 1.0 if no counter, COUNTER_BONUS (1.4) if tower counters enemy.
+ * Returns 1.0 if no counter, COUNTER_BONUS (default 1.4) if tower counters
+ * enemy. A per-tier override (e.g. cannon 穿甲 Lv5 with counterBonus 1.8)
+ * replaces the default 1.4 when the tower actually counters the enemy.
  */
 export function counterMultiplier(
   towerCounters: readonly ArmorType[] | undefined,
   enemyArmor: ArmorType | undefined,
+  overrideBonus?: number,
 ): number {
   if (!towerCounters || towerCounters.length === 0) return 1;
   if (!enemyArmor) return 1;
-  return towerCounters.includes(enemyArmor) ? COUNTER_BONUS : 1;
+  if (!towerCounters.includes(enemyArmor)) return 1;
+  return overrideBonus && overrideBonus > 0 ? overrideBonus : COUNTER_BONUS;
 }
