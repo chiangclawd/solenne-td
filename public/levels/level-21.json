@@ -40,6 +40,12 @@
       "text": "這就是虛空要塞——他們連治療都是武器。",
       "color": "#6ee17a",
       "portrait": "pip"
+    },
+    {
+      "speaker": "基蘭指揮官",
+      "text": "記住這個。我們，不這樣做。",
+      "color": "#5eb8ff",
+      "portrait": "kieran"
     }
   ],
   "outroLose": [
@@ -48,6 +54,18 @@
       "text": "我們被治療流打潰。退。",
       "color": "#5eb8ff",
       "portrait": "kieran"
+    },
+    {
+      "speaker": "皮普工程師",
+      "text": "優先擊殺治療者。我之前就該提醒的。",
+      "color": "#6ee17a",
+      "portrait": "pip"
+    },
+    {
+      "speaker": "瓦西亞中士",
+      "text": "下次我帶狙擊手上。",
+      "color": "#ff9f43",
+      "portrait": "vasya"
     }
   ],
   "path": [
@@ -99,6 +117,7 @@
   "startingGold": 260,
   "startingLives": 12,
   "availableTowers": [
+    "cannon",
     "quickShot",
     "machineGun",
     "frostTower",

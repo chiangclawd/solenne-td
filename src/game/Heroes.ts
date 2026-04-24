@@ -101,6 +101,16 @@ export const HEROES: readonly HeroDef[] = [
         duration: 8,
         targeting: 'self',
       },
+      {
+        id: 'guardian',
+        name: '御駕親征',
+        icon: '🛡',
+        description: '6 秒內自身受傷減免 80%，周圍敵人減速 35%',
+        cooldown: 35,
+        duration: 6,
+        targeting: 'self',
+        radius: T * 2.5,
+      },
     ],
   },
   {

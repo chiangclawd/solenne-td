@@ -46,6 +46,12 @@
       "text": "往內走。到最裡面。",
       "color": "#5eb8ff",
       "portrait": "kieran"
+    },
+    {
+      "speaker": "皮普工程師",
+      "text": "（低聲）那裡……有個人，在等我。",
+      "color": "#6ee17a",
+      "portrait": "pip"
     }
   ],
   "outroLose": [
@@ -54,6 +60,18 @@
       "text": "越殺越多……我們撐不下去。",
       "color": "#ff9f43",
       "portrait": "vasya"
+    },
+    {
+      "speaker": "皮普工程師",
+      "text": "分裂祭壇不能只打碎。要從源頭切斷。",
+      "color": "#6ee17a",
+      "portrait": "pip"
+    },
+    {
+      "speaker": "基蘭指揮官",
+      "text": "重組。這次我們知道怎麼打。",
+      "color": "#5eb8ff",
+      "portrait": "kieran"
     }
   ],
   "path": [
@@ -109,6 +127,7 @@
   "startingGold": 270,
   "startingLives": 12,
   "availableTowers": [
+    "cannon",
     "quickShot",
     "machineGun",
     "frostTower",

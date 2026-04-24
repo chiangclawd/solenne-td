@@ -58,6 +58,12 @@
       "text": "……他們叫他「第一個人」。",
       "color": "#6ee17a",
       "portrait": "pip"
+    },
+    {
+      "speaker": "瓦西亞中士",
+      "text": "管他叫什麼。我帶了夠多的子彈。",
+      "color": "#ff9f43",
+      "portrait": "vasya"
     }
   ],
   "outroLose": [
@@ -66,6 +72,18 @@
       "text": "我們被幽影衝散了。",
       "color": "#ff9f43",
       "portrait": "vasya"
+    },
+    {
+      "speaker": "基蘭指揮官",
+      "text": "重組。這次不急。",
+      "color": "#5eb8ff",
+      "portrait": "kieran"
+    },
+    {
+      "speaker": "皮普工程師",
+      "text": "他們聽得見我們。下次，要靜一點。",
+      "color": "#6ee17a",
+      "portrait": "pip"
     }
   ],
   "path": [
@@ -113,6 +131,7 @@
   "startingGold": 255,
   "startingLives": 12,
   "availableTowers": [
+    "cannon",
     "quickShot",
     "machineGun",
     "frostTower",

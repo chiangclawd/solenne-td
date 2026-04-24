@@ -10,10 +10,11 @@ export interface Achievement {
 }
 
 export type AchievementEvent =
-  | { type: 'levelComplete'; levelId: string; stars: number; livesRatio: number }
+  | { type: 'levelComplete'; levelId: string; stars: number; livesRatio: number; heroId?: string; frontlineTier?: 'front' | 'near' | 'rear' }
   | { type: 'towerPlaced'; towerId: string }
   | { type: 'enemyKilled'; count: number }
   | { type: 'waveClear'; wave: number }
+  | { type: 'heroDeployed'; heroId: string }
   | { type: 'saveTick' };
 
 export const ACHIEVEMENTS: readonly Achievement[] = [
@@ -165,6 +166,50 @@ export const ACHIEVEMENTS: readonly Achievement[] = [
         if (byDiff && (byDiff.heroic ?? 0) > 0) return true;
       }
       return false;
+    },
+  },
+  // ---- Hero-related achievements ----
+  {
+    id: 'first_deploy',
+    title: '指揮官登場',
+    description: '首次部署英雄至戰場。',
+    icon: '⚔',
+    check: (_s, ev) => ev?.type === 'heroDeployed',
+  },
+  {
+    id: 'unlock_vasya',
+    title: '中士加入',
+    description: '通關第 5 關解鎖瓦西亞。',
+    icon: '🎯',
+    check: (s) => !!s.levelProgress['level-05']?.completed,
+  },
+  {
+    id: 'unlock_pip',
+    title: '工程師歸隊',
+    description: '通關第 10 關解鎖皮普。',
+    icon: '🔧',
+    check: (s) => !!s.levelProgress['level-10']?.completed,
+  },
+  {
+    id: 'frontline_hero',
+    title: '前線指揮',
+    description: '以「前線部署」tier 通關任一關。',
+    icon: '🚩',
+    check: (_s, ev) =>
+      ev?.type === 'levelComplete' && ev.frontlineTier === 'front',
+  },
+  {
+    id: 'triple_hero_finale',
+    title: '三英雄征途',
+    description: '用三位英雄各自通關最終關 (L23)。',
+    icon: '👑',
+    check: (s) => {
+      const wins = s.heroLevelWins ?? {};
+      return (
+        (wins.kieran ?? []).includes('level-23') &&
+        (wins.vasya ?? []).includes('level-23') &&
+        (wins.pip ?? []).includes('level-23')
+      );
     },
   },
 ];

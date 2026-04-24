@@ -1,10 +1,10 @@
 import { BaseScene } from '../ui/Scene.ts';
 import { LevelSelectScene } from './LevelSelectScene.ts';
+import { HeroSelectScene } from './HeroSelectScene.ts';
 import { SettingsScene } from './SettingsScene.ts';
 import { CodexScene } from './CodexScene.ts';
 import { CreditsScene } from './CreditsScene.ts';
 import { UpgradeScene } from './UpgradeScene.ts';
-import { GameScene } from './GameScene.ts';
 import { COLORS, TILE_SIZE, WORLD_WIDTH, WORLD_HEIGHT, GRID_COLS, GRID_ROWS } from '../config.ts';
 import { totalStars, countCompleted } from '../storage/SaveData.ts';
 import { ACHIEVEMENTS } from '../game/Achievements.ts';
@@ -219,7 +219,8 @@ export class MainMenuScene extends BaseScene {
     }
     if (this.endlessBtn && this.inside(screenX, screenY, this.endlessBtn)) {
       this.ctx.audio.click();
-      this.ctx.transition(new GameScene(this.ctx, generateEndlessLevel(), null));
+      // Endless also goes through HeroSelect so player can bring a commander
+      this.ctx.transition(new HeroSelectScene(this.ctx, generateEndlessLevel()));
       return;
     }
     if (this.upgradeBtn && this.inside(screenX, screenY, this.upgradeBtn)) {

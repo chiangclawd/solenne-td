@@ -173,6 +173,7 @@
   "startingGold": 290,
   "startingLives": 14,
   "availableTowers": [
+    "cannon",
     "quickShot",
     "machineGun",
     "frostTower",

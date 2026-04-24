@@ -43,6 +43,8 @@ export interface SaveData {
   metaUpgrades?: Record<string, number>;
   /** Last hero the player selected (UI default on next level start). */
   selectedHero?: string;
+  /** Map of hero id → list of levels cleared WITH that hero. Used by achievements. */
+  heroLevelWins?: Record<string, string[]>;
 }
 
 const SAVE_KEY = 'td-solenne-save-v1';
@@ -102,6 +104,7 @@ function migrate(parsed: Partial<SaveData> & { version?: number }): SaveData {
   if (parsed.endlessHighScore) out.endlessHighScore = parsed.endlessHighScore;
   if (parsed.metaUpgrades) out.metaUpgrades = parsed.metaUpgrades;
   if (typeof parsed.selectedHero === 'string') out.selectedHero = parsed.selectedHero;
+  if (parsed.heroLevelWins) out.heroLevelWins = parsed.heroLevelWins;
   return out;
 }
 

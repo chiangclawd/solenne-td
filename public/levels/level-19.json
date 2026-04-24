@@ -63,12 +63,30 @@
       "text": "我必須。",
       "color": "#6ee17a",
       "portrait": "pip"
+    },
+    {
+      "speaker": "瓦西亞中士",
+      "text": "皮普，我走在你前面。",
+      "color": "#ff9f43",
+      "portrait": "vasya"
     }
   ],
   "outroLose": [
     {
       "speaker": "瓦西亞中士",
       "text": "皮普倒了。他說——他先走一步。",
+      "color": "#ff9f43",
+      "portrait": "vasya"
+    },
+    {
+      "speaker": "基蘭指揮官",
+      "text": "把他的徽章帶走。下次我們一起回來。",
+      "color": "#5eb8ff",
+      "portrait": "kieran"
+    },
+    {
+      "speaker": "瓦西亞中士",
+      "text": "承諾。",
       "color": "#ff9f43",
       "portrait": "vasya"
     }
@@ -114,6 +132,7 @@
   "startingGold": 250,
   "startingLives": 13,
   "availableTowers": [
+    "cannon",
     "quickShot",
     "machineGun",
     "frostTower",

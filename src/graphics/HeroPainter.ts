@@ -36,6 +36,12 @@ export function drawHero(
     if (hero.isEffectActive('rally')) {
       drawPulseRing(ctx, x, y, def.passive.auraRadius || 160, '#ffd166', elapsed, 2.4);
     }
+    if (hero.isEffectActive('guardian')) {
+      // Defensive shield shimmer — two bright rings
+      const r = def.skills.find((s) => s.id === 'guardian')?.radius ?? 100;
+      drawPulseRing(ctx, x, y, r, '#ffd166', elapsed, 1.6);
+      drawPulseRing(ctx, x, y, r * 0.6, '#ffe29a', elapsed + 0.3, 1.6);
+    }
     if (hero.isEffectActive('emergencyBuild')) {
       const r = def.skills.find((s) => s.id === 'emergencyBuild')?.radius ?? 120;
       drawPulseRing(ctx, x, y, r, '#c878ff', elapsed, 2.0);
@@ -141,6 +147,7 @@ function paintSkillIcon(ctx: Ctx, skillId: string, size: number): void {
   const cy = size / 2;
   switch (skillId) {
     case 'rally':           paintIconRally(ctx, cx, cy, size); return;
+    case 'guardian':        paintIconGuardian(ctx, cx, cy, size); return;
     case 'grenade':         paintIconGrenade(ctx, cx, cy, size); return;
     case 'piercingShot':    paintIconPiercingShot(ctx, cx, cy, size); return;
     case 'flash':           paintIconFlash(ctx, cx, cy, size); return;
@@ -756,6 +763,71 @@ function paintIconRally(ctx: Ctx, cx: number, cy: number, size: number): void {
   ctx.stroke();
   // Gold star emblem on flag
   drawMiniStar(ctx, fx + 6 * s, fy + 6 * s, 2.5 * s, '#ffd166');
+  ctx.restore();
+}
+
+function paintIconGuardian(ctx: Ctx, cx: number, cy: number, size: number): void {
+  const s = size / 48;
+  const glow = 0.6 + Math.sin(Date.now() * 0.005) * 0.3;
+  ctx.save();
+  // Background wash
+  ctx.fillStyle = 'rgba(110,200,255,0.1)';
+  ctx.beginPath(); ctx.arc(cx, cy, size * 0.46, 0, Math.PI * 2); ctx.fill();
+
+  // Outer glow (light blue halo)
+  ctx.globalCompositeOperation = 'lighter';
+  const haloGrad = ctx.createRadialGradient(cx, cy, 2 * s, cx, cy, 17 * s);
+  haloGrad.addColorStop(0, `rgba(110,200,255,${glow * 0.5})`);
+  haloGrad.addColorStop(1, 'rgba(110,200,255,0)');
+  ctx.fillStyle = haloGrad;
+  ctx.beginPath(); ctx.arc(cx, cy, 17 * s, 0, Math.PI * 2); ctx.fill();
+  ctx.globalCompositeOperation = 'source-over';
+
+  // Shield body (heater shape)
+  const shieldGrad = ctx.createLinearGradient(cx, cy - 15 * s, cx, cy + 15 * s);
+  shieldGrad.addColorStop(0, '#6fa5d5');
+  shieldGrad.addColorStop(0.5, '#3d73a8');
+  shieldGrad.addColorStop(1, '#1a3d6b');
+  ctx.fillStyle = shieldGrad;
+  ctx.beginPath();
+  ctx.moveTo(cx - 11 * s, cy - 12 * s);
+  ctx.lineTo(cx + 11 * s, cy - 12 * s);
+  ctx.lineTo(cx + 11 * s, cy + 2 * s);
+  ctx.quadraticCurveTo(cx + 11 * s, cy + 12 * s, cx, cy + 14 * s);
+  ctx.quadraticCurveTo(cx - 11 * s, cy + 12 * s, cx - 11 * s, cy + 2 * s);
+  ctx.closePath();
+  ctx.fill();
+  // Gold rim
+  ctx.strokeStyle = '#e9b659';
+  ctx.lineWidth = 1.2 * s;
+  ctx.stroke();
+  // Inner darker rim
+  ctx.strokeStyle = '#0b1a2e';
+  ctx.lineWidth = 0.5 * s;
+  ctx.stroke();
+
+  // Shield highlight on upper-left
+  ctx.fillStyle = 'rgba(255,255,255,0.25)';
+  ctx.beginPath();
+  ctx.moveTo(cx - 9 * s, cy - 10 * s);
+  ctx.lineTo(cx - 1 * s, cy - 10 * s);
+  ctx.lineTo(cx - 5 * s, cy);
+  ctx.lineTo(cx - 9 * s, cy - 4 * s);
+  ctx.closePath();
+  ctx.fill();
+
+  // Central cross / emblem (gold)
+  ctx.fillStyle = '#f4c667';
+  ctx.fillRect(cx - 1.2 * s, cy - 6 * s, 2.4 * s, 11 * s);
+  ctx.fillRect(cx - 5 * s, cy - 1.5 * s, 10 * s, 2.4 * s);
+  // Cross outline
+  ctx.strokeStyle = '#7a5a16';
+  ctx.lineWidth = 0.5 * s;
+  ctx.strokeRect(cx - 1.2 * s, cy - 6 * s, 2.4 * s, 11 * s);
+  ctx.strokeRect(cx - 5 * s, cy - 1.5 * s, 10 * s, 2.4 * s);
+  // Center boss
+  ctx.fillStyle = '#e9b659';
+  ctx.beginPath(); ctx.arc(cx, cy - 0.3 * s, 1.5 * s, 0, Math.PI * 2); ctx.fill();
   ctx.restore();
 }
 

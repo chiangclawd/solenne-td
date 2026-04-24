@@ -334,10 +334,23 @@ export class GameScene extends BaseScene {
       if (newHero) this.unlockedHero = newHero;
     }
     this.ctx.save.stats.totalWavesSurvived += this.waveMgr.totalWaves();
+
+    // Track per-hero level wins for the triple_hero_finale achievement
+    if (this.selectedHeroId) {
+      if (!this.ctx.save.heroLevelWins) this.ctx.save.heroLevelWins = {};
+      const list = this.ctx.save.heroLevelWins[this.selectedHeroId] ?? [];
+      if (!list.includes(this.level.id)) list.push(this.level.id);
+      this.ctx.save.heroLevelWins[this.selectedHeroId] = list;
+    }
     this.ctx.persistSave();
 
     const unlocked = this.ctx.achievements.check(this.ctx.save, {
-      type: 'levelComplete', levelId: this.level.id, stars, livesRatio: ratio,
+      type: 'levelComplete',
+      levelId: this.level.id,
+      stars,
+      livesRatio: ratio,
+      heroId: this.selectedHeroId ?? undefined,
+      frontlineTier: this.hero?.frontline.tier,
     });
     if (unlocked.length > 0) this.ctx.audio.achievement();
     this.ctx.persistSave();
@@ -486,12 +499,25 @@ export class GameScene extends BaseScene {
         if (this.hero.alive && this.hero.def.id === 'pip' && this.hero.def.passive.auraRadius > 0) {
           const rad = this.hero.auraRadius();
           const r2 = rad * rad;
-          const slowAmount = 0.18 * this.hero.frontline.strengthMul; // scales with frontline
+          const slowAmount = 0.18 * this.hero.frontline.strengthMul;
           for (const e of this.enemies) {
             if (!e.alive) continue;
             const p = e.position();
             if ((p.x - this.hero.x) ** 2 + (p.y - this.hero.y) ** 2 <= r2) {
               e.applySlow(0.1, Math.max(0.1, 1 - slowAmount));
+            }
+          }
+        }
+        // Kieran's Royal Ward (guardian) — slow enemies near hero while active
+        if (this.hero.alive && this.hero.isEffectActive('guardian')) {
+          const def = this.hero.def.skills.find((s) => s.id === 'guardian');
+          const rad = (def?.radius ?? 100);
+          const r2 = rad * rad;
+          for (const e of this.enemies) {
+            if (!e.alive) continue;
+            const p = e.position();
+            if ((p.x - this.hero.x) ** 2 + (p.y - this.hero.y) ** 2 <= r2) {
+              e.applySlow(0.1, 0.65); // 35% slow
             }
           }
         }
@@ -1714,6 +1740,11 @@ export class GameScene extends BaseScene {
         this.heroDeployMode = false;
         this.occupiedTiles.add(key);
         this.ctx.audio.place();
+        // Fire hero-deployed achievement event
+        const unlocked = this.ctx.achievements.check(this.ctx.save, {
+          type: 'heroDeployed', heroId: this.heroDef.id,
+        });
+        if (unlocked.length > 0) this.ctx.audio.achievement();
       }
       return;
     }

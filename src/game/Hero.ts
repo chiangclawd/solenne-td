@@ -121,6 +121,8 @@ export class Hero {
 
   takeDamage(amount: number): void {
     if (!this.alive) return;
+    // Royal Ward (Kieran's guardian skill): 80% damage reduction while active
+    if (this.isEffectActive('guardian')) amount *= 0.2;
     this.hp -= amount;
     if (this.hp <= 0) {
       this.hp = 0;
@@ -154,6 +156,15 @@ export class Hero {
           kind: 'heroRally', x: this.x, y: this.y,
           radius: this.def.passive.auraRadius || 160,
           life: 0.9, maxLife: 0.9, color: this.def.color,
+        });
+        break;
+      }
+      case 'guardian': {
+        // Royal Ward — defensive shield burst + visual ring
+        fx.push({
+          kind: 'heroRally', x: this.x, y: this.y,
+          radius: def.radius ?? 100,
+          life: 1.0, maxLife: 1.0, color: '#ffd166',
         });
         break;
       }

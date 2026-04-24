@@ -1,6 +1,5 @@
 import { BaseScene } from '../ui/Scene.ts';
 import { MainMenuScene } from './MainMenuScene.ts';
-import { GameScene } from './GameScene.ts';
 import { HeroSelectScene } from './HeroSelectScene.ts';
 import { SettingsScene } from './SettingsScene.ts';
 import { getStars, isUnlocked, totalStars, countCompleted } from '../storage/SaveData.ts';
@@ -297,11 +296,8 @@ export class LevelSelectScene extends BaseScene {
     for (const c of this.cards) {
       if (c.unlocked && this.inside(screenX, screenY, c.rect)) {
         this.ctx.audio.click();
-        if (c.level.endless === true) {
-          this.ctx.transition(new GameScene(this.ctx, c.level, null));
-        } else {
-          this.ctx.transition(new HeroSelectScene(this.ctx, c.level));
-        }
+        // All level types (campaign + endless) now route through HeroSelect
+        this.ctx.transition(new HeroSelectScene(this.ctx, c.level));
         return;
       }
     }
