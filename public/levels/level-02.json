@@ -4,460 +4,97 @@
   "world": 1,
   "flavorText": "沙丘之間的奇襲。試探你的耐力。",
   "intro": [
-    {
-      "speaker": "基蘭指揮官",
-      "text": "草原哨站失守。現在是沙漠。這次我們有狙擊塔了。",
-      "color": "#5eb8ff",
-      "portrait": "kieran"
-    },
-    {
-      "speaker": "瓦西亞中士",
-      "text": "沙丘通道。他們一波一波來——先是偵察兵，然後是重裝。",
-      "color": "#ff9f43",
-      "portrait": "vasya"
-    },
-    {
-      "speaker": "皮普工程師",
-      "text": "指揮官，情報說他們帶了我們沒見過的東西。",
-      "color": "#6ee17a",
-      "portrait": "pip"
-    },
-    {
-      "speaker": "鐵潮之聲",
-      "text": "【雜訊】……你們的城牆會倒……你們的孩子……會與我們一同前進……",
-      "color": "#ff6b6b"
-    },
-    {
-      "speaker": "基蘭指揮官",
-      "text": "別理他們。塔準備好。",
-      "color": "#5eb8ff",
-      "portrait": "kieran"
-    }
+    { "speaker": "基蘭指揮官", "text": "草原哨站失守。現在是沙漠。這次我們有狙擊塔了。", "color": "#5eb8ff", "portrait": "kieran" },
+    { "speaker": "瓦西亞中士", "text": "沙丘通道。他們一波一波來——先是偵察兵，然後是重裝。", "color": "#ff9f43", "portrait": "vasya" },
+    { "speaker": "皮普工程師", "text": "指揮官，情報說他們帶了我們沒見過的東西。", "color": "#6ee17a", "portrait": "pip" },
+    { "speaker": "鐵潮之聲", "text": "【雜訊】……你們的城牆會倒……你們的孩子……會與我們一同前進……", "color": "#ff6b6b" },
+    { "speaker": "基蘭指揮官", "text": "別理他們。塔準備好。", "color": "#5eb8ff", "portrait": "kieran" }
   ],
   "outroWin": [
-    {
-      "speaker": "皮普工程師",
-      "text": "他們退了！連重裝都退了！",
-      "color": "#6ee17a",
-      "portrait": "pip"
-    },
-    {
-      "speaker": "瓦西亞中士",
-      "text": "別高興太早，小子。這只是試探。",
-      "color": "#ff9f43",
-      "portrait": "vasya"
-    }
+    { "speaker": "皮普工程師", "text": "他們退了！連重裝都退了！", "color": "#6ee17a", "portrait": "pip" },
+    { "speaker": "瓦西亞中士", "text": "別高興太早，小子。這只是試探。", "color": "#ff9f43", "portrait": "vasya" }
   ],
   "outroLose": [
-    {
-      "speaker": "基蘭指揮官",
-      "text": "沙丘失守。向總部回報。",
-      "color": "#5eb8ff",
-      "portrait": "kieran"
-    }
+    { "speaker": "基蘭指揮官", "text": "沙丘失守。向總部回報。", "color": "#5eb8ff", "portrait": "kieran" }
   ],
   "paths": [
     [
-      {
-        "x": -0.5,
-        "y": 2
-      },
-      {
-        "x": 8,
-        "y": 2
-      },
-      {
-        "x": 8,
-        "y": 5
-      },
-      {
-        "x": 2,
-        "y": 5
-      },
-      {
-        "x": 2,
-        "y": 8
-      },
-      {
-        "x": 8,
-        "y": 8
-      },
-      {
-        "x": 8,
-        "y": 11
-      },
-      {
-        "x": 2,
-        "y": 11
-      },
-      {
-        "x": 2,
-        "y": 13
-      },
-      {
-        "x": 10.5,
-        "y": 13
-      }
+      { "x": 2, "y": -0.5 },
+      { "x": 2, "y": 3 },
+      { "x": 6, "y": 3 },
+      { "x": 6, "y": 7 },
+      { "x": 2, "y": 7 },
+      { "x": 2, "y": 11 },
+      { "x": 6, "y": 11 },
+      { "x": 6, "y": 15.5 }
+    ],
+    [
+      { "x": 8, "y": -0.5 },
+      { "x": 8, "y": 11 },
+      { "x": 6, "y": 11 },
+      { "x": 6, "y": 15.5 }
     ]
   ],
   "startingGold": 200,
   "startingLives": 12,
-  "availableTowers": [
-    "cannon",
-    "quickShot",
-    "machineGun",
-    "frostTower",
-    "sniper",
-    "missileLauncher"
-  ],
+  "availableTowers": ["cannon", "quickShot", "machineGun", "frostTower", "sniper"],
   "waves": [
     [
-      {
-        "delay": 0.6,
-        "enemy": "soldier"
-      },
-      {
-        "delay": 0.6,
-        "enemy": "soldier"
-      },
-      {
-        "delay": 0.6,
-        "enemy": "soldier"
-      },
-      {
-        "delay": 0.6,
-        "enemy": "runner"
-      },
-      {
-        "delay": 0.6,
-        "enemy": "runner"
-      },
-      {
-        "delay": 0.6,
-        "enemy": "runner"
-      },
-      {
-        "delay": 0.6,
-        "enemy": "runner"
-      },
-      {
-        "delay": 0.8,
-        "enemy": "tank"
-      },
-      {
-        "delay": 0.8,
-        "enemy": "tank"
-      }
+      { "delay": 0.7, "enemy": "soldier", "path": 0 }, { "delay": 0.7, "enemy": "soldier", "path": 0 },
+      { "delay": 0.7, "enemy": "soldier", "path": 0 }, { "delay": 0.7, "enemy": "soldier", "path": 0 },
+      { "delay": 0.7, "enemy": "soldier", "path": 0 },
+      { "delay": 0.45, "enemy": "scout", "path": 1 }, { "delay": 0.45, "enemy": "scout", "path": 1 },
+      { "delay": 0.45, "enemy": "scout", "path": 1 }, { "delay": 0.45, "enemy": "scout", "path": 1 }
     ],
     [
-      {
-        "delay": 0.5,
-        "enemy": "scout"
-      },
-      {
-        "delay": 0.5,
-        "enemy": "scout"
-      },
-      {
-        "delay": 0.5,
-        "enemy": "scout"
-      },
-      {
-        "delay": 0.5,
-        "enemy": "scout"
-      },
-      {
-        "delay": 0.5,
-        "enemy": "scout"
-      },
-      {
-        "delay": 0.5,
-        "enemy": "scout"
-      },
-      {
-        "delay": 0.5,
-        "enemy": "scout"
-      },
-      {
-        "delay": 0.5,
-        "enemy": "scout"
-      },
-      {
-        "delay": 0.7,
-        "enemy": "armored"
-      },
-      {
-        "delay": 0.7,
-        "enemy": "armored"
-      },
-      {
-        "delay": 0.7,
-        "enemy": "armored"
-      },
-      {
-        "delay": 1.5,
-        "enemy": "boss"
-      }
+      { "delay": 0.8, "enemy": "tank", "path": 0 }, { "delay": 0.8, "enemy": "tank", "path": 0 },
+      { "delay": 0.8, "enemy": "tank", "path": 0 }, { "delay": 0.8, "enemy": "tank", "path": 0 },
+      { "delay": 0.4, "enemy": "scout", "path": 1 }, { "delay": 0.4, "enemy": "scout", "path": 1 },
+      { "delay": 0.4, "enemy": "scout", "path": 1 }, { "delay": 0.4, "enemy": "runner", "path": 1 },
+      { "delay": 0.4, "enemy": "runner", "path": 1 }, { "delay": 0.4, "enemy": "runner", "path": 1 }
     ],
     [
-      {
-        "delay": 0.7,
-        "enemy": "boss"
-      },
-      {
-        "delay": 0.5,
-        "enemy": "soldier"
-      },
-      {
-        "delay": 0.5,
-        "enemy": "soldier"
-      },
-      {
-        "delay": 0.5,
-        "enemy": "soldier"
-      },
-      {
-        "delay": 0.5,
-        "enemy": "soldier"
-      },
-      {
-        "delay": 0.5,
-        "enemy": "soldier"
-      },
-      {
-        "delay": 0.5,
-        "enemy": "soldier"
-      },
-      {
-        "delay": 0.5,
-        "enemy": "soldier"
-      },
-      {
-        "delay": 0.5,
-        "enemy": "soldier"
-      },
-      {
-        "delay": 1,
-        "enemy": "armored"
-      },
-      {
-        "delay": 1,
-        "enemy": "heavyTank"
-      },
-      {
-        "delay": 1,
-        "enemy": "armored"
-      },
-      {
-        "delay": 1.8,
-        "enemy": "armoredBoss"
-      }
+      { "delay": 0.7, "enemy": "tank", "path": 0 }, { "delay": 0.7, "enemy": "tank", "path": 0 },
+      { "delay": 0.7, "enemy": "armored", "path": 0 }, { "delay": 0.7, "enemy": "armored", "path": 0 },
+      { "delay": 0.35, "enemy": "runner", "path": 1 }, { "delay": 0.35, "enemy": "runner", "path": 1 },
+      { "delay": 0.35, "enemy": "runner", "path": 1 }, { "delay": 0.35, "enemy": "runner", "path": 1 },
+      { "delay": 0.35, "enemy": "soldier", "path": 1 },
+      { "delay": 1.4, "enemy": "boss", "path": 0 }
     ],
     [
-      {
-        "delay": 0.45,
-        "enemy": "scout"
-      },
-      {
-        "delay": 0.45,
-        "enemy": "soldier"
-      },
-      {
-        "delay": 0.45,
-        "enemy": "runner"
-      },
-      {
-        "delay": 0.45,
-        "enemy": "scout"
-      },
-      {
-        "delay": 0.45,
-        "enemy": "soldier"
-      },
-      {
-        "delay": 0.45,
-        "enemy": "runner"
-      },
-      {
-        "delay": 0.7,
-        "enemy": "tank"
-      },
-      {
-        "delay": 0.7,
-        "enemy": "tank"
-      },
-      {
-        "delay": 0.7,
-        "enemy": "tank"
-      },
-      {
-        "delay": 0.7,
-        "enemy": "tank"
-      },
-      {
-        "delay": 0.7,
-        "enemy": "tank"
-      },
-      {
-        "delay": 1.4,
-        "enemy": "boss"
-      }
+      { "delay": 0.5, "enemy": "soldier", "path": 0 }, { "delay": 0.5, "enemy": "soldier", "path": 0 },
+      { "delay": 0.5, "enemy": "tank", "path": 0 }, { "delay": 0.5, "enemy": "tank", "path": 0 },
+      { "delay": 0.5, "enemy": "tank", "path": 0 }, { "delay": 0.5, "enemy": "armored", "path": 0 },
+      { "delay": 0.3, "enemy": "scout", "path": 1 }, { "delay": 0.3, "enemy": "scout", "path": 1 },
+      { "delay": 0.3, "enemy": "scout", "path": 1 }, { "delay": 0.3, "enemy": "runner", "path": 1 },
+      { "delay": 0.3, "enemy": "runner", "path": 1 }, { "delay": 0.3, "enemy": "runner", "path": 1 },
+      { "delay": 1.4, "enemy": "boss", "path": 0 }
     ],
     [
-      {
-        "delay": 0.4,
-        "enemy": "scout"
-      },
-      {
-        "delay": 0.4,
-        "enemy": "soldier"
-      },
-      {
-        "delay": 0.4,
-        "enemy": "runner"
-      },
-      {
-        "delay": 0.4,
-        "enemy": "scout"
-      },
-      {
-        "delay": 0.6,
-        "enemy": "tank"
-      },
-      {
-        "delay": 0.6,
-        "enemy": "tank"
-      },
-      {
-        "delay": 0.6,
-        "enemy": "tank"
-      },
-      {
-        "delay": 0.6,
-        "enemy": "tank"
-      },
-      {
-        "delay": 0.7,
-        "enemy": "tank"
-      },
-      {
-        "delay": 0.7,
-        "enemy": "tank"
-      },
-      {
-        "delay": 0.7,
-        "enemy": "tank"
-      },
-      {
-        "delay": 1.3,
-        "enemy": "boss"
-      },
-      {
-        "delay": 1.5,
-        "enemy": "boss"
-      }
+      { "delay": 0.6, "enemy": "armored", "path": 0 }, { "delay": 0.6, "enemy": "armored", "path": 0 },
+      { "delay": 0.6, "enemy": "heavyTank", "path": 0 }, { "delay": 0.6, "enemy": "heavyTank", "path": 0 },
+      { "delay": 0.3, "enemy": "runner", "path": 1 }, { "delay": 0.3, "enemy": "runner", "path": 1 },
+      { "delay": 0.3, "enemy": "runner", "path": 1 }, { "delay": 0.3, "enemy": "runner", "path": 1 },
+      { "delay": 0.3, "enemy": "scout", "path": 1 }, { "delay": 0.3, "enemy": "scout", "path": 1 },
+      { "delay": 1.5, "enemy": "boss", "path": 0 }, { "delay": 1.7, "enemy": "boss", "path": 1 }
     ],
     [
-      {
-        "delay": 1.2,
-        "enemy": "boss"
-      },
-      {
-        "delay": 0.35,
-        "enemy": "scout"
-      },
-      {
-        "delay": 0.35,
-        "enemy": "soldier"
-      },
-      {
-        "delay": 0.35,
-        "enemy": "runner"
-      },
-      {
-        "delay": 0.35,
-        "enemy": "scout"
-      },
-      {
-        "delay": 0.35,
-        "enemy": "soldier"
-      },
-      {
-        "delay": 0.35,
-        "enemy": "runner"
-      },
-      {
-        "delay": 0.35,
-        "enemy": "scout"
-      },
-      {
-        "delay": 0.35,
-        "enemy": "soldier"
-      },
-      {
-        "delay": 0.55,
-        "enemy": "tank"
-      },
-      {
-        "delay": 0.55,
-        "enemy": "tank"
-      },
-      {
-        "delay": 0.55,
-        "enemy": "tank"
-      },
-      {
-        "delay": 0.55,
-        "enemy": "tank"
-      },
-      {
-        "delay": 0.55,
-        "enemy": "tank"
-      },
-      {
-        "delay": 0.55,
-        "enemy": "tank"
-      },
-      {
-        "delay": 2,
-        "enemy": "boss"
-      },
-      {
-        "delay": 2.2,
-        "enemy": "boss"
-      }
+      { "delay": 1.0, "enemy": "armoredBoss", "path": 0 },
+      { "delay": 0.5, "enemy": "heavyTank", "path": 0 }, { "delay": 0.5, "enemy": "heavyTank", "path": 0 },
+      { "delay": 0.5, "enemy": "armored", "path": 0 }, { "delay": 0.5, "enemy": "armored", "path": 0 },
+      { "delay": 0.28, "enemy": "scout", "path": 1 }, { "delay": 0.28, "enemy": "scout", "path": 1 },
+      { "delay": 0.28, "enemy": "runner", "path": 1 }, { "delay": 0.28, "enemy": "runner", "path": 1 },
+      { "delay": 0.28, "enemy": "scout", "path": 1 }, { "delay": 0.28, "enemy": "runner", "path": 1 },
+      { "delay": 0.28, "enemy": "scout", "path": 1 }, { "delay": 0.28, "enemy": "runner", "path": 1 },
+      { "delay": 2.0, "enemy": "boss", "path": 0 }, { "delay": 2.2, "enemy": "boss", "path": 1 }
     ]
   ],
   "obstacles": [
-    {
-      "x": 0,
-      "y": 11,
-      "kind": "ruin"
-    },
-    {
-      "x": 0,
-      "y": 9,
-      "kind": "tree"
-    },
-    {
-      "x": 0,
-      "y": 13,
-      "kind": "tree"
-    },
-    {
-      "x": 0,
-      "y": 6,
-      "kind": "tree"
-    },
-    {
-      "x": 0,
-      "y": 7,
-      "kind": "tree"
-    },
-    {
-      "x": 0,
-      "y": 12,
-      "kind": "tree"
-    }
+    { "x": 0, "y": 1, "kind": "rock" },
+    { "x": 4, "y": 5, "kind": "rock", "destructible": true, "hp": 40, "reward": 15 },
+    { "x": 3, "y": 9, "kind": "ruin", "destructible": true, "hp": 30, "reward": 10 },
+    { "x": 7, "y": 5, "kind": "tree" },
+    { "x": 9, "y": 13, "kind": "rock" },
+    { "x": 0, "y": 13, "kind": "tree" }
   ]
 }
