@@ -72,13 +72,14 @@ export class HeroSelectScene extends BaseScene {
       vw / 2, 54, COLORS.textDim, 12,
     );
 
-    // Cards
+    // Cards — anchor top so the confirm button sits just below the stack
+    // on ANY viewport height (was: centered vertically, which produced a big
+    // empty gap on taller phones and left 出戰 orphaned at the very bottom).
     this.cards = [];
     const cardW = Math.min(280, vw - 40);
     const cardH = 118;
     const gap = 12;
-    const totalH = HEROES.length * cardH + (HEROES.length - 1) * gap;
-    const startY = Math.max(80, (vh - totalH - 120) / 2);
+    const startY = 86;
     const startX = (vw - cardW) / 2;
 
     for (let i = 0; i < HEROES.length; i++) {
@@ -169,13 +170,18 @@ export class HeroSelectScene extends BaseScene {
       12, true,
     );
 
-    // Confirm button
-    const btnW = 200, btnH = 44;
-    this.confirmBtn = { x: (vw - btnW) / 2, y: vh - btnH - 18, w: btnW, h: btnH };
+    // Confirm button — anchored 20px below the "no hero" card so it's always
+    // immediately next to the selection UI, not floating at the screen bottom
+    // on tall viewports.
+    const btnW = 240, btnH = 52;
+    const confirmY = noneY + noneH + 20;
+    this.confirmBtn = { x: (vw - btnW) / 2, y: confirmY, w: btnW, h: btnH };
     const selDef = this.selected ? HEROES.find((h) => h.id === this.selected) ?? null : null;
     const btnColor = selDef ? selDef.color : '#6ee17a';
-    r.drawScreenRoundedRect(this.confirmBtn.x, this.confirmBtn.y, btnW, btnH, 10, btnColor);
-    r.drawTextScreenCenter('▶ 出戰', this.confirmBtn.x + btnW / 2, this.confirmBtn.y + btnH / 2, '#0a0f1a', 16, true);
+    r.drawScreenRoundedRect(this.confirmBtn.x + 2, this.confirmBtn.y + 3, btnW, btnH, 12, 'rgba(0,0,0,0.35)');
+    r.drawScreenRoundedRect(this.confirmBtn.x, this.confirmBtn.y, btnW, btnH, 12, btnColor);
+    r.drawScreenRoundedRectOutline(this.confirmBtn.x, this.confirmBtn.y, btnW, btnH, 12, '#fff', 1);
+    r.drawTextScreenCenter('▶ 出戰', this.confirmBtn.x + btnW / 2, this.confirmBtn.y + btnH / 2, '#0a0f1a', 18, true);
 
     // Pulse ring on selected card
     if (selDef) {
