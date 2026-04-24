@@ -523,6 +523,38 @@ export class GameScene extends BaseScene {
       }
       for (const e of this.enemies) e.update(dt, this.enemies);
 
+      // Drain phase-2 spawn requests (once per enemy; triggers minion
+      // summons when a boss crosses its HP threshold)
+      for (const e of this.enemies) {
+        if (e.pendingPhaseSpawns.length > 0 && !e.phaseSpawnsConsumed) {
+          e.phaseSpawnsConsumed = true;
+          for (const s of e.pendingPhaseSpawns) {
+            const cfg = ENEMY_TYPES[s.type];
+            if (!cfg) continue;
+            const modified: EnemyConfig = {
+              ...cfg,
+              hp: Math.round(cfg.hp * this.diffMod.hp),
+              speed: Math.round(cfg.speed * this.diffMod.speed),
+              reward: Math.max(1, Math.round(cfg.reward * this.diffMod.reward)),
+            };
+            for (let k = 0; k < s.count; k++) {
+              this.pendingSpawns.push({
+                config: modified,
+                progress: e.progress,
+                delay: s.delay + k * 0.05,
+                path: e.path,
+              });
+            }
+          }
+          // Show phase-2 banner + screen shake
+          if (e.phase2?.banner) {
+            showBanner(this.banner, 'PHASE 2', e.phase2.banner, '#ff6b6b');
+          }
+          this.ctx.renderer.shake(0.4, 6);
+          this.ctx.audio.bossStinger();
+        }
+      }
+
       // Hero tick (before towers so buffs are known this frame)
       if (this.hero) {
         this.hero.update(dt, this.enemies, this.projectiles, this.chainSegments);
@@ -985,7 +1017,33 @@ export class GameScene extends BaseScene {
         r.drawCircleOutline(p.x, p.y, e.healsNearby.radius, 'rgba(110, 235, 140, 0.25)', 1);
       }
       drawEnemy(r.ctx, e.sprite, p.x, p.y, e.rotation, e.spriteSize, e.hitFlash, e.age, e.deathAnim);
+      // Phase-2 expanding red shockwave — fades over ~1.25s
+      if (e.phaseFlash > 0) {
+        const t = 1 - e.phaseFlash;
+        const ringR = e.radius + 4 + t * 30;
+        r.ctx.save();
+        r.ctx.globalAlpha = e.phaseFlash * 0.8;
+        r.ctx.strokeStyle = '#ff4444';
+        r.ctx.lineWidth = 3;
+        r.ctx.beginPath();
+        r.ctx.arc(p.x, p.y, ringR, 0, Math.PI * 2);
+        r.ctx.stroke();
+        r.ctx.restore();
+      }
       if (e.alive) {
+        // Persistent red aura on phase-2 bosses so players remember "this one went berserk"
+        if (e.phaseTriggered) {
+          const pulse = 0.15 + Math.sin(this.elapsed * 3) * 0.08;
+          r.ctx.save();
+          r.ctx.globalAlpha = pulse;
+          r.ctx.strokeStyle = '#ff6b6b';
+          r.ctx.lineWidth = 1.5;
+          r.ctx.setLineDash([3, 3]);
+          r.ctx.beginPath();
+          r.ctx.arc(p.x, p.y, e.radius + 5, 0, Math.PI * 2);
+          r.ctx.stroke();
+          r.ctx.restore();
+        }
         if (e.isSlowed()) {
           r.drawCircleOutline(p.x, p.y, e.radius + 3, 'rgba(110, 200, 255, 0.9)', 1.5);
         }
