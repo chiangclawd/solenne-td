@@ -27,12 +27,22 @@ export class Weather {
   private readonly world: number;
   /** Used by world-5 to pace occasional lightning bolts. */
   private eventAccum = 0;
+  /** v2.5.1 D2 — disable weather when low-animation mode is on. */
+  enabled = true;
 
   constructor(worldId: number) {
     this.world = worldId;
   }
 
   update(dt: number): void {
+    if (!this.enabled) {
+      // Still tick existing particles down so they exit cleanly when mode toggled on.
+      for (let i = this.particles.length - 1; i >= 0; i--) {
+        this.particles[i].life -= dt * 2;
+        if (this.particles[i].life <= 0) this.particles.splice(i, 1);
+      }
+      return;
+    }
     const rate = this.spawnRate();
     if (rate > 0) {
       this.spawnAccum += dt;

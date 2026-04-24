@@ -19,6 +19,12 @@ export interface Particle {
 
 export class ParticleSystem {
   private readonly pool: Particle[] = [];
+  /**
+   * v2.5.1 D2 — when `enabled = false` (set from Settings low-animation
+   * mode), all spawn* methods become no-ops. Existing particles still
+   * tick out and render until they expire — no visual jank.
+   */
+  enabled = true;
 
   update(dt: number): void {
     for (let i = this.pool.length - 1; i >= 0; i--) {
@@ -87,6 +93,7 @@ export class ParticleSystem {
   // ---------- Spawn helpers ----------
 
   explosion(x: number, y: number, scale: number = 1): void {
+    if (!this.enabled) return;
     // Shock ring
     this.pool.push({
       x, y, vx: 0, vy: 0, life: 0.4, maxLife: 0.4,
@@ -132,6 +139,7 @@ export class ParticleSystem {
   }
 
   muzzleFlash(x: number, y: number, rotation: number): void {
+    if (!this.enabled) return;
     // Tiny burst at muzzle
     for (let i = 0; i < 3; i++) {
       const spread = (Math.random() - 0.5) * 0.4;
@@ -154,6 +162,7 @@ export class ParticleSystem {
   }
 
   impactSparks(x: number, y: number, color: string = '#ffd166'): void {
+    if (!this.enabled) return;
     for (let i = 0; i < 6; i++) {
       const angle = Math.random() * Math.PI * 2;
       const speed = 40 + Math.random() * 60;
@@ -174,6 +183,7 @@ export class ParticleSystem {
   }
 
   enemyDeath(x: number, y: number, accent: string = '#ffd166'): void {
+    if (!this.enabled) return;
     // Gold coin burst
     for (let i = 0; i < 8; i++) {
       const angle = -Math.PI / 2 + (Math.random() - 0.5) * Math.PI;
@@ -202,6 +212,7 @@ export class ParticleSystem {
   }
 
   frostBurst(x: number, y: number): void {
+    if (!this.enabled) return;
     // Ring
     this.pool.push({
       x, y, vx: 0, vy: 0, life: 0.35, maxLife: 0.35,
@@ -230,6 +241,7 @@ export class ParticleSystem {
 
   /** Trail dot left by a moving missile */
   missileTrail(x: number, y: number): void {
+    if (!this.enabled) return;
     this.pool.push({
       x: x + (Math.random() - 0.5) * 2,
       y: y + (Math.random() - 0.5) * 2,

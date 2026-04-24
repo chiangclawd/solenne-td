@@ -25,6 +25,12 @@ export interface Settings {
   difficulty: Difficulty;
   showFps: boolean;
   screenShake: boolean;
+  /** v2.5.1 D2 — swap red/green damage/health hues to blue/yellow. */
+  colorBlindMode?: boolean;
+  /** v2.5.1 D2 — UI text scale multiplier (1.0 default, 1.2 for larger). */
+  uiScale?: number;
+  /** v2.5.1 D2 — disable particles, weather, screen shake, ember fx. */
+  lowAnimation?: boolean;
 }
 
 export interface GlobalStats {
@@ -74,6 +80,9 @@ export function defaultSettings(): Settings {
     difficulty: 'normal',
     showFps: false,
     screenShake: true,
+    colorBlindMode: false,
+    uiScale: 1.0,
+    lowAnimation: false,
   };
 }
 

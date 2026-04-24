@@ -62,6 +62,21 @@ async function main(): Promise<void> {
       bgmVolume: save.settings.bgmVolume,
       muted: save.settings.muted,
     });
+    // v2.5.1 D2 — piggyback accessibility on the same persist path
+    renderer.setAccessibility({
+      uiScale: save.settings.uiScale ?? 1.0,
+      colorBlindPalette: save.settings.colorBlindMode ? CB_PALETTE : null,
+    });
+    renderer.setShakeEnabled(save.settings.screenShake && !save.settings.lowAnimation);
+  };
+
+  // Okabe-Ito palette: reds → amber/orange; greens → cyan-blue.
+  const CB_PALETTE: Record<string, string> = {
+    '#ff6b6b': '#ff9f43',
+    '#ff3030': '#e07a30',
+    '#ff8a8a': '#ffb37a',
+    '#6ee17a': '#5eb8ff',
+    '#a8f0b5': '#a8dcff',
   };
 
   const ctx: SceneContext = {

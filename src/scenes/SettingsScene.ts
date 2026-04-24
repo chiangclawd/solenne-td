@@ -19,6 +19,9 @@ export class SettingsScene extends BaseScene {
   private muteBtn: Rect | null = null;
   private shakeBtn: Rect | null = null;
   private fpsBtn: Rect | null = null;
+  private colorBlindBtn: Rect | null = null;
+  private lowAnimBtn: Rect | null = null;
+  private uiScaleBtns: { rect: Rect; scale: number }[] = [];
   private diffBtns: { rect: Rect; diff: Difficulty }[] = [];
 
   update(_dt: number): void {
@@ -97,6 +100,38 @@ export class SettingsScene extends BaseScene {
     mkToggle(`顯示 FPS${this.ctx.save.settings.showFps ? '（開）' : '（關）'}`, this.ctx.save.settings.showFps, (rr) => { this.fpsBtn = rr; });
     y += 56;
 
+    // v2.5.1 D2 — Accessibility section
+    r.drawTextScreen('♿ 無障礙', panelX, y, '#ffd166', 13, true);
+    y += 22;
+    mkToggle(
+      `色盲模式${this.ctx.save.settings.colorBlindMode ? '（開）' : '（關）'}`,
+      this.ctx.save.settings.colorBlindMode === true,
+      (rr) => { this.colorBlindBtn = rr; },
+    );
+    y += 48;
+    mkToggle(
+      `低動畫（關閉粒子 / 天氣 / 震屏）${this.ctx.save.settings.lowAnimation ? '（開）' : '（關）'}`,
+      this.ctx.save.settings.lowAnimation === true,
+      (rr) => { this.lowAnimBtn = rr; },
+    );
+    y += 48;
+    // UI scale picker — 3 buttons: 1.0 / 1.2 / 1.4
+    r.drawTextScreen('字級', panelX, y + 8, COLORS.text, 12);
+    const scaleOptions = [1.0, 1.2, 1.4];
+    const currentScale = this.ctx.save.settings.uiScale ?? 1.0;
+    const sbW = 52, sbH = 30;
+    this.uiScaleBtns = [];
+    for (let i = 0; i < scaleOptions.length; i++) {
+      const bx = panelX + panelW - (3 - i) * (sbW + 6);
+      const sel = Math.abs(currentScale - scaleOptions[i]) < 0.01;
+      const rect: Rect = { x: bx, y: y + 2, w: sbW, h: sbH };
+      r.drawScreenRoundedRect(bx, y + 2, sbW, sbH, 7, sel ? '#2c8cc7' : '#22304a');
+      if (sel) r.drawScreenRoundedRectOutline(bx, y + 2, sbW, sbH, 7, '#5eb8ff', 1);
+      r.drawTextScreenCenter(`${Math.round(scaleOptions[i] * 100)}%`, bx + sbW / 2, y + 2 + sbH / 2, '#fff', 11, true);
+      this.uiScaleBtns.push({ rect, scale: scaleOptions[i] });
+    }
+    y += 44;
+
     // Difficulty
     r.drawTextScreen('◆ 難度', panelX, y, '#ffd166', 13, true);
     y += 22;
@@ -153,7 +188,7 @@ export class SettingsScene extends BaseScene {
     }
     if (this.shakeBtn && this.inside(screenX, screenY, this.shakeBtn)) {
       this.ctx.save.settings.screenShake = !this.ctx.save.settings.screenShake;
-      this.ctx.renderer.setShakeEnabled(this.ctx.save.settings.screenShake);
+      this.ctx.applyAudioSettings();
       this.ctx.audio.click();
       return;
     }
@@ -161,6 +196,26 @@ export class SettingsScene extends BaseScene {
       this.ctx.save.settings.showFps = !this.ctx.save.settings.showFps;
       this.ctx.audio.click();
       return;
+    }
+    if (this.colorBlindBtn && this.inside(screenX, screenY, this.colorBlindBtn)) {
+      this.ctx.save.settings.colorBlindMode = !this.ctx.save.settings.colorBlindMode;
+      this.ctx.applyAudioSettings();
+      this.ctx.audio.click();
+      return;
+    }
+    if (this.lowAnimBtn && this.inside(screenX, screenY, this.lowAnimBtn)) {
+      this.ctx.save.settings.lowAnimation = !this.ctx.save.settings.lowAnimation;
+      this.ctx.applyAudioSettings();
+      this.ctx.audio.click();
+      return;
+    }
+    for (const sb of this.uiScaleBtns) {
+      if (this.inside(screenX, screenY, sb.rect)) {
+        this.ctx.save.settings.uiScale = sb.scale;
+        this.ctx.applyAudioSettings();
+        this.ctx.audio.click();
+        return;
+      }
     }
 
     for (const b of this.diffBtns) {
