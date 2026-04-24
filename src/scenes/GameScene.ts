@@ -61,7 +61,7 @@ function bgmForWorld(world: number): import('../engine/AudioManager.ts').BgmTrac
 
 export class GameScene extends BaseScene {
   private readonly level: LevelData;
-  private readonly path: Path;
+  private readonly paths: Path[];
   private readonly pathTiles: Set<string>;
   private readonly obstacleTiles: Set<string>;
   private readonly destructibles: Destructible[] = [];
@@ -77,7 +77,7 @@ export class GameScene extends BaseScene {
   private readonly chainSegments: ChainSegment[] = [];
   private readonly occupiedTiles = new Set<string>();
   private readonly floaters: Floater[] = [];
-  private readonly pendingSpawns: { config: EnemyConfig; progress: number; delay: number }[] = [];
+  private readonly pendingSpawns: { config: EnemyConfig; progress: number; delay: number; path: Path }[] = [];
   private readonly particles = new ParticleSystem();
   private readonly screenParticles = new ScreenParticleSystem();
   private readonly banner = makeBanner();
@@ -163,8 +163,15 @@ export class GameScene extends BaseScene {
     };
     // Waypoints in JSON are tile indices. Offset by T/2 so enemies walk through
     // tile centers (not along the top-left edges of the tile row).
-    this.path = new Path(level.path.map((p) => ({ x: p.x * T + T / 2, y: p.y * T + T / 2 })));
-    this.pathTiles = this.path.computeOccupiedTiles(T);
+    this.paths = level.paths.map((p) =>
+      new Path(p.map((pt) => ({ x: pt.x * T + T / 2, y: pt.y * T + T / 2 }))),
+    );
+    // Union of all paths' occupied tiles — drives obstacle-placement blocking,
+    // path-tile rendering, and hero frontline-distance calc.
+    this.pathTiles = new Set<string>();
+    for (const path of this.paths) {
+      for (const key of path.computeOccupiedTiles(T)) this.pathTiles.add(key);
+    }
     this.obstacleTiles = new Set<string>();
     for (const ob of level.obstacles ?? []) {
       this.obstacleTiles.add(`${ob.x},${ob.y}`);
@@ -188,7 +195,7 @@ export class GameScene extends BaseScene {
     const boostedGold = level.startingGold + this.metaMod.startGold;
     const boostedLives = level.startingLives + this.metaMod.startLives;
     this.state = new GameState(boostedGold, boostedLives);
-    this.waveMgr = new WaveManager(this.waves, this.path);
+    this.waveMgr = new WaveManager(this.waves, this.paths);
     this.weather = new Weather(level.world);
   }
 
@@ -509,7 +516,7 @@ export class GameScene extends BaseScene {
         this.pendingSpawns[i].delay -= dt;
         if (this.pendingSpawns[i].delay <= 0) {
           const s = this.pendingSpawns[i];
-          this.enemies.push(new Enemy(this.path, s.config, s.progress));
+          this.enemies.push(new Enemy(s.path, s.config, s.progress));
           this.pendingSpawns.splice(i, 1);
         }
       }
@@ -697,6 +704,8 @@ export class GameScene extends BaseScene {
                   config: modified,
                   progress: e.progress,
                   delay: s.delay + k * 0.05,
+                  // Inherit the parent's path so child minions stay on-track
+                  path: e.path,
                 });
               }
             }
@@ -824,25 +833,31 @@ export class GameScene extends BaseScene {
       }
     }
 
-    // Flowing path indicators — dots slide along path showing direction
-    const totalLen = this.path.totalLength;
+    // Flowing path indicators — dots slide along each path showing direction.
+    // Each path gets a subtly different hue so players can read multi-path
+    // levels (path 0 = warm gold, path 1 = cool cyan, path 2 = pink).
     const dotSpacing = 60; // world px between dots
     const flowSpeed = 40; // world px per second
     const flowOffset = (this.elapsed * flowSpeed) % dotSpacing;
-    for (let d = -flowOffset; d < totalLen; d += dotSpacing) {
-      if (d < 0) continue;
-      const p = this.path.pointAt(d);
-      r.ctx.save();
-      r.ctx.globalAlpha = 0.5;
-      r.ctx.fillStyle = '#ffd166';
-      r.ctx.beginPath();
-      r.ctx.arc(p.x, p.y, 2.5, 0, Math.PI * 2);
-      r.ctx.fill();
-      r.ctx.globalAlpha = 0.2;
-      r.ctx.beginPath();
-      r.ctx.arc(p.x, p.y, 5, 0, Math.PI * 2);
-      r.ctx.fill();
-      r.ctx.restore();
+    const pathHues = ['#ffd166', '#6ec8ff', '#ff8ac6', '#6ee17a'];
+    for (let pi = 0; pi < this.paths.length; pi++) {
+      const path = this.paths[pi];
+      const hue = pathHues[pi % pathHues.length];
+      for (let d = -flowOffset; d < path.totalLength; d += dotSpacing) {
+        if (d < 0) continue;
+        const p = path.pointAt(d);
+        r.ctx.save();
+        r.ctx.globalAlpha = 0.5;
+        r.ctx.fillStyle = hue;
+        r.ctx.beginPath();
+        r.ctx.arc(p.x, p.y, 2.5, 0, Math.PI * 2);
+        r.ctx.fill();
+        r.ctx.globalAlpha = 0.2;
+        r.ctx.beginPath();
+        r.ctx.arc(p.x, p.y, 5, 0, Math.PI * 2);
+        r.ctx.fill();
+        r.ctx.restore();
+      }
     }
 
     for (const t of this.towers) {

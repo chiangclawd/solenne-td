@@ -15,21 +15,42 @@ export async function loadLevel(id: string): Promise<LevelData> {
   const base = import.meta.env.BASE_URL;
   const res = await fetch(`${base}levels/${id}.json`);
   if (!res.ok) throw new Error(`Level "${id}" failed to load: HTTP ${res.status}`);
-  const data = (await res.json()) as LevelData;
+  const raw = (await res.json()) as unknown;
+  const data = migrate(raw);
   validate(data);
   return data;
+}
+
+/**
+ * One-time migration for legacy single-path level JSONs: `{path: [...]}` →
+ * `{paths: [[...]]}`. Leaves already-migrated levels (with `paths`) alone.
+ * This lets us evolve the schema without hand-rewriting every file.
+ */
+function migrate(raw: unknown): LevelData {
+  const obj = (raw && typeof raw === 'object') ? { ...(raw as Record<string, unknown>) } : {};
+  if (!obj.paths && Array.isArray(obj.path)) {
+    obj.paths = [obj.path];
+    delete obj.path;
+  }
+  return obj as unknown as LevelData;
 }
 
 function validate(data: LevelData): void {
   if (typeof data.id !== 'string' || typeof data.name !== 'string') {
     throw new Error('Level missing id/name');
   }
-  if (!Array.isArray(data.path) || data.path.length < 2) {
-    throw new Error('Level needs path with at least 2 points');
+  if (!Array.isArray(data.paths) || data.paths.length === 0) {
+    throw new Error('Level needs paths array with at least one path');
   }
-  for (const p of data.path) {
-    if (typeof p.x !== 'number' || typeof p.y !== 'number') {
-      throw new Error('Invalid path point (expected {x, y} numbers)');
+  for (let i = 0; i < data.paths.length; i++) {
+    const path = data.paths[i];
+    if (!Array.isArray(path) || path.length < 2) {
+      throw new Error(`Level path[${i}] needs at least 2 points`);
+    }
+    for (const p of path) {
+      if (typeof p.x !== 'number' || typeof p.y !== 'number') {
+        throw new Error(`Invalid path[${i}] point (expected {x, y} numbers)`);
+      }
     }
   }
   if (!Array.isArray(data.availableTowers) || data.availableTowers.length === 0) {
@@ -48,6 +69,11 @@ function validate(data: LevelData): void {
       }
       if (typeof entry.delay !== 'number') {
         throw new Error(`Wave entry missing delay for enemy "${entry.enemy}"`);
+      }
+      if (entry.path !== undefined) {
+        if (typeof entry.path !== 'number' || entry.path < 0 || entry.path >= data.paths.length) {
+          throw new Error(`Wave entry.path=${entry.path} out of bounds (have ${data.paths.length} paths)`);
+        }
       }
     }
   }

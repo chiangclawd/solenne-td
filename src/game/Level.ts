@@ -6,6 +6,8 @@ export interface TileCoord {
 export interface WaveEntryData {
   delay: number;
   enemy: string;
+  /** Which path index this enemy spawns on. Defaults to 0 (first path). */
+  path?: number;
 }
 
 export type WaveData = readonly WaveEntryData[];
@@ -38,7 +40,12 @@ export interface LevelData {
   name: string;
   world: number;
   flavorText?: string;
-  path: readonly TileCoord[];
+  /**
+   * One or more enemy paths. Each path is a list of tile waypoints. Enemies
+   * are assigned a path via their wave entry's `path` field (default 0).
+   * Single-path levels just have `paths.length === 1`.
+   */
+  paths: readonly (readonly TileCoord[])[];
   startingGold: number;
   startingLives: number;
   availableTowers: readonly string[];
@@ -48,6 +55,5 @@ export interface LevelData {
   outroLose?: readonly DialogueLineData[];
   endless?: boolean;
   coverImage?: string;
-  /** Optional obstacles — occupy tiles, block tower placement, drawn as decorations. */
   obstacles?: readonly Obstacle[];
 }
