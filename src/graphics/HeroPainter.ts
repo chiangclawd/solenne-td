@@ -76,7 +76,7 @@ export function drawHero(
   }
 
   if (hero.alive) {
-    drawHpBar(ctx, x, y - BODY_RADIUS - 10, BODY_RADIUS * 2.2, hero.hp, def.maxHp, def.color);
+    drawHpBar(ctx, x, y - BODY_RADIUS - 10, BODY_RADIUS * 2.2, hero.hp, hero.effMaxHp, def.color);
   } else {
     drawRespawnTimer(ctx, x, y, hero.respawnRemaining, def.respawnSeconds, def.color);
   }

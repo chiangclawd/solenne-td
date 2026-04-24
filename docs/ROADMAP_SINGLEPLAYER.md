@@ -248,8 +248,8 @@ LevelSelect 目前是方格列表 → 改成手繪風世界地圖：
 | ✅ **v2.3.1** | A2 Tower branching | 同時擴展核心策略深度 |
 | **v2.4** | B1 Daily Challenge | 有每日回流動機 |
 | **v2.4** | C2 Codex 擴充 | 低工程高體驗，夾在 A2 後做 |
-| **v2.5** | C1 Hero talents | 英雄系統深度 + new game+ 感 |
-| **v2.5** | D2 無障礙 | 必須做，技術上不難 |
+| ✅ **v2.5.0** | C1 Hero talents | 英雄系統深度 + new game+ 感 |
+| **v2.5.1** | D2 無障礙 | 必須做，技術上不難 |
 | **v2.6** | B2 Trial mode | post-game 延長壽命 |
 | **v2.6** | D3 Cinematic | 結尾儀式感 |
 | **v2.7** | D1 世界地圖 | 大美術工程壓軸 |

@@ -261,6 +261,37 @@ export const ACHIEVEMENTS: readonly Achievement[] = [
       });
     },
   },
+  // ---- v2.5 C1 Hero Talent achievement ----
+  {
+    id: 'talent_initiate',
+    title: '天賦初學',
+    description: '為任一英雄投資 5 點以上天賦。',
+    icon: '⚔',
+    check: (s) => {
+      for (const hero of ['kieran', 'vasya', 'pip']) {
+        const tree = s.heroTalents?.[hero];
+        if (!tree) continue;
+        const tierSum = Object.values(tree).reduce<number>((a, b) => a + (b || 0), 0);
+        if (tierSum >= 5) return true;
+      }
+      return false;
+    },
+  },
+  {
+    id: 'talent_master',
+    title: '天賦大師',
+    description: '為任一英雄完全點滿天賦（15 點）。',
+    icon: '✦',
+    check: (s) => {
+      for (const hero of ['kieran', 'vasya', 'pip']) {
+        const tree = s.heroTalents?.[hero];
+        if (!tree) continue;
+        const tierSum = Object.values(tree).reduce<number>((a, b) => a + (b || 0), 0);
+        if (tierSum >= 15) return true;
+      }
+      return false;
+    },
+  },
 ];
 
 export interface UnlockedNotice {
