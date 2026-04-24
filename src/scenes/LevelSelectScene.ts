@@ -38,6 +38,7 @@ const WORLD_NAMES: Record<number, { name: string; sub: string; color: string }> 
   3: { name: '首都保衛', sub: 'Capital Stand', color: '#ff6b6b' },
   4: { name: '凍原前哨', sub: 'Frozen Outpost', color: '#6ec8ff' },
   5: { name: '虛空要塞', sub: 'Void Fortress', color: '#c878ff' },
+  6: { name: '海底裂縫', sub: 'Seabed Fissure', color: '#6ec8e0' },
 };
 
 const DIFF_LABEL: Record<string, string> = {
@@ -169,7 +170,7 @@ export class LevelSelectScene extends BaseScene {
     r.ctx.clip();
 
     let y = contentTop - this.scrollY;
-    const worlds = [1, 2, 3, 4, 5];
+    const worlds = [1, 2, 3, 4, 5, 6];
     const base = import.meta.env.BASE_URL;
     // Viewport-culling Y bounds (in CSS coord; same space as running y cursor)
     const viewTop = contentTop;

@@ -187,6 +187,7 @@ export function drawTowerTurret(
     case 'frostTower': paintFrost(ctx, level); break;
     case 'tesla': paintTesla(ctx, level); break;
     case 'lightTower': paintLight(ctx, level); break;
+    case 'torpedoTower': paintTorpedo(ctx, level); break;
     default: paintCannon(ctx, level);
   }
   ctx.restore();
@@ -1057,6 +1058,9 @@ export function drawEnemy(
     case 'enemySplitter': paintSplitter(ctx, size); break;
     case 'enemyHealer': paintHealer(ctx, size); break;
     case 'enemyVoidBoss': paintVoidBoss(ctx, size); break;
+    case 'enemyTentacle': paintTentacle(ctx, size, age); break;
+    case 'enemySwimmer': paintSwimmer(ctx, size, age); break;
+    case 'enemyAbyssalBoss': paintAbyssalBoss(ctx, size, age); break;
     default: paintSoldier(ctx, size);
   }
 
@@ -2110,4 +2114,269 @@ export function drawProjectile(
     ctx.fillRect(-1, -3, 2, 5);
   }
   ctx.restore();
+}
+
+// ---------- World 6: Seabed enemies ----------
+
+function paintTentacle(ctx: Ctx, size: number, age: number): void {
+  const s = size / 40;
+  // Body — dark teal blob with suckers
+  const grad = ctx.createRadialGradient(0, -2 * s, 2 * s, 0, 0, 14 * s);
+  grad.addColorStop(0, '#4a7a7a');
+  grad.addColorStop(0.6, '#2a4850');
+  grad.addColorStop(1, '#0f2028');
+  ctx.fillStyle = grad;
+  ctx.beginPath();
+  ctx.ellipse(0, 0, 11 * s, 13 * s, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.strokeStyle = '#000814';
+  ctx.lineWidth = 1;
+  ctx.stroke();
+
+  // Tentacle arms wriggling outward (8 of them for 360° melee feel)
+  for (let i = 0; i < 8; i++) {
+    const angle = (i / 8) * Math.PI * 2 + Math.sin(age * 2 + i) * 0.15;
+    const baseR = 11 * s;
+    const tipR = 17 * s + Math.sin(age * 4 + i) * 1.5 * s;
+    const midR = (baseR + tipR) / 2;
+    const baseX = Math.cos(angle) * baseR;
+    const baseY = Math.sin(angle) * baseR;
+    const midX = Math.cos(angle + Math.sin(age + i) * 0.25) * midR;
+    const midY = Math.sin(angle + Math.sin(age + i) * 0.25) * midR;
+    const tipX = Math.cos(angle + Math.sin(age + i) * 0.35) * tipR;
+    const tipY = Math.sin(angle + Math.sin(age + i) * 0.35) * tipR;
+    ctx.strokeStyle = '#3a6868';
+    ctx.lineWidth = 2.2 * s;
+    ctx.lineCap = 'round';
+    ctx.beginPath();
+    ctx.moveTo(baseX, baseY);
+    ctx.quadraticCurveTo(midX, midY, tipX, tipY);
+    ctx.stroke();
+    // Sucker tip
+    ctx.fillStyle = '#8fb8b8';
+    ctx.beginPath();
+    ctx.arc(tipX, tipY, 1.4 * s, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  // Glowing yellow eye (central)
+  ctx.fillStyle = '#ffd166';
+  ctx.beginPath();
+  ctx.arc(0, -2 * s, 2.4 * s, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = '#000';
+  ctx.beginPath();
+  ctx.arc(0, -2 * s, 1.1 * s, 0, Math.PI * 2);
+  ctx.fill();
+  // Reflection
+  ctx.fillStyle = '#fff';
+  ctx.beginPath();
+  ctx.arc(-0.6 * s, -2.6 * s, 0.5 * s, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Sucker dots on body
+  ctx.fillStyle = 'rgba(255,255,255,0.25)';
+  for (let i = 0; i < 6; i++) {
+    const a = i * (Math.PI / 3) + age * 0.3;
+    ctx.beginPath();
+    ctx.arc(Math.cos(a) * 5 * s, Math.sin(a) * 6 * s + 3 * s, 0.9 * s, 0, Math.PI * 2);
+    ctx.fill();
+  }
+}
+
+function paintSwimmer(ctx: Ctx, size: number, age: number): void {
+  const s = size / 40;
+  const flicker = Math.sin(age * 10) * 0.4;
+  // Tiny fish-like body
+  const grad = ctx.createLinearGradient(-5 * s, 0, 5 * s, 0);
+  grad.addColorStop(0, '#6ec8ff');
+  grad.addColorStop(0.5, '#3d88c8');
+  grad.addColorStop(1, '#1a4870');
+  ctx.fillStyle = grad;
+  ctx.beginPath();
+  ctx.moveTo(-6 * s, 0);
+  ctx.quadraticCurveTo(-2 * s, -3 * s, 4 * s, -1 * s);
+  ctx.quadraticCurveTo(6 * s, 0, 4 * s, 1 * s);
+  ctx.quadraticCurveTo(-2 * s, 3 * s, -6 * s, 0);
+  ctx.closePath();
+  ctx.fill();
+  ctx.strokeStyle = '#0a2038';
+  ctx.lineWidth = 0.6;
+  ctx.stroke();
+  // Tail fin flap
+  ctx.fillStyle = '#2a5a8a';
+  ctx.beginPath();
+  ctx.moveTo(-5 * s, 0);
+  ctx.lineTo(-9 * s + flicker * s, -3 * s);
+  ctx.lineTo(-8 * s, 0);
+  ctx.lineTo(-9 * s + flicker * s, 3 * s);
+  ctx.closePath();
+  ctx.fill();
+  // Eye
+  ctx.fillStyle = '#fff';
+  ctx.beginPath();
+  ctx.arc(2 * s, -0.8 * s, 0.8 * s, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = '#000';
+  ctx.beginPath();
+  ctx.arc(2.2 * s, -0.8 * s, 0.4 * s, 0, Math.PI * 2);
+  ctx.fill();
+}
+
+function paintAbyssalBoss(ctx: Ctx, size: number, age: number): void {
+  const s = size / 40;
+  // Huge dark-teal body — layered
+  const grad = ctx.createRadialGradient(0, -3 * s, 4 * s, 0, 0, 22 * s);
+  grad.addColorStop(0, '#5aa8a0');
+  grad.addColorStop(0.3, '#2a5860');
+  grad.addColorStop(0.8, '#0d2028');
+  grad.addColorStop(1, '#000');
+  ctx.fillStyle = grad;
+  ctx.beginPath();
+  ctx.ellipse(0, 0, 18 * s, 20 * s, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.strokeStyle = '#000';
+  ctx.lineWidth = 1.4;
+  ctx.stroke();
+
+  // Many tentacle arms (12)
+  for (let i = 0; i < 12; i++) {
+    const angle = (i / 12) * Math.PI * 2 + Math.sin(age * 1.6 + i) * 0.12;
+    const baseR = 18 * s;
+    const tipR = 30 * s + Math.sin(age * 3 + i) * 2 * s;
+    const midR = (baseR + tipR) / 2;
+    const baseX = Math.cos(angle) * baseR;
+    const baseY = Math.sin(angle) * baseR;
+    const midX = Math.cos(angle + Math.sin(age * 0.8 + i) * 0.3) * midR;
+    const midY = Math.sin(angle + Math.sin(age * 0.8 + i) * 0.3) * midR;
+    const tipX = Math.cos(angle + Math.sin(age * 0.8 + i) * 0.5) * tipR;
+    const tipY = Math.sin(angle + Math.sin(age * 0.8 + i) * 0.5) * tipR;
+    // Arm outline
+    ctx.strokeStyle = '#1a3840';
+    ctx.lineWidth = 4 * s;
+    ctx.lineCap = 'round';
+    ctx.beginPath();
+    ctx.moveTo(baseX, baseY);
+    ctx.quadraticCurveTo(midX, midY, tipX, tipY);
+    ctx.stroke();
+    // Arm highlight
+    ctx.strokeStyle = '#4a7a7a';
+    ctx.lineWidth = 2 * s;
+    ctx.beginPath();
+    ctx.moveTo(baseX * 0.9, baseY * 0.9);
+    ctx.quadraticCurveTo(midX, midY, tipX, tipY);
+    ctx.stroke();
+    // Glow at tip
+    ctx.fillStyle = 'rgba(255,209,102,0.7)';
+    ctx.beginPath();
+    ctx.arc(tipX, tipY, 2 * s, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  // Central glowing mouth
+  const mouthGlow = 0.7 + Math.sin(age * 3) * 0.25;
+  const mouthGrad = ctx.createRadialGradient(0, 0, 0, 0, 0, 8 * s);
+  mouthGrad.addColorStop(0, `rgba(255, 220, 120, ${mouthGlow})`);
+  mouthGrad.addColorStop(0.6, `rgba(255, 140, 40, ${mouthGlow * 0.5})`);
+  mouthGrad.addColorStop(1, 'rgba(100, 20, 0, 0)');
+  ctx.fillStyle = mouthGrad;
+  ctx.beginPath();
+  ctx.arc(0, 0, 8 * s, 0, Math.PI * 2);
+  ctx.fill();
+  // Dark pupil
+  ctx.fillStyle = '#0a0000';
+  ctx.beginPath();
+  ctx.arc(0, 0, 3 * s, 0, Math.PI * 2);
+  ctx.fill();
+  // Teeth ring
+  ctx.fillStyle = '#f4e0c0';
+  for (let i = 0; i < 10; i++) {
+    const a = (i / 10) * Math.PI * 2;
+    ctx.beginPath();
+    ctx.moveTo(Math.cos(a) * 3 * s, Math.sin(a) * 3 * s);
+    ctx.lineTo(Math.cos(a + 0.15) * 5 * s, Math.sin(a + 0.15) * 5 * s);
+    ctx.lineTo(Math.cos(a + 0.3) * 3 * s, Math.sin(a + 0.3) * 3 * s);
+    ctx.closePath();
+    ctx.fill();
+  }
+}
+
+// ---------- World 6: Torpedo Tower ----------
+
+function paintTorpedo(ctx: Ctx, level: number): void {
+  // Double-tube torpedo launcher on a nautical-blue base.
+  // Wider tube array at higher levels.
+
+  // Mounting ring (nautical blue-green)
+  const ringGrad = ctx.createRadialGradient(0, 0, 3, 0, 0, 14);
+  ringGrad.addColorStop(0, '#4a7a8a');
+  ringGrad.addColorStop(1, '#1a3848');
+  ctx.fillStyle = ringGrad;
+  ctx.beginPath();
+  ctx.arc(0, 0, 13, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.strokeStyle = '#08141a';
+  ctx.lineWidth = 1.2;
+  ctx.stroke();
+
+  // Gold rivets around the ring
+  ctx.fillStyle = '#e9b659';
+  for (let i = 0; i < 6; i++) {
+    const a = (i / 6) * Math.PI * 2;
+    ctx.beginPath();
+    ctx.arc(Math.cos(a) * 10, Math.sin(a) * 10, 1.1, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  // Torpedo tubes — 2 at lv0, 3 at lv1+, 4 at lv2
+  const tubes = [0, 0, 0];
+  const tubeCount = level >= 2 ? 4 : level >= 1 ? 3 : 2;
+  for (let i = 0; i < tubeCount; i++) {
+    const offset = tubeCount === 2 ? (i === 0 ? -3 : 3) : (i - (tubeCount - 1) / 2) * 3;
+    tubes.push(offset);
+  }
+  const tubeLen = level >= 1 ? 14 : 12;
+  // Dark cradle
+  ctx.fillStyle = '#0a1820';
+  ctx.fillRect(-1, -5, tubeLen + 2, 10);
+  // Each tube
+  for (let i = 0; i < tubeCount; i++) {
+    const yOff = (i - (tubeCount - 1) / 2) * 3.2;
+    // Tube body — metallic cylinder
+    const tubeGrad = ctx.createLinearGradient(0, yOff - 1.5, 0, yOff + 1.5);
+    tubeGrad.addColorStop(0, '#aab8c8');
+    tubeGrad.addColorStop(0.5, '#6b7a8a');
+    tubeGrad.addColorStop(1, '#2a3848');
+    ctx.fillStyle = tubeGrad;
+    ctx.fillRect(0, yOff - 1.4, tubeLen, 2.8);
+    ctx.strokeStyle = '#0a1820';
+    ctx.lineWidth = 0.5;
+    ctx.strokeRect(0, yOff - 1.4, tubeLen, 2.8);
+    // Cap
+    ctx.fillStyle = '#e9b659';
+    ctx.beginPath();
+    ctx.arc(tubeLen, yOff, 1.3, 0, Math.PI * 2);
+    ctx.fill();
+    // Inner tube shadow
+    ctx.fillStyle = 'rgba(0,0,0,0.5)';
+    ctx.fillRect(tubeLen - 2, yOff - 0.8, 1.5, 1.6);
+  }
+
+  // Lv 2 hero band — gold accent stripe across the base
+  if (level >= 2) {
+    ctx.fillStyle = '#e9b659';
+    ctx.fillRect(-6, 6, 12, 1.2);
+  }
+
+  // Control gauge (lv1+)
+  if (level >= 1) {
+    ctx.fillStyle = '#0a1820';
+    ctx.beginPath();
+    ctx.arc(-6, -5, 2.5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#ffd166';
+    ctx.beginPath();
+    ctx.arc(-6, -5, 1.5, 0, Math.PI * 2);
+    ctx.fill();
+  }
 }

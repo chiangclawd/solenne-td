@@ -1,0 +1,207 @@
+{
+  "id": "level-24",
+  "name": "海岸裂縫",
+  "world": 6,
+  "flavorText": "虛空要塞崩塌後，海底傳來震動。皮普盯著圖紙，手在抖。",
+  "intro": [
+    {
+      "speaker": "旁白",
+      "text": "南境沿海。虛空要塞倒進海裡三個月後。",
+      "color": "#9aa5b8"
+    },
+    {
+      "speaker": "皮普工程師",
+      "text": "海床有回音。那些鐵潮碎片——它們沒死。它們在海底重新組合。",
+      "color": "#6ee17a",
+      "portrait": "pip"
+    },
+    {
+      "speaker": "瓦西亞中士",
+      "text": "你看過這種東西嗎？",
+      "color": "#ff9f43",
+      "portrait": "vasya"
+    },
+    {
+      "speaker": "皮普工程師",
+      "text": "（停頓）......看過。在虛空要塞的最深層。他們沒叫它敵人。",
+      "color": "#6ee17a",
+      "portrait": "pip"
+    },
+    {
+      "speaker": "基蘭指揮官",
+      "text": "把魚雷塔架起來。這次，我們往水裡打。",
+      "color": "#5eb8ff",
+      "portrait": "kieran"
+    }
+  ],
+  "outroWin": [
+    {
+      "speaker": "皮普工程師",
+      "text": "觸手退回裂縫裡去了。但這只是第一層。",
+      "color": "#6ee17a",
+      "portrait": "pip"
+    },
+    {
+      "speaker": "基蘭指揮官",
+      "text": "往下走。打到底為止。",
+      "color": "#5eb8ff",
+      "portrait": "kieran"
+    },
+    {
+      "speaker": "瓦西亞中士",
+      "text": "又是一個「第一個人」嗎？",
+      "color": "#ff9f43",
+      "portrait": "vasya"
+    },
+    {
+      "speaker": "皮普工程師",
+      "text": "不。這個——比那個更老。",
+      "color": "#6ee17a",
+      "portrait": "pip"
+    }
+  ],
+  "outroLose": [
+    {
+      "speaker": "瓦西亞中士",
+      "text": "那些觸手把我們的塔拆了。退！",
+      "color": "#ff9f43",
+      "portrait": "vasya"
+    },
+    {
+      "speaker": "基蘭指揮官",
+      "text": "重組。下次，塔要蓋遠一點。",
+      "color": "#5eb8ff",
+      "portrait": "kieran"
+    }
+  ],
+  "paths": [
+    [
+      { "x": -0.5, "y": 4 },
+      { "x": 3, "y": 4 },
+      { "x": 3, "y": 8 },
+      { "x": 7, "y": 8 },
+      { "x": 7, "y": 12 },
+      { "x": 9, "y": 12 },
+      { "x": 9, "y": 15.5 }
+    ]
+  ],
+  "startingGold": 280,
+  "startingLives": 14,
+  "availableTowers": [
+    "cannon",
+    "quickShot",
+    "machineGun",
+    "frostTower",
+    "sniper",
+    "missileLauncher",
+    "heavyCannon",
+    "tesla",
+    "lightTower",
+    "torpedoTower"
+  ],
+  "waves": [
+    [
+      { "delay": 0.7, "enemy": "tentacle" },
+      { "delay": 0.7, "enemy": "tentacle" },
+      { "delay": 0.5, "enemy": "runner" },
+      { "delay": 0.5, "enemy": "runner" },
+      { "delay": 0.5, "enemy": "runner" }
+    ],
+    [
+      { "delay": 0.6, "enemy": "swimmerShoal" },
+      { "delay": 0.25, "enemy": "swimmerShoal" },
+      { "delay": 0.25, "enemy": "swimmerShoal" },
+      { "delay": 0.25, "enemy": "swimmerShoal" },
+      { "delay": 0.25, "enemy": "swimmerShoal" },
+      { "delay": 0.6, "enemy": "tentacle" },
+      { "delay": 0.6, "enemy": "tentacle" },
+      { "delay": 0.6, "enemy": "armored" }
+    ],
+    [
+      { "delay": 0.5, "enemy": "tentacle" },
+      { "delay": 0.5, "enemy": "tentacle" },
+      { "delay": 0.5, "enemy": "tentacle" },
+      { "delay": 0.4, "enemy": "heavyTank" },
+      { "delay": 0.4, "enemy": "heavyTank" },
+      { "delay": 0.3, "enemy": "swimmerShoal" },
+      { "delay": 0.25, "enemy": "swimmerShoal" },
+      { "delay": 0.25, "enemy": "swimmerShoal" },
+      { "delay": 0.25, "enemy": "swimmerShoal" },
+      { "delay": 0.25, "enemy": "swimmerShoal" },
+      { "delay": 1.5, "enemy": "boss" }
+    ],
+    [
+      { "delay": 0.4, "enemy": "tentacle" },
+      { "delay": 0.4, "enemy": "tentacle" },
+      { "delay": 0.4, "enemy": "tentacle" },
+      { "delay": 0.4, "enemy": "tentacle" },
+      { "delay": 0.3, "enemy": "plane" },
+      { "delay": 0.3, "enemy": "plane" },
+      { "delay": 0.25, "enemy": "swimmerShoal" },
+      { "delay": 0.25, "enemy": "swimmerShoal" },
+      { "delay": 0.25, "enemy": "swimmerShoal" },
+      { "delay": 0.25, "enemy": "swimmerShoal" },
+      { "delay": 0.25, "enemy": "swimmerShoal" },
+      { "delay": 0.25, "enemy": "swimmerShoal" },
+      { "delay": 0.4, "enemy": "heavyTank" },
+      { "delay": 0.4, "enemy": "heavyTank" },
+      { "delay": 1.4, "enemy": "armoredBoss" }
+    ],
+    [
+      { "delay": 0.35, "enemy": "tentacle" },
+      { "delay": 0.35, "enemy": "tentacle" },
+      { "delay": 0.35, "enemy": "tentacle" },
+      { "delay": 0.35, "enemy": "tentacle" },
+      { "delay": 0.35, "enemy": "tentacle" },
+      { "delay": 0.3, "enemy": "armored" },
+      { "delay": 0.3, "enemy": "armored" },
+      { "delay": 0.3, "enemy": "armored" },
+      { "delay": 0.2, "enemy": "swimmerShoal" },
+      { "delay": 0.2, "enemy": "swimmerShoal" },
+      { "delay": 0.2, "enemy": "swimmerShoal" },
+      { "delay": 0.2, "enemy": "swimmerShoal" },
+      { "delay": 0.2, "enemy": "swimmerShoal" },
+      { "delay": 0.2, "enemy": "swimmerShoal" },
+      { "delay": 0.2, "enemy": "swimmerShoal" },
+      { "delay": 0.2, "enemy": "swimmerShoal" },
+      { "delay": 1.3, "enemy": "finalBoss" }
+    ],
+    [
+      { "delay": 1.2, "enemy": "abyssalBoss" },
+      { "delay": 0.3, "enemy": "tentacle" },
+      { "delay": 0.3, "enemy": "tentacle" },
+      { "delay": 0.3, "enemy": "tentacle" },
+      { "delay": 0.3, "enemy": "tentacle" },
+      { "delay": 0.3, "enemy": "tentacle" },
+      { "delay": 0.3, "enemy": "tentacle" },
+      { "delay": 0.15, "enemy": "swimmerShoal" },
+      { "delay": 0.15, "enemy": "swimmerShoal" },
+      { "delay": 0.15, "enemy": "swimmerShoal" },
+      { "delay": 0.15, "enemy": "swimmerShoal" },
+      { "delay": 0.15, "enemy": "swimmerShoal" },
+      { "delay": 0.15, "enemy": "swimmerShoal" },
+      { "delay": 0.15, "enemy": "swimmerShoal" },
+      { "delay": 0.15, "enemy": "swimmerShoal" },
+      { "delay": 0.15, "enemy": "swimmerShoal" },
+      { "delay": 0.15, "enemy": "swimmerShoal" },
+      { "delay": 0.4, "enemy": "heavyTank" },
+      { "delay": 0.4, "enemy": "heavyTank" },
+      { "delay": 2, "enemy": "finalBoss" }
+    ]
+  ],
+  "obstacles": [
+    { "x": 5, "y": 4, "kind": "water" },
+    { "x": 6, "y": 4, "kind": "water" },
+    { "x": 1, "y": 6, "kind": "water" },
+    { "x": 2, "y": 5, "kind": "water" },
+    { "x": 8, "y": 5, "kind": "water" },
+    { "x": 5, "y": 10, "kind": "water" },
+    { "x": 4, "y": 11, "kind": "water" },
+    { "x": 3, "y": 13, "kind": "water" },
+    { "x": 1, "y": 10, "kind": "coral" },
+    { "x": 6, "y": 6, "kind": "coral" },
+    { "x": 0, "y": 12, "kind": "coral" },
+    { "x": 8, "y": 10, "kind": "rock", "destructible": true, "hp": 80, "reward": 30 },
+    { "x": 2, "y": 2, "kind": "coral" }
+  ]
+}

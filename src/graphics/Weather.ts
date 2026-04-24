@@ -119,6 +119,7 @@ export class Weather {
       case 3: return 20;  // rain
       case 4: return 18;  // snow
       case 5: return 8;   // void mist
+      case 6: return 10;  // rising bubbles
       default: return 0;
     }
   }
@@ -186,6 +187,19 @@ export class Weather {
           life: 5,
           maxLife: 5,
           hue: 'rgba(180, 120, 220, 0.15)',
+          kind: 'mist',
+        });
+        break;
+      case 6:
+        // Bubbles drifting up — use 'mist' kind for the radial-fade rendering
+        this.particles.push({
+          x, y: WORLD_HEIGHT + 10,
+          vx: (Math.random() - 0.5) * 6,
+          vy: -20 - Math.random() * 15,
+          size: 2 + Math.random() * 3,
+          life: 4 + Math.random() * 2,
+          maxLife: 5,
+          hue: 'rgba(180, 220, 240, 0.25)',
           kind: 'mist',
         });
         break;
