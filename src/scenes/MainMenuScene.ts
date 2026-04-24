@@ -6,6 +6,8 @@ import { CodexScene } from './CodexScene.ts';
 import { CreditsScene } from './CreditsScene.ts';
 import { UpgradeScene } from './UpgradeScene.ts';
 import { HeroTalentsScene } from './HeroTalentsScene.ts';
+import { TrialSelectScene } from './TrialSelectScene.ts';
+import { isCompleted } from '../storage/SaveData.ts';
 import { COLORS, TILE_SIZE, WORLD_WIDTH, WORLD_HEIGHT, GRID_COLS, GRID_ROWS } from '../config.ts';
 import { totalStars, countCompleted } from '../storage/SaveData.ts';
 import { ACHIEVEMENTS } from '../game/Achievements.ts';
@@ -47,6 +49,7 @@ export class MainMenuScene extends BaseScene {
   private endlessBtn: Rect | null = null;
   private upgradeBtn: Rect | null = null;
   private talentsBtn: Rect | null = null;
+  private trialsBtn: Rect | null = null;
   private codexBtn: Rect | null = null;
   private settingsBtn: Rect | null = null;
   private creditsBtn: Rect | null = null;
@@ -195,9 +198,23 @@ export class MainMenuScene extends BaseScene {
       '為指揮官投資技能路線',
       baseY + (bh + gap) * 4,
     );
-    this.codexBtn = mkBtn('🛠 塔百科', '9 塔 · 17 敵', baseY + (bh + gap) * 5);
-    this.settingsBtn = mkBtn('⚙ 設定', '音量 · 難度 · 效果', baseY + (bh + gap) * 6);
-    this.creditsBtn = mkBtn('✦ 致謝', '製作團隊 / 資源', baseY + (bh + gap) * 7);
+    // Trial mode unlocked once L28 is cleared.
+    const trialsUnlocked = isCompleted(this.ctx.save, 'level-28');
+    if (trialsUnlocked) {
+      const cleared = Object.values(this.ctx.save.trialProgress ?? {}).filter((p) => p.completed).length;
+      this.trialsBtn = mkBtn(
+        '⊘ 試煉之巔',
+        cleared >= 6 ? '六試煉皆通過' : `已通過 ${cleared}/6 試煉`,
+        baseY + (bh + gap) * 5,
+      );
+      this.codexBtn = mkBtn('🛠 塔百科', '9 塔 · 17 敵', baseY + (bh + gap) * 6);
+      this.settingsBtn = mkBtn('⚙ 設定', '音量 · 難度 · 效果', baseY + (bh + gap) * 7);
+      this.creditsBtn = mkBtn('✦ 致謝', '製作團隊 / 資源', baseY + (bh + gap) * 8);
+    } else {
+      this.codexBtn = mkBtn('🛠 塔百科', '9 塔 · 17 敵', baseY + (bh + gap) * 5);
+      this.settingsBtn = mkBtn('⚙ 設定', '音量 · 難度 · 效果', baseY + (bh + gap) * 6);
+      this.creditsBtn = mkBtn('✦ 致謝', '製作團隊 / 資源', baseY + (bh + gap) * 7);
+    }
 
     // iOS "add to home screen" hint — shown only when running in Safari (not
     // already standalone PWA) so players know how to get full-screen mode.
@@ -256,6 +273,11 @@ export class MainMenuScene extends BaseScene {
     if (this.talentsBtn && this.inside(screenX, screenY, this.talentsBtn)) {
       this.ctx.audio.click();
       this.ctx.transition(new HeroTalentsScene(this.ctx));
+      return;
+    }
+    if (this.trialsBtn && this.inside(screenX, screenY, this.trialsBtn)) {
+      this.ctx.audio.click();
+      this.ctx.transition(new TrialSelectScene(this.ctx));
       return;
     }
     if (this.codexBtn && this.inside(screenX, screenY, this.codexBtn)) {

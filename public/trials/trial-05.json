@@ -1,0 +1,205 @@
+{
+  "id": "trial-05",
+  "name": "試煉五 · 資源大師",
+  "world": 0,
+  "flavorText": "能用的金子比你想像的少。每分都得算。",
+  "intro": [
+    {
+      "speaker": "皮普工程師",
+      "text": "預算砍到剩骨頭。看你選哪種武器。",
+      "color": "#6ee17a",
+      "portrait": "pip"
+    }
+  ],
+  "outroWin": [
+    {
+      "speaker": "皮普工程師",
+      "text": "帳算對了。漂亮。",
+      "color": "#6ee17a",
+      "portrait": "pip"
+    }
+  ],
+  "outroLose": [
+    {
+      "speaker": "皮普工程師",
+      "text": "預算用光。下次選擇要更精明。",
+      "color": "#6ee17a",
+      "portrait": "pip"
+    }
+  ],
+  "paths": [
+    [
+      {
+        "x": 5,
+        "y": -0.5
+      },
+      {
+        "x": 5,
+        "y": 3
+      },
+      {
+        "x": 2,
+        "y": 3
+      },
+      {
+        "x": 2,
+        "y": 12
+      },
+      {
+        "x": 8,
+        "y": 12
+      },
+      {
+        "x": 8,
+        "y": 15.5
+      }
+    ]
+  ],
+  "startingGold": 100,
+  "startingLives": 5,
+  "availableTowers": [
+    "cannon",
+    "quickShot",
+    "machineGun",
+    "frostTower",
+    "sniper",
+    "missileLauncher"
+  ],
+  "waves": [
+    [
+      {
+        "delay": 0.7,
+        "enemy": "soldier"
+      },
+      {
+        "delay": 0.7,
+        "enemy": "soldier"
+      },
+      {
+        "delay": 0.7,
+        "enemy": "soldier"
+      },
+      {
+        "delay": 0.7,
+        "enemy": "soldier"
+      },
+      {
+        "delay": 0.9,
+        "enemy": "tank"
+      }
+    ],
+    [
+      {
+        "delay": 0.5,
+        "enemy": "scout"
+      },
+      {
+        "delay": 0.5,
+        "enemy": "runner"
+      },
+      {
+        "delay": 0.5,
+        "enemy": "scout"
+      },
+      {
+        "delay": 0.7,
+        "enemy": "tank"
+      },
+      {
+        "delay": 0.7,
+        "enemy": "tank"
+      },
+      {
+        "delay": 0.9,
+        "enemy": "armored"
+      }
+    ],
+    [
+      {
+        "delay": 0.4,
+        "enemy": "runner"
+      },
+      {
+        "delay": 0.4,
+        "enemy": "runner"
+      },
+      {
+        "delay": 0.4,
+        "enemy": "soldier"
+      },
+      {
+        "delay": 0.6,
+        "enemy": "tank"
+      },
+      {
+        "delay": 0.6,
+        "enemy": "armored"
+      },
+      {
+        "delay": 0.6,
+        "enemy": "armored"
+      },
+      {
+        "delay": 1.4,
+        "enemy": "boss"
+      }
+    ],
+    [
+      {
+        "delay": 0.35,
+        "enemy": "scout"
+      },
+      {
+        "delay": 0.35,
+        "enemy": "runner"
+      },
+      {
+        "delay": 0.35,
+        "enemy": "soldier"
+      },
+      {
+        "delay": 0.55,
+        "enemy": "armored"
+      },
+      {
+        "delay": 0.55,
+        "enemy": "armored"
+      },
+      {
+        "delay": 0.55,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 1.4,
+        "enemy": "boss"
+      },
+      {
+        "delay": 1.6,
+        "enemy": "armoredBoss"
+      }
+    ]
+  ],
+  "obstacles": [
+    {
+      "x": 5,
+      "y": 7,
+      "kind": "rock",
+      "destructible": true,
+      "hp": 30,
+      "reward": 12
+    },
+    {
+      "x": 5,
+      "y": 9,
+      "kind": "ruin",
+      "destructible": true,
+      "hp": 28,
+      "reward": 10
+    }
+  ],
+  "trial": {
+    "forbidUpgrade": true,
+    "forbidSell": true,
+    "metaStarReward": 8
+  }
+}

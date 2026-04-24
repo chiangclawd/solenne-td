@@ -67,6 +67,16 @@ export interface SaveData {
    * Stars budget is derived from heroLevelWins[hero].length, spent on tier unlocks.
    */
   heroTalents?: Record<string, Record<string, number>>;
+  /**
+   * v2.6.0 B2 — trial completion tracking. Map of trial id → simple completion record.
+   * Each trial only counts once for meta-star reward purposes (no double-dipping).
+   */
+  trialProgress?: Record<string, { completed: boolean; bestStars: number; firstClear?: number }>;
+  /**
+   * v2.6.0 B2 — bonus meta stars earned from clearing trials. Added to
+   * the campaign-derived totalStars when computing availableStars.
+   */
+  metaStarBonus?: number;
 }
 
 const SAVE_KEY = 'td-solenne-save-v1';
@@ -145,6 +155,8 @@ function migrate(parsed: Partial<SaveData> & { version?: number }): SaveData {
   if (typeof parsed.selectedHero === 'string') out.selectedHero = parsed.selectedHero;
   if (parsed.heroLevelWins) out.heroLevelWins = parsed.heroLevelWins;
   if (parsed.heroTalents) out.heroTalents = parsed.heroTalents;
+  if (parsed.trialProgress) out.trialProgress = parsed.trialProgress;
+  if (typeof parsed.metaStarBonus === 'number') out.metaStarBonus = parsed.metaStarBonus;
   return out;
 }
 
@@ -222,6 +234,8 @@ export function isUnlocked(save: SaveData, levels: readonly { id: string }[], le
 export function totalStars(save: SaveData): number {
   let s = 0;
   for (const k in save.levelProgress) s += save.levelProgress[k].bestStars;
+  // v2.6.0 B2 — trial bonus stars (granted on first clear of each trial).
+  s += save.metaStarBonus ?? 0;
   return s;
 }
 

@@ -37,6 +37,28 @@ export interface Obstacle {
 
 import type { LevelChallenges } from './Challenges.ts';
 
+/**
+ * v2.6.0 B2 — trial-mode metadata. Present iff this level is a post-campaign
+ * trial. The trial otherwise reuses the full LevelData schema, so most
+ * constraints are expressed via `availableTowers`, `startingGold`, custom
+ * `waves`, etc. The trial block adds:
+ *
+ *   - `forceHero`: skip HeroSelect and pin the player to this hero (or none)
+ *   - `forbidUpgrade`/`forbidSell`: disable those buttons in the upgrade panel
+ *   - `metaStarReward`: meta stars granted on first completion
+ *
+ * Unlock order is enforced by trialProgress + the trial-select UI; the JSON
+ * doesn't need a dependency field.
+ */
+export interface TrialMeta {
+  /** 'none' = play with no hero. HeroId = pin to that hero. undefined = let player choose. */
+  forceHero?: 'kieran' | 'vasya' | 'pip' | 'none';
+  forbidUpgrade?: boolean;
+  forbidSell?: boolean;
+  /** Meta stars granted on first completion. Stored in save.metaStarBonus. */
+  metaStarReward: number;
+}
+
 export interface LevelData {
   id: string;
   name: string;
@@ -64,4 +86,10 @@ export interface LevelData {
    * the loader falls back to the legacy livesRatio → stars mapping.
    */
   challenges?: LevelChallenges;
+  /**
+   * v2.6.0 B2 — trial metadata. Present iff this level is a post-campaign
+   * trial; loader exposes it via `loadTrial()` so the main level list stays
+   * clean.
+   */
+  trial?: TrialMeta;
 }

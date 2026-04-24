@@ -1,0 +1,251 @@
+{
+  "id": "trial-01",
+  "name": "試煉一 · 塔工坊",
+  "world": 0,
+  "flavorText": "只有兩座塔。看你能逼出多少潛力。",
+  "intro": [
+    {
+      "speaker": "皮普工程師",
+      "text": "指揮官想看你赤手單獨用最基礎的武器。",
+      "color": "#6ee17a",
+      "portrait": "pip"
+    },
+    {
+      "speaker": "基蘭指揮官",
+      "text": "加農砲與速射槍。沒有花樣。守住。",
+      "color": "#5eb8ff",
+      "portrait": "kieran"
+    }
+  ],
+  "outroWin": [
+    {
+      "speaker": "皮普工程師",
+      "text": "基本款也能贏。漂亮。",
+      "color": "#6ee17a",
+      "portrait": "pip"
+    }
+  ],
+  "outroLose": [
+    {
+      "speaker": "基蘭指揮官",
+      "text": "基礎還沒精通。再來。",
+      "color": "#5eb8ff",
+      "portrait": "kieran"
+    }
+  ],
+  "paths": [
+    [
+      {
+        "x": 2,
+        "y": -0.5
+      },
+      {
+        "x": 2,
+        "y": 4
+      },
+      {
+        "x": 8,
+        "y": 4
+      },
+      {
+        "x": 8,
+        "y": 11
+      },
+      {
+        "x": 2,
+        "y": 11
+      },
+      {
+        "x": 2,
+        "y": 15.5
+      }
+    ]
+  ],
+  "startingGold": 200,
+  "startingLives": 12,
+  "availableTowers": [
+    "cannon",
+    "quickShot"
+  ],
+  "waves": [
+    [
+      {
+        "delay": 0.5,
+        "enemy": "soldier"
+      },
+      {
+        "delay": 0.5,
+        "enemy": "soldier"
+      },
+      {
+        "delay": 0.5,
+        "enemy": "soldier"
+      },
+      {
+        "delay": 0.5,
+        "enemy": "soldier"
+      },
+      {
+        "delay": 0.5,
+        "enemy": "soldier"
+      },
+      {
+        "delay": 0.5,
+        "enemy": "soldier"
+      },
+      {
+        "delay": 0.7,
+        "enemy": "tank"
+      },
+      {
+        "delay": 0.7,
+        "enemy": "tank"
+      }
+    ],
+    [
+      {
+        "delay": 0.4,
+        "enemy": "scout"
+      },
+      {
+        "delay": 0.4,
+        "enemy": "runner"
+      },
+      {
+        "delay": 0.4,
+        "enemy": "scout"
+      },
+      {
+        "delay": 0.4,
+        "enemy": "runner"
+      },
+      {
+        "delay": 0.4,
+        "enemy": "scout"
+      },
+      {
+        "delay": 0.7,
+        "enemy": "tank"
+      },
+      {
+        "delay": 0.7,
+        "enemy": "tank"
+      },
+      {
+        "delay": 0.7,
+        "enemy": "tank"
+      },
+      {
+        "delay": 0.9,
+        "enemy": "armored"
+      }
+    ],
+    [
+      {
+        "delay": 0.35,
+        "enemy": "runner"
+      },
+      {
+        "delay": 0.35,
+        "enemy": "runner"
+      },
+      {
+        "delay": 0.35,
+        "enemy": "runner"
+      },
+      {
+        "delay": 0.35,
+        "enemy": "soldier"
+      },
+      {
+        "delay": 0.6,
+        "enemy": "tank"
+      },
+      {
+        "delay": 0.6,
+        "enemy": "tank"
+      },
+      {
+        "delay": 0.6,
+        "enemy": "armored"
+      },
+      {
+        "delay": 0.6,
+        "enemy": "armored"
+      },
+      {
+        "delay": 0.8,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 1.4,
+        "enemy": "boss"
+      }
+    ],
+    [
+      {
+        "delay": 0.3,
+        "enemy": "scout"
+      },
+      {
+        "delay": 0.3,
+        "enemy": "runner"
+      },
+      {
+        "delay": 0.3,
+        "enemy": "soldier"
+      },
+      {
+        "delay": 0.3,
+        "enemy": "scout"
+      },
+      {
+        "delay": 0.3,
+        "enemy": "runner"
+      },
+      {
+        "delay": 0.5,
+        "enemy": "tank"
+      },
+      {
+        "delay": 0.5,
+        "enemy": "tank"
+      },
+      {
+        "delay": 0.5,
+        "enemy": "armored"
+      },
+      {
+        "delay": 0.5,
+        "enemy": "armored"
+      },
+      {
+        "delay": 0.5,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 1.5,
+        "enemy": "boss"
+      },
+      {
+        "delay": 1.5,
+        "enemy": "armoredBoss"
+      }
+    ]
+  ],
+  "obstacles": [
+    {
+      "x": 5,
+      "y": 7,
+      "kind": "rock"
+    },
+    {
+      "x": 5,
+      "y": 13,
+      "kind": "tree"
+    }
+  ],
+  "trial": {
+    "metaStarReward": 5
+  }
+}
