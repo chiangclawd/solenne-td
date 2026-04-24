@@ -413,10 +413,29 @@ export class GameScene extends BaseScene {
     this.lastRunFlags = [star1, star2, star3];
     const stars = (star1 ? 1 : 0) + (star2 ? 1 : 0) + (star3 ? 1 : 0);
     this.spawnStarRain(60 + stars * 20);
-    const wasAlreadyCompleted = this.ctx.save.levelProgress[this.level.id]?.completed === true;
-    recordCompletion(this.ctx.save, this.level.id, stars, this.difficulty, this.lastRunFlags);
-    // First-time unlock detection (tower + hero)
-    if (!wasAlreadyCompleted) {
+    // Trial wins are tracked separately so they don't pollute campaign
+    // levelProgress (which feeds level select / star totals).
+    const isTrial = this.level.trial !== undefined;
+    const wasAlreadyCompleted = isTrial
+      ? this.ctx.save.trialProgress?.[this.level.id]?.completed === true
+      : this.ctx.save.levelProgress[this.level.id]?.completed === true;
+    if (isTrial) {
+      if (!this.ctx.save.trialProgress) this.ctx.save.trialProgress = {};
+      const tp = this.ctx.save.trialProgress[this.level.id] ?? { completed: false, bestStars: 0 };
+      tp.completed = true;
+      tp.bestStars = Math.max(tp.bestStars, stars);
+      if (!wasAlreadyCompleted) {
+        tp.firstClear = Date.now();
+        // Grant meta star bonus on first clear only.
+        const reward = this.level.trial?.metaStarReward ?? 0;
+        this.ctx.save.metaStarBonus = (this.ctx.save.metaStarBonus ?? 0) + reward;
+      }
+      this.ctx.save.trialProgress[this.level.id] = tp;
+    } else {
+      recordCompletion(this.ctx.save, this.level.id, stars, this.difficulty, this.lastRunFlags);
+    }
+    // First-time unlock detection (tower + hero) — only for campaign levels.
+    if (!isTrial && !wasAlreadyCompleted) {
       const newUnlock = unlockTriggeredBy(this.level.id);
       if (newUnlock) this.unlockedTower = newUnlock;
       const newHero = heroUnlockTriggeredBy(this.level.id);
@@ -1987,12 +2006,15 @@ export class GameScene extends BaseScene {
     const bw = (vw - 32 - 16) / 3;
     const by = panelY + 68;
 
-    const canUp = t.canUpgrade();
+    const trialBlocksUpgrade = this.level.trial?.forbidUpgrade === true;
+    const canUp = t.canUpgrade() && !trialBlocksUpgrade;
     const upCost = Math.round(t.nextUpgradeCost() * (1 - this.metaMod.costDiscount));
     const canAfford = canUp && this.state.gold >= upCost;
-    this.upgradeBtn = { x: padX, y: by, w: bw, h: bh };
-    r.drawScreenRoundedRect(padX, by, bw, bh, 9, canAfford ? '#2c8cc7' : '#22304a');
-    if (canUp) {
+    this.upgradeBtn = trialBlocksUpgrade ? null : { x: padX, y: by, w: bw, h: bh };
+    r.drawScreenRoundedRect(padX, by, bw, bh, 9, trialBlocksUpgrade ? '#1a1a22' : (canAfford ? '#2c8cc7' : '#22304a'));
+    if (trialBlocksUpgrade) {
+      r.drawTextScreenCenter('🔒 試煉', padX + bw / 2, by + bh / 2, '#7a8a9f', 13, true);
+    } else if (canUp) {
       const branchTint = t.branch ? t.config.branches[t.branch].color : '#5eb8ff';
       r.drawScreenRoundedRectOutline(padX, by, bw, bh, 9, branchTint, 1.5);
       r.drawTextScreenCenter('⬆ 升級', padX + bw / 2, by + bh / 2 - 8, '#fff', 14, true);
@@ -2001,12 +2023,17 @@ export class GameScene extends BaseScene {
       r.drawTextScreenCenter('滿級', padX + bw / 2, by + bh / 2, '#ffd166', 16, true);
     }
 
+    const trialBlocksSell = this.level.trial?.forbidSell === true;
     const sellVal = t.sellValue(this.metaMod.sellBonus);
     const sellX = padX + bw + 8;
-    this.sellBtn = { x: sellX, y: by, w: bw, h: bh };
-    r.drawScreenRoundedRect(sellX, by, bw, bh, 9, '#22304a');
-    r.drawTextScreenCenter('出售', sellX + bw / 2, by + bh / 2 - 8, '#fff', 14, true);
-    r.drawTextScreenCenter(`+💰${sellVal}`, sellX + bw / 2, by + bh / 2 + 11, '#ffd166', 14, true);
+    this.sellBtn = trialBlocksSell ? null : { x: sellX, y: by, w: bw, h: bh };
+    r.drawScreenRoundedRect(sellX, by, bw, bh, 9, trialBlocksSell ? '#1a1a22' : '#22304a');
+    if (trialBlocksSell) {
+      r.drawTextScreenCenter('🔒 試煉', sellX + bw / 2, by + bh / 2, '#7a8a9f', 13, true);
+    } else {
+      r.drawTextScreenCenter('出售', sellX + bw / 2, by + bh / 2 - 8, '#fff', 14, true);
+      r.drawTextScreenCenter(`+💰${sellVal}`, sellX + bw / 2, by + bh / 2 + 11, '#ffd166', 14, true);
+    }
 
     const closeX = sellX + bw + 8;
     this.closePanelBtn = { x: closeX, y: by, w: bw, h: bh };

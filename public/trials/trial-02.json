@@ -1,0 +1,179 @@
+{
+  "id": "trial-02",
+  "name": "試煉二 · 狙擊巔峰",
+  "world": 0,
+  "flavorText": "一座塔，一個目標，一發命中。",
+  "intro": [
+    {
+      "speaker": "瓦西亞中士",
+      "text": "想看看你能不能像我一樣信任一發子彈。",
+      "color": "#ff9f43",
+      "portrait": "vasya"
+    }
+  ],
+  "outroWin": [
+    {
+      "speaker": "瓦西亞中士",
+      "text": "你的彈道我認可了。",
+      "color": "#ff9f43",
+      "portrait": "vasya"
+    }
+  ],
+  "outroLose": [
+    {
+      "speaker": "瓦西亞中士",
+      "text": "一發子彈的代價。記住。",
+      "color": "#ff9f43",
+      "portrait": "vasya"
+    }
+  ],
+  "paths": [
+    [
+      {
+        "x": 5,
+        "y": -0.5
+      },
+      {
+        "x": 5,
+        "y": 15.5
+      }
+    ]
+  ],
+  "startingGold": 250,
+  "startingLives": 10,
+  "availableTowers": [
+    "sniper"
+  ],
+  "waves": [
+    [
+      {
+        "delay": 0.6,
+        "enemy": "tank"
+      },
+      {
+        "delay": 0.6,
+        "enemy": "tank"
+      },
+      {
+        "delay": 0.6,
+        "enemy": "tank"
+      },
+      {
+        "delay": 0.6,
+        "enemy": "armored"
+      },
+      {
+        "delay": 0.6,
+        "enemy": "armored"
+      }
+    ],
+    [
+      {
+        "delay": 0.5,
+        "enemy": "armored"
+      },
+      {
+        "delay": 0.5,
+        "enemy": "armored"
+      },
+      {
+        "delay": 0.5,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 0.5,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 1,
+        "enemy": "boss"
+      }
+    ],
+    [
+      {
+        "delay": 0.45,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 0.45,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 0.45,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 0.45,
+        "enemy": "armored"
+      },
+      {
+        "delay": 0.45,
+        "enemy": "armored"
+      },
+      {
+        "delay": 1.4,
+        "enemy": "boss"
+      },
+      {
+        "delay": 1.4,
+        "enemy": "armoredBoss"
+      }
+    ],
+    [
+      {
+        "delay": 0.4,
+        "enemy": "wraith"
+      },
+      {
+        "delay": 0.4,
+        "enemy": "wraith"
+      },
+      {
+        "delay": 0.4,
+        "enemy": "wraith"
+      },
+      {
+        "delay": 0.4,
+        "enemy": "wraith"
+      },
+      {
+        "delay": 0.8,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 0.8,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 1.6,
+        "enemy": "finalBoss"
+      }
+    ]
+  ],
+  "obstacles": [
+    {
+      "x": 1,
+      "y": 4,
+      "kind": "rock"
+    },
+    {
+      "x": 9,
+      "y": 4,
+      "kind": "rock"
+    },
+    {
+      "x": 1,
+      "y": 10,
+      "kind": "tree"
+    },
+    {
+      "x": 9,
+      "y": 10,
+      "kind": "tree"
+    }
+  ],
+  "trial": {
+    "forceHero": "none",
+    "metaStarReward": 5
+  }
+}

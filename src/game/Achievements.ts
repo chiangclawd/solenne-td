@@ -292,6 +292,37 @@ export const ACHIEVEMENTS: readonly Achievement[] = [
       return false;
     },
   },
+  // ---- v2.6.0 B2 Trial achievements ----
+  {
+    id: 'trial_initiate',
+    title: '試煉初涉',
+    description: '通過第一場試煉。',
+    icon: '⊘',
+    check: (s) => !!s.trialProgress?.['trial-01']?.completed,
+  },
+  {
+    id: 'trial_three',
+    title: '試煉三連',
+    description: '通過 3 場以上試煉。',
+    icon: '◈',
+    check: (s) => {
+      let n = 0;
+      for (const id in s.trialProgress ?? {}) {
+        if (s.trialProgress![id].completed) n++;
+      }
+      return n >= 3;
+    },
+  },
+  {
+    id: 'trial_legend',
+    title: '巔峰傳說',
+    description: '通過全 6 場試煉。',
+    icon: '✦',
+    check: (s) => {
+      const ids = ['trial-01', 'trial-02', 'trial-03', 'trial-04', 'trial-05', 'trial-06'];
+      return ids.every((id) => s.trialProgress?.[id]?.completed === true);
+    },
+  },
 ];
 
 export interface UnlockedNotice {

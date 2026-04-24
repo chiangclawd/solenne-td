@@ -1,0 +1,281 @@
+{
+  "id": "trial-03",
+  "name": "試煉三 · 凍原獨行",
+  "world": 0,
+  "flavorText": "凍住他們，要不就被淹沒。",
+  "intro": [
+    {
+      "speaker": "旁白",
+      "text": "只剩冰霜塔。減速是你唯一的武器。",
+      "color": "#9aa5b8"
+    }
+  ],
+  "outroWin": [
+    {
+      "speaker": "旁白",
+      "text": "冰封一切。",
+      "color": "#9aa5b8"
+    }
+  ],
+  "outroLose": [
+    {
+      "speaker": "旁白",
+      "text": "潮水終究太急。",
+      "color": "#9aa5b8"
+    }
+  ],
+  "paths": [
+    [
+      {
+        "x": 2,
+        "y": -0.5
+      },
+      {
+        "x": 2,
+        "y": 8
+      },
+      {
+        "x": 5,
+        "y": 8
+      },
+      {
+        "x": 5,
+        "y": 15.5
+      }
+    ],
+    [
+      {
+        "x": 8,
+        "y": -0.5
+      },
+      {
+        "x": 8,
+        "y": 8
+      },
+      {
+        "x": 5,
+        "y": 8
+      },
+      {
+        "x": 5,
+        "y": 15.5
+      }
+    ]
+  ],
+  "startingGold": 240,
+  "startingLives": 10,
+  "availableTowers": [
+    "frostTower"
+  ],
+  "waves": [
+    [
+      {
+        "delay": 0.3,
+        "enemy": "scout",
+        "path": 0
+      },
+      {
+        "delay": 0.3,
+        "enemy": "scout",
+        "path": 0
+      },
+      {
+        "delay": 0.3,
+        "enemy": "runner",
+        "path": 0
+      },
+      {
+        "delay": 0.3,
+        "enemy": "runner",
+        "path": 0
+      },
+      {
+        "delay": 0.3,
+        "enemy": "scout",
+        "path": 1
+      },
+      {
+        "delay": 0.3,
+        "enemy": "scout",
+        "path": 1
+      },
+      {
+        "delay": 0.3,
+        "enemy": "runner",
+        "path": 1
+      },
+      {
+        "delay": 0.3,
+        "enemy": "runner",
+        "path": 1
+      }
+    ],
+    [
+      {
+        "delay": 0.28,
+        "enemy": "frostRaider",
+        "path": 0
+      },
+      {
+        "delay": 0.28,
+        "enemy": "frostRaider",
+        "path": 0
+      },
+      {
+        "delay": 0.28,
+        "enemy": "frostRaider",
+        "path": 0
+      },
+      {
+        "delay": 0.28,
+        "enemy": "frostRaider",
+        "path": 1
+      },
+      {
+        "delay": 0.28,
+        "enemy": "frostRaider",
+        "path": 1
+      },
+      {
+        "delay": 0.28,
+        "enemy": "frostRaider",
+        "path": 1
+      },
+      {
+        "delay": 0.6,
+        "enemy": "tank",
+        "path": 0
+      },
+      {
+        "delay": 0.6,
+        "enemy": "tank",
+        "path": 1
+      }
+    ],
+    [
+      {
+        "delay": 0.25,
+        "enemy": "runner",
+        "path": 0
+      },
+      {
+        "delay": 0.25,
+        "enemy": "frostRaider",
+        "path": 0
+      },
+      {
+        "delay": 0.25,
+        "enemy": "scout",
+        "path": 0
+      },
+      {
+        "delay": 0.25,
+        "enemy": "runner",
+        "path": 1
+      },
+      {
+        "delay": 0.25,
+        "enemy": "frostRaider",
+        "path": 1
+      },
+      {
+        "delay": 0.25,
+        "enemy": "scout",
+        "path": 1
+      },
+      {
+        "delay": 0.5,
+        "enemy": "armored",
+        "path": 0
+      },
+      {
+        "delay": 0.5,
+        "enemy": "armored",
+        "path": 1
+      },
+      {
+        "delay": 1.5,
+        "enemy": "boss",
+        "path": 0
+      }
+    ],
+    [
+      {
+        "delay": 0.22,
+        "enemy": "frostRaider",
+        "path": 0
+      },
+      {
+        "delay": 0.22,
+        "enemy": "frostRaider",
+        "path": 0
+      },
+      {
+        "delay": 0.22,
+        "enemy": "runner",
+        "path": 0
+      },
+      {
+        "delay": 0.22,
+        "enemy": "frostRaider",
+        "path": 1
+      },
+      {
+        "delay": 0.22,
+        "enemy": "frostRaider",
+        "path": 1
+      },
+      {
+        "delay": 0.22,
+        "enemy": "runner",
+        "path": 1
+      },
+      {
+        "delay": 0.4,
+        "enemy": "iceBeast",
+        "path": 0
+      },
+      {
+        "delay": 0.4,
+        "enemy": "iceBeast",
+        "path": 1
+      },
+      {
+        "delay": 1.4,
+        "enemy": "boss",
+        "path": 0
+      },
+      {
+        "delay": 1.4,
+        "enemy": "boss",
+        "path": 1
+      }
+    ]
+  ],
+  "obstacles": [
+    {
+      "x": 4,
+      "y": 4,
+      "kind": "iceRock"
+    },
+    {
+      "x": 6,
+      "y": 4,
+      "kind": "iceRock"
+    },
+    {
+      "x": 4,
+      "y": 11,
+      "kind": "iceRock"
+    },
+    {
+      "x": 6,
+      "y": 11,
+      "kind": "iceRock"
+    }
+  ],
+  "trial": {
+    "forceHero": "none",
+    "metaStarReward": 5
+  }
+}

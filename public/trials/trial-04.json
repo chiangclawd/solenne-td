@@ -1,0 +1,175 @@
+{
+  "id": "trial-04",
+  "name": "試煉四 · 赤手空拳",
+  "world": 0,
+  "flavorText": "沒有塔。沒有掩護。只剩你和你的指揮官。",
+  "intro": [
+    {
+      "speaker": "基蘭指揮官",
+      "text": "今天你不是指揮官 — 是士兵。",
+      "color": "#5eb8ff",
+      "portrait": "kieran"
+    }
+  ],
+  "outroWin": [
+    {
+      "speaker": "基蘭指揮官",
+      "text": "沒有人能小看一個會戰鬥的人。",
+      "color": "#5eb8ff",
+      "portrait": "kieran"
+    }
+  ],
+  "outroLose": [
+    {
+      "speaker": "基蘭指揮官",
+      "text": "單打獨鬥還是有極限。",
+      "color": "#5eb8ff",
+      "portrait": "kieran"
+    }
+  ],
+  "paths": [
+    [
+      {
+        "x": 3,
+        "y": -0.5
+      },
+      {
+        "x": 3,
+        "y": 5
+      },
+      {
+        "x": 7,
+        "y": 5
+      },
+      {
+        "x": 7,
+        "y": 10
+      },
+      {
+        "x": 3,
+        "y": 10
+      },
+      {
+        "x": 3,
+        "y": 15.5
+      }
+    ]
+  ],
+  "startingGold": 50,
+  "startingLives": 8,
+  "availableTowers": [
+    "cannon"
+  ],
+  "waves": [
+    [
+      {
+        "delay": 0.6,
+        "enemy": "soldier"
+      },
+      {
+        "delay": 0.6,
+        "enemy": "soldier"
+      },
+      {
+        "delay": 0.6,
+        "enemy": "soldier"
+      },
+      {
+        "delay": 0.6,
+        "enemy": "runner"
+      },
+      {
+        "delay": 0.6,
+        "enemy": "runner"
+      }
+    ],
+    [
+      {
+        "delay": 0.55,
+        "enemy": "soldier"
+      },
+      {
+        "delay": 0.55,
+        "enemy": "runner"
+      },
+      {
+        "delay": 0.55,
+        "enemy": "soldier"
+      },
+      {
+        "delay": 0.55,
+        "enemy": "runner"
+      },
+      {
+        "delay": 0.9,
+        "enemy": "tank"
+      }
+    ],
+    [
+      {
+        "delay": 0.5,
+        "enemy": "runner"
+      },
+      {
+        "delay": 0.5,
+        "enemy": "runner"
+      },
+      {
+        "delay": 0.5,
+        "enemy": "soldier"
+      },
+      {
+        "delay": 0.5,
+        "enemy": "soldier"
+      },
+      {
+        "delay": 0.9,
+        "enemy": "tank"
+      },
+      {
+        "delay": 0.9,
+        "enemy": "tank"
+      }
+    ],
+    [
+      {
+        "delay": 0.4,
+        "enemy": "scout"
+      },
+      {
+        "delay": 0.4,
+        "enemy": "runner"
+      },
+      {
+        "delay": 0.4,
+        "enemy": "scout"
+      },
+      {
+        "delay": 0.4,
+        "enemy": "runner"
+      },
+      {
+        "delay": 0.7,
+        "enemy": "tank"
+      },
+      {
+        "delay": 0.7,
+        "enemy": "tank"
+      },
+      {
+        "delay": 1.6,
+        "enemy": "boss"
+      }
+    ]
+  ],
+  "obstacles": [
+    {
+      "x": 5,
+      "y": 7,
+      "kind": "rock"
+    }
+  ],
+  "trial": {
+    "metaStarReward": 8
+  }
+}
