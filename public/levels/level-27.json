@@ -1,0 +1,226 @@
+{
+  "id": "level-27",
+  "name": "泰坦之脊",
+  "world": 6,
+  "flavorText": "他們不是住在這裡。他們活在一隻會動的東西上。",
+  "intro": [
+    {
+      "speaker": "旁白",
+      "text": "水深 1200 公尺。周圍不是水 —— 是一片巨大的、起伏的皮膚。",
+      "color": "#9aa5b8"
+    },
+    {
+      "speaker": "瓦西亞中士",
+      "text": "基蘭……我們站的地方在呼吸。",
+      "color": "#ff9f43",
+      "portrait": "vasya"
+    },
+    {
+      "speaker": "皮普工程師",
+      "text": "是他。這整座海底裂縫——是他的脊背。",
+      "color": "#6ee17a",
+      "portrait": "pip"
+    },
+    {
+      "speaker": "基蘭指揮官",
+      "text": "「他」是誰？",
+      "color": "#5eb8ff",
+      "portrait": "kieran"
+    },
+    {
+      "speaker": "皮普工程師",
+      "text": "虛空要塞和第一個人……都只是他的子嗣。",
+      "color": "#6ee17a",
+      "portrait": "pip"
+    },
+    {
+      "speaker": "基蘭指揮官",
+      "text": "那就打醒他。",
+      "color": "#5eb8ff",
+      "portrait": "kieran"
+    }
+  ],
+  "outroWin": [
+    {
+      "speaker": "瓦西亞中士",
+      "text": "他的脊椎在震——我覺得他醒了。",
+      "color": "#ff9f43",
+      "portrait": "vasya"
+    },
+    {
+      "speaker": "皮普工程師",
+      "text": "這是好事還是壞事？",
+      "color": "#6ee17a",
+      "portrait": "pip"
+    },
+    {
+      "speaker": "基蘭指揮官",
+      "text": "往下。我們要看到他的臉。",
+      "color": "#5eb8ff",
+      "portrait": "kieran"
+    }
+  ],
+  "outroLose": [
+    {
+      "speaker": "瓦西亞中士",
+      "text": "脊椎抖了一下——我們被甩出來了。",
+      "color": "#ff9f43",
+      "portrait": "vasya"
+    },
+    {
+      "speaker": "基蘭指揮官",
+      "text": "整隊。再上。",
+      "color": "#5eb8ff",
+      "portrait": "kieran"
+    }
+  ],
+  "paths": [
+    [
+      { "x": -0.5, "y": 2 },
+      { "x": 4, "y": 2 },
+      { "x": 4, "y": 6 },
+      { "x": 2, "y": 6 },
+      { "x": 2, "y": 10 },
+      { "x": 6, "y": 10 },
+      { "x": 6, "y": 15.5 }
+    ],
+    [
+      { "x": 10.5, "y": 2 },
+      { "x": 6, "y": 2 },
+      { "x": 6, "y": 6 },
+      { "x": 8, "y": 6 },
+      { "x": 8, "y": 10 },
+      { "x": 4, "y": 10 },
+      { "x": 4, "y": 15.5 }
+    ]
+  ],
+  "startingGold": 380,
+  "startingLives": 14,
+  "availableTowers": [
+    "cannon",
+    "quickShot",
+    "machineGun",
+    "frostTower",
+    "sniper",
+    "missileLauncher",
+    "heavyCannon",
+    "tesla",
+    "lightTower",
+    "torpedoTower"
+  ],
+  "waves": [
+    [
+      { "delay": 0.5, "enemy": "tentacle", "path": 0 },
+      { "delay": 0.5, "enemy": "tentacle", "path": 1 },
+      { "delay": 0.5, "enemy": "tentacle", "path": 0 },
+      { "delay": 0.5, "enemy": "tentacle", "path": 1 },
+      { "delay": 0.3, "enemy": "runner", "path": 0 },
+      { "delay": 0.3, "enemy": "runner", "path": 1 }
+    ],
+    [
+      { "delay": 0.4, "enemy": "tentacle", "path": 0 },
+      { "delay": 0.4, "enemy": "tentacle", "path": 1 },
+      { "delay": 0.25, "enemy": "swimmerShoal", "path": 0 },
+      { "delay": 0.25, "enemy": "swimmerShoal", "path": 0 },
+      { "delay": 0.25, "enemy": "swimmerShoal", "path": 0 },
+      { "delay": 0.25, "enemy": "swimmerShoal", "path": 1 },
+      { "delay": 0.25, "enemy": "swimmerShoal", "path": 1 },
+      { "delay": 0.25, "enemy": "swimmerShoal", "path": 1 },
+      { "delay": 0.4, "enemy": "armored", "path": 0 },
+      { "delay": 0.4, "enemy": "armored", "path": 1 },
+      { "delay": 0.4, "enemy": "plane", "path": 0 },
+      { "delay": 0.4, "enemy": "plane", "path": 1 }
+    ],
+    [
+      { "delay": 0.35, "enemy": "tentacle", "path": 0 },
+      { "delay": 0.35, "enemy": "tentacle", "path": 0 },
+      { "delay": 0.35, "enemy": "tentacle", "path": 1 },
+      { "delay": 0.35, "enemy": "tentacle", "path": 1 },
+      { "delay": 0.35, "enemy": "heavyTank", "path": 0 },
+      { "delay": 0.35, "enemy": "heavyTank", "path": 1 },
+      { "delay": 0.2, "enemy": "swimmerShoal", "path": 0 },
+      { "delay": 0.2, "enemy": "swimmerShoal", "path": 1 },
+      { "delay": 0.2, "enemy": "swimmerShoal", "path": 0 },
+      { "delay": 0.2, "enemy": "swimmerShoal", "path": 1 },
+      { "delay": 0.3, "enemy": "plane", "path": 0 },
+      { "delay": 0.3, "enemy": "plane", "path": 1 },
+      { "delay": 1.4, "enemy": "boss", "path": 0 },
+      { "delay": 0.3, "enemy": "boss", "path": 1 }
+    ],
+    [
+      { "delay": 0.3, "enemy": "tentacle", "path": 0 },
+      { "delay": 0.3, "enemy": "tentacle", "path": 1 },
+      { "delay": 0.3, "enemy": "tentacle", "path": 0 },
+      { "delay": 0.3, "enemy": "tentacle", "path": 1 },
+      { "delay": 0.3, "enemy": "tentacle", "path": 0 },
+      { "delay": 0.3, "enemy": "tentacle", "path": 1 },
+      { "delay": 0.3, "enemy": "armored", "path": 0 },
+      { "delay": 0.3, "enemy": "armored", "path": 1 },
+      { "delay": 0.3, "enemy": "heavyTank", "path": 0 },
+      { "delay": 0.3, "enemy": "heavyTank", "path": 1 },
+      { "delay": 0.15, "enemy": "swimmerShoal", "path": 0 },
+      { "delay": 0.15, "enemy": "swimmerShoal", "path": 1 },
+      { "delay": 0.15, "enemy": "swimmerShoal", "path": 0 },
+      { "delay": 0.15, "enemy": "swimmerShoal", "path": 1 },
+      { "delay": 0.15, "enemy": "swimmerShoal", "path": 0 },
+      { "delay": 0.15, "enemy": "swimmerShoal", "path": 1 },
+      { "delay": 1.4, "enemy": "armoredBoss", "path": 0 },
+      { "delay": 0.3, "enemy": "armoredBoss", "path": 1 }
+    ],
+    [
+      { "delay": 0.3, "enemy": "plane", "path": 0 },
+      { "delay": 0.3, "enemy": "plane", "path": 1 },
+      { "delay": 0.3, "enemy": "plane", "path": 0 },
+      { "delay": 0.3, "enemy": "plane", "path": 1 },
+      { "delay": 0.3, "enemy": "plane", "path": 0 },
+      { "delay": 0.3, "enemy": "plane", "path": 1 },
+      { "delay": 0.3, "enemy": "tentacle", "path": 0 },
+      { "delay": 0.3, "enemy": "tentacle", "path": 1 },
+      { "delay": 0.3, "enemy": "tentacle", "path": 0 },
+      { "delay": 0.3, "enemy": "tentacle", "path": 1 },
+      { "delay": 0.3, "enemy": "heavyTank", "path": 0 },
+      { "delay": 0.3, "enemy": "heavyTank", "path": 1 },
+      { "delay": 0.3, "enemy": "heavyTank", "path": 0 },
+      { "delay": 0.3, "enemy": "heavyTank", "path": 1 },
+      { "delay": 1.5, "enemy": "finalBoss", "path": 0 },
+      { "delay": 0.4, "enemy": "finalBoss", "path": 1 }
+    ],
+    [
+      { "delay": 1, "enemy": "abyssalBoss", "path": 0 },
+      { "delay": 0.3, "enemy": "abyssalBoss", "path": 1 },
+      { "delay": 0.3, "enemy": "tentacle", "path": 0 },
+      { "delay": 0.3, "enemy": "tentacle", "path": 1 },
+      { "delay": 0.3, "enemy": "tentacle", "path": 0 },
+      { "delay": 0.3, "enemy": "tentacle", "path": 1 },
+      { "delay": 0.3, "enemy": "tentacle", "path": 0 },
+      { "delay": 0.3, "enemy": "tentacle", "path": 1 },
+      { "delay": 0.15, "enemy": "swimmerShoal", "path": 0 },
+      { "delay": 0.15, "enemy": "swimmerShoal", "path": 1 },
+      { "delay": 0.15, "enemy": "swimmerShoal", "path": 0 },
+      { "delay": 0.15, "enemy": "swimmerShoal", "path": 1 },
+      { "delay": 0.15, "enemy": "swimmerShoal", "path": 0 },
+      { "delay": 0.15, "enemy": "swimmerShoal", "path": 1 },
+      { "delay": 0.15, "enemy": "swimmerShoal", "path": 0 },
+      { "delay": 0.15, "enemy": "swimmerShoal", "path": 1 },
+      { "delay": 0.3, "enemy": "heavyTank", "path": 0 },
+      { "delay": 0.3, "enemy": "heavyTank", "path": 1 },
+      { "delay": 2, "enemy": "finalBoss", "path": 0 },
+      { "delay": 0.3, "enemy": "finalBoss", "path": 1 }
+    ]
+  ],
+  "obstacles": [
+    { "x": 5, "y": 0, "kind": "coral" },
+    { "x": 5, "y": 4, "kind": "water" },
+    { "x": 0, "y": 4, "kind": "water" },
+    { "x": 10, "y": 4, "kind": "water" },
+    { "x": 5, "y": 8, "kind": "coral" },
+    { "x": 3, "y": 8, "kind": "water" },
+    { "x": 7, "y": 8, "kind": "water" },
+    { "x": 1, "y": 12, "kind": "coral" },
+    { "x": 9, "y": 12, "kind": "coral" },
+    { "x": 5, "y": 12, "kind": "water" },
+    { "x": 3, "y": 13, "kind": "rock", "destructible": true, "hp": 90, "reward": 35 },
+    { "x": 7, "y": 13, "kind": "rock", "destructible": true, "hp": 90, "reward": 35 },
+    { "x": 5, "y": 14, "kind": "rock", "destructible": true, "hp": 90, "reward": 35 }
+  ]
+}

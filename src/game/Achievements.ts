@@ -71,9 +71,9 @@ export const ACHIEVEMENTS: readonly Achievement[] = [
   {
     id: 'all_three_stars',
     title: '索倫戰神',
-    description: '全 23 關取得三星。',
+    description: '全 28 關取得三星。',
     icon: '🏆',
-    check: (s) => totalStars(s) >= 69,
+    check: (s) => totalStars(s) >= 84,
   },
   {
     id: 'world_4',
@@ -94,11 +94,20 @@ export const ACHIEVEMENTS: readonly Achievement[] = [
         .every((id) => s.levelProgress[id]?.completed),
   },
   {
+    id: 'world_6',
+    title: '深淵征途',
+    description: '通關世界六，擊退第一片海。',
+    icon: '🌊',
+    check: (s) =>
+      ['level-24', 'level-25', 'level-26', 'level-27', 'level-28']
+        .every((id) => s.levelProgress[id]?.completed),
+  },
+  {
     id: 'full_campaign',
     title: '索倫史詩',
-    description: '通關全 23 關戰役。',
+    description: '通關全 28 關戰役。',
     icon: '📜',
-    check: (s) => countCompleted(s) >= 23,
+    check: (s) => countCompleted(s) >= 28,
   },
   {
     id: 'hundred_kills',
@@ -201,14 +210,14 @@ export const ACHIEVEMENTS: readonly Achievement[] = [
   {
     id: 'triple_hero_finale',
     title: '三英雄征途',
-    description: '用三位英雄各自通關最終關 (L23)。',
+    description: '用三位英雄各自通關最終關 (L28)。',
     icon: '👑',
     check: (s) => {
       const wins = s.heroLevelWins ?? {};
       return (
-        (wins.kieran ?? []).includes('level-23') &&
-        (wins.vasya ?? []).includes('level-23') &&
-        (wins.pip ?? []).includes('level-23')
+        (wins.kieran ?? []).includes('level-28') &&
+        (wins.vasya ?? []).includes('level-28') &&
+        (wins.pip ?? []).includes('level-28')
       );
     },
   },
