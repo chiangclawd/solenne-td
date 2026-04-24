@@ -77,6 +77,10 @@ export interface SaveData {
    * the campaign-derived totalStars when computing availableStars.
    */
   metaStarBonus?: number;
+  /** v2.6.1 D3 — set true after the player has watched the opening cinematic. */
+  seenIntro?: boolean;
+  /** v2.6.1 D3 — set true after the L28-win ending cinematic has played. */
+  seenOutro?: boolean;
 }
 
 const SAVE_KEY = 'td-solenne-save-v1';
@@ -157,6 +161,8 @@ function migrate(parsed: Partial<SaveData> & { version?: number }): SaveData {
   if (parsed.heroTalents) out.heroTalents = parsed.heroTalents;
   if (parsed.trialProgress) out.trialProgress = parsed.trialProgress;
   if (typeof parsed.metaStarBonus === 'number') out.metaStarBonus = parsed.metaStarBonus;
+  if (parsed.seenIntro === true) out.seenIntro = true;
+  if (parsed.seenOutro === true) out.seenOutro = true;
   return out;
 }
 

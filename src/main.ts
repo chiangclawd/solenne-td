@@ -97,7 +97,15 @@ async function main(): Promise<void> {
     playBgm: (track: BgmTrack) => audio.playBgm(track),
   };
 
-  sceneManager.transition(new MainMenuScene(ctx));
+  // v2.6.1 D3 — auto-play opening cinematic on first launch (seenIntro flag).
+  // Skipped if the player has already seen it on a previous session.
+  if (save.seenIntro !== true) {
+    // Lazy import to avoid pulling cinematic into the initial bundle critical path
+    const cine = await import('./scenes/CinematicScene.ts');
+    sceneManager.transition(new cine.CinematicScene(ctx, 'opening', () => new MainMenuScene(ctx)));
+  } else {
+    sceneManager.transition(new MainMenuScene(ctx));
+  }
   requestAnimationFrame(() => {
     document.body.classList.add('booted');
     setTimeout(() => {
