@@ -552,21 +552,41 @@ export class GameScene extends BaseScene {
             }
           }
         }
-        // Contact damage — enemies near alive hero damage it on a tick
+        // Contact damage — enemies in melee range of the hero chip its HP
+        // on a tick. Key design: the contact radius is wider than a single
+        // tile (44 vs 40-px tiles), so a hero placed ONE TILE from the path
+        // (= front-tier deployment) WILL get brushed by passing enemies.
+        // This is what makes the frontline/rear tier trade-off real — earlier
+        // the radius was 24 and adjacent-tile heroes never got touched, so
+        // "front tier" was a free buff. Now it's a genuine risk/reward.
+        //
+        // Damage scales with each enemy's max HP so tanks/bosses bite harder
+        // than scouts. Capped per-tick to prevent a packed crowd from
+        // one-shotting low-HP heroes.
         if (this.hero.alive) {
           this.heroContactDamageTimer += dt;
-          if (this.heroContactDamageTimer >= 0.5) {
-            this.heroContactDamageTimer -= 0.5;
-            const contactR2 = 24 * 24;
-            let touches = 0;
+          if (this.heroContactDamageTimer >= 0.35) {
+            this.heroContactDamageTimer -= 0.35;
+            const contactR = 44;
+            const contactR2 = contactR * contactR;
+            let accumulated = 0;
             for (const e of this.enemies) {
               if (!e.alive) continue;
               const p = e.position();
-              if ((p.x - this.hero.x) ** 2 + (p.y - this.hero.y) ** 2 <= contactR2) {
-                touches++;
+              const dist2 = (p.x - this.hero.x) ** 2 + (p.y - this.hero.y) ** 2;
+              if (dist2 <= contactR2) {
+                // Per-enemy bite = 2.5% of its max HP, clamped to [4, 22]
+                // (scouts ≈ 4, tentacles ≈ 9, heavy tank ≈ 6, boss ≈ 8-22)
+                accumulated += Math.max(4, Math.min(22, e.hpMax * 0.025));
               }
             }
-            if (touches > 0) this.hero.takeDamage(8 * Math.min(3, touches));
+            if (accumulated > 0) {
+              // Tick cap: a single 0.35s window can't take more than 40% of
+              // max HP, so even a dense swarm can't delete a full-health hero
+              // in one frame.
+              const capped = Math.min(accumulated, this.hero.def.maxHp * 0.4);
+              this.hero.takeDamage(capped);
+            }
           }
         }
       }
@@ -1602,7 +1622,7 @@ export class GameScene extends BaseScene {
       vw / 2, y + 14, this.heroDef.accent, 13, true,
     );
     r.drawTextScreenCenter(
-      '越靠近路徑，光環與技能越強（但危險）',
+      '越靠近路徑，光環/技能越強 — 但會被經過的敵人攻擊',
       vw / 2, y + 32, '#cbd2de', 10,
     );
   }
