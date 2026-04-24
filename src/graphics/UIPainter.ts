@@ -128,7 +128,24 @@ export function drawGlowTitle(
   ctx.restore();
 }
 
-export type TerrainTheme = 'grass' | 'industrial' | 'capital' | 'frozen' | 'void';
+export type TerrainTheme = 'grass' | 'industrial' | 'capital' | 'frozen' | 'void' | 'undersea';
+
+/**
+ * Subtle inner AO vignette — darkens the ~1.5px rim of a tile so adjacent
+ * tiles feel like discrete blocks rather than one flat fill. Called at the
+ * END of every theme's grass/path function. Cheap (~0.05ms per tile) and
+ * universally lifts depth without re-colouring base hues.
+ */
+function drawTileAO(ctx: Ctx, x: number, y: number, T: number, strength = 0.28): void {
+  // Top/left highlight — 1px warm lift
+  ctx.fillStyle = `rgba(255, 255, 255, ${strength * 0.12})`;
+  ctx.fillRect(x, y, T, 1);
+  ctx.fillRect(x, y, 1, T);
+  // Bottom/right shadow — 1.5px cool darken
+  ctx.fillStyle = `rgba(0, 0, 0, ${strength})`;
+  ctx.fillRect(x, y + T - 1.5, T, 1.5);
+  ctx.fillRect(x + T - 1.5, y, 1.5, T);
+}
 
 // Deterministic per-tile hash; stable across renders and sessions.
 function tileHash(tx: number, ty: number, salt = 0): number {
@@ -148,7 +165,11 @@ export function drawGrassTile(ctx: Ctx, x: number, y: number, size: number, them
     case 'capital': drawGrassCapital(ctx, x, y, size); break;
     case 'frozen': drawGrassFrozen(ctx, x, y, size); break;
     case 'void': drawGrassVoid(ctx, x, y, size); break;
+    case 'undersea': drawGrassUndersea(ctx, x, y, size); break;
   }
+  // Universal edge AO — applied after theme-specific detail so it sits on top
+  // of any fills. Grass themes get a softer rim than path tiles.
+  drawTileAO(ctx, x, y, size, 0.22);
 }
 
 // ---------- Grass Theme (邊境) ----------
@@ -583,7 +604,11 @@ export function drawPathTile(ctx: Ctx, x: number, y: number, size: number, theme
     case 'capital': drawPathCapital(ctx, x, y, size); break;
     case 'frozen': drawPathFrozen(ctx, x, y, size); break;
     case 'void': drawPathVoid(ctx, x, y, size); break;
+    case 'undersea': drawPathUndersea(ctx, x, y, size); break;
   }
+  // Path tiles get a slightly stronger rim so the trail reads as a carved
+  // trench separate from the surrounding terrain.
+  drawTileAO(ctx, x, y, size, 0.35);
 }
 
 function drawPathGrass(ctx: Ctx, x: number, y: number, T: number): void {
@@ -765,18 +790,169 @@ function drawPathVoid(ctx: Ctx, x: number, y: number, T: number): void {
   ctx.strokeRect(x + 0.5, y + 0.5, T - 1, T - 1);
 }
 
+// ---------- Undersea Theme (深海 · W6) ----------
+// Seabed with coral accents, kelp ripples, and bioluminescent specks.
+function drawGrassUndersea(ctx: Ctx, x: number, y: number, T: number): void {
+  const tx = Math.floor(x / T);
+  const ty = Math.floor(y / T);
+  const h = tileHash(tx, ty, 23);
+
+  // Deep-blue sandy base — cool teal gradient
+  const baseHue = 185 + ((h % 9) - 4);
+  const g = ctx.createLinearGradient(x, y, x, y + T);
+  g.addColorStop(0, `hsl(${baseHue}, 32%, 22%)`);
+  g.addColorStop(1, `hsl(${baseHue + 5}, 38%, 12%)`);
+  ctx.fillStyle = g;
+  ctx.fillRect(x, y, T, T);
+
+  // Sand ripple lines (horizontal, subtle)
+  ctx.strokeStyle = 'rgba(120, 180, 200, 0.14)';
+  ctx.lineWidth = 0.8;
+  for (let i = 0; i < 3; i++) {
+    const ry = y + ((h + i * 91) % 28) / 28 * T;
+    ctx.beginPath();
+    ctx.moveTo(x, ry);
+    ctx.bezierCurveTo(x + T * 0.3, ry - 1.5, x + T * 0.7, ry + 1.5, x + T, ry);
+    ctx.stroke();
+  }
+
+  // Scattered tiny shells / pebbles (white + pink flecks)
+  for (let i = 0; i < 4; i++) {
+    const px = x + ((h + i * 127) % 37) / 37 * T;
+    const py = y + ((h + i * 73) % 31) / 31 * T;
+    ctx.fillStyle = (h + i) % 3 === 0 ? 'rgba(255, 200, 210, 0.45)' : 'rgba(230, 235, 240, 0.4)';
+    ctx.beginPath();
+    ctx.arc(px, py, 0.9 + ((h + i) % 2) * 0.4, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  // Tile-feature variants
+  const feature = h % 8;
+  if (feature === 0) {
+    // Pink coral tuft cluster
+    const cx = x + T * 0.32, cy = y + T * 0.68;
+    ctx.strokeStyle = 'rgba(255, 120, 150, 0.65)';
+    ctx.lineWidth = 1.1;
+    for (let b = 0; b < 4; b++) {
+      const ang = -Math.PI / 2 + (b - 1.5) * 0.5;
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.lineTo(cx + Math.cos(ang) * 4, cy + Math.sin(ang) * 4);
+      ctx.stroke();
+    }
+    ctx.fillStyle = 'rgba(255, 150, 180, 0.5)';
+    ctx.beginPath(); ctx.arc(cx, cy, 1.8, 0, Math.PI * 2); ctx.fill();
+  } else if (feature === 1) {
+    // Kelp blade waving — curved vertical strip
+    ctx.strokeStyle = 'rgba(70, 180, 120, 0.5)';
+    ctx.lineWidth = 1.6;
+    ctx.beginPath();
+    const kx = x + T * 0.65;
+    ctx.moveTo(kx, y + T);
+    ctx.bezierCurveTo(kx - 3, y + T * 0.7, kx + 3, y + T * 0.35, kx, y + T * 0.1);
+    ctx.stroke();
+  } else if (feature === 2) {
+    // Bioluminescent speck cluster (cyan dots)
+    ctx.fillStyle = 'rgba(120, 240, 255, 0.75)';
+    for (let f = 0; f < 3; f++) {
+      const fx = x + ((h + f * 59) % 26) / 26 * T;
+      const fy = y + ((h + f * 37) % 26) / 26 * T;
+      ctx.beginPath();
+      ctx.arc(fx, fy, 0.9, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    // Soft glow under one speck
+    ctx.fillStyle = 'rgba(120, 240, 255, 0.15)';
+    ctx.beginPath();
+    ctx.arc(x + T * 0.5, y + T * 0.5, 5, 0, Math.PI * 2);
+    ctx.fill();
+  } else if (feature === 3) {
+    // Starfish (5-point)
+    ctx.fillStyle = 'rgba(255, 160, 90, 0.72)';
+    const sx = x + T * 0.6, sy = y + T * 0.35;
+    ctx.beginPath();
+    for (let p = 0; p < 5; p++) {
+      const a = -Math.PI / 2 + p * (Math.PI * 2 / 5);
+      const pxx = sx + Math.cos(a) * 2.6;
+      const pyy = sy + Math.sin(a) * 2.6;
+      if (p === 0) ctx.moveTo(pxx, pyy); else ctx.lineTo(pxx, pyy);
+      const a2 = a + Math.PI / 5;
+      ctx.lineTo(sx + Math.cos(a2) * 1.1, sy + Math.sin(a2) * 1.1);
+    }
+    ctx.closePath();
+    ctx.fill();
+  } else if (feature === 4) {
+    // Dark sea-rock silhouette at corner
+    ctx.fillStyle = 'rgba(20, 30, 45, 0.55)';
+    ctx.beginPath();
+    ctx.ellipse(x + T * 0.85, y + T * 0.18, T * 0.18, T * 0.12, 0.3, 0, Math.PI * 2);
+    ctx.fill();
+  }
+}
+
+function drawPathUndersea(ctx: Ctx, x: number, y: number, T: number): void {
+  const h = tileHash(Math.floor(x / T), Math.floor(y / T), 29);
+  // Exposed rock pavement — lighter than seabed so path reads clearly
+  const g = ctx.createLinearGradient(x, y, x, y + T);
+  g.addColorStop(0, '#5a6878');
+  g.addColorStop(1, '#2a3644');
+  ctx.fillStyle = g;
+  ctx.fillRect(x, y, T, T);
+  // Wet-sand caustic pattern — thin shifting lines
+  ctx.strokeStyle = 'rgba(170, 220, 230, 0.28)';
+  ctx.lineWidth = 0.7;
+  for (let i = 0; i < 4; i++) {
+    const cy = y + ((h + i * 53) % 31) / 31 * T;
+    ctx.beginPath();
+    ctx.moveTo(x, cy);
+    ctx.bezierCurveTo(x + T * 0.35, cy - 1.8, x + T * 0.65, cy + 1.8, x + T, cy);
+    ctx.stroke();
+  }
+  // Stone slab outline (irregular bricks)
+  ctx.strokeStyle = 'rgba(10, 20, 30, 0.5)';
+  ctx.lineWidth = 0.8;
+  if ((h % 2) === 0) {
+    ctx.beginPath();
+    ctx.moveTo(x + T * 0.5, y);
+    ctx.lineTo(x + T * 0.5, y + T);
+    ctx.stroke();
+  }
+  // Seaweed fringe along one edge
+  if ((h % 3) === 0) {
+    ctx.strokeStyle = 'rgba(60, 160, 110, 0.6)';
+    ctx.lineWidth = 1;
+    for (let k = 0; k < 3; k++) {
+      const bx = x + 3 + k * 4;
+      ctx.beginPath();
+      ctx.moveTo(bx, y + T);
+      ctx.quadraticCurveTo(bx + 1, y + T - 3, bx - 0.5, y + T - 5);
+      ctx.stroke();
+    }
+  }
+  // Scattered pale pebbles
+  ctx.fillStyle = 'rgba(200, 210, 220, 0.55)';
+  for (let i = 0; i < 3; i++) {
+    const px = x + ((h + i * 83) % 33) / 33 * T;
+    const py = y + ((h + i * 41) % 33) / 33 * T;
+    ctx.beginPath();
+    ctx.arc(px, py, 1 + ((h + i) % 2) * 0.3, 0, Math.PI * 2);
+    ctx.fill();
+  }
+}
+
 /** Background gradient per world theme (full canvas). */
 export function drawWorldBackground(
   ctx: Ctx,
   w: number, h: number,
-  theme: 'grass' | 'industrial' | 'capital' | 'frozen' | 'void' = 'grass',
+  theme: TerrainTheme = 'grass',
 ): void {
-  const themes = {
+  const themes: Record<TerrainTheme, [string, string, string]> = {
     grass:      ['#2a4e2a', '#3a6b3a', '#1f3a1f'],
     industrial: ['#3a3428', '#4a4438', '#2a251c'],
     capital:    ['#2a2a3f', '#3a3a52', '#1a1a2a'],
     frozen:     ['#2a4858', '#4a6878', '#182a36'],
     void:       ['#1a1028', '#2a1e38', '#0a0618'],
+    undersea:   ['#0c2838', '#184858', '#05161f'],
   };
   const cols = themes[theme];
   const g = ctx.createLinearGradient(0, 0, 0, h);
@@ -787,11 +963,12 @@ export function drawWorldBackground(
   ctx.fillRect(0, 0, w, h);
 }
 
-export function themeForWorld(worldId: number): 'grass' | 'industrial' | 'capital' | 'frozen' | 'void' {
+export function themeForWorld(worldId: number): TerrainTheme {
   if (worldId === 1) return 'grass';
   if (worldId === 2) return 'industrial';
   if (worldId === 3) return 'capital';
   if (worldId === 4) return 'frozen';
   if (worldId === 5) return 'void';
+  if (worldId === 6) return 'undersea';
   return 'grass';
 }

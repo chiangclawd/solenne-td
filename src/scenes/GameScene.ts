@@ -15,6 +15,7 @@ import type { Wave } from '../game/WaveManager.ts';
 import type { LevelData } from '../game/Level.ts';
 import { DialogueBox } from '../ui/DialogueBox.ts';
 import { recordCompletion, getStars } from '../storage/SaveData.ts';
+import type { Achievement } from '../game/Achievements.ts';
 import type { SceneContext } from './SceneContext.ts';
 import type { Difficulty } from '../storage/SaveData.ts';
 import { generateEndlessWave } from '../game/WaveGenerator.ts';
@@ -129,6 +130,12 @@ export class GameScene extends BaseScene {
   private readonly heroFx: HeroImpactFx[] = [];
   /** If this win triggered a hero unlock, stored for end overlay. */
   private unlockedHero: HeroDef | null = null;
+  /**
+   * Achievements unlocked during this level attempt. Captured at level end
+   * and rendered as persistent cards on the end overlay so they don't decay
+   * behind the 88%-opaque victory wash like the fleeting 3.5s toasts did.
+   */
+  private unlockedThisLevel: Achievement[] = [];
   /** Enemy-on-hero damage accumulator (per-enemy grace window). */
   private heroContactDamageTimer = 0;
 
@@ -302,6 +309,10 @@ export class GameScene extends BaseScene {
     this.hero = null;
     this.heroFx.length = 0;
     this.heroDeployMode = this.heroDef !== null;
+    // Clear previous run's unlock cards so the end overlay starts fresh.
+    this.unlockedThisLevel = [];
+    this.unlockedTower = null;
+    this.unlockedHero = null;
     // Rebuild destructibles + obstacleTiles from level definition
     this.destructibles.length = 0;
     for (const ob of this.level.obstacles ?? []) {
@@ -375,6 +386,8 @@ export class GameScene extends BaseScene {
       heroId: this.selectedHeroId ?? undefined,
       frontlineTier: this.hero?.frontline.tier,
     });
+    // Capture for end-overlay render — toasts decay in 3.5s, cards persist.
+    this.unlockedThisLevel = [...unlocked];
     if (unlocked.length > 0) this.ctx.audio.achievement();
     this.ctx.persistSave();
 
@@ -390,6 +403,13 @@ export class GameScene extends BaseScene {
 
   private triggerLose(): void {
     this.ctx.audio.defeat();
+    // Even on loss, passive-stat achievements (totalKills, totalTowersBuilt,
+    // totalWavesSurvived) may have crossed a threshold. Re-check with a null
+    // event so those cards still surface on the defeat screen.
+    const unlocked = this.ctx.achievements.check(this.ctx.save, null);
+    this.unlockedThisLevel = [...unlocked];
+    if (unlocked.length > 0) this.ctx.audio.achievement();
+    this.ctx.persistSave();
     if (this.isEndless) {
       // Record high score
       const survived = this.state.waveIndex;
@@ -1527,6 +1547,35 @@ export class GameScene extends BaseScene {
       r.drawTextScreen(`${def.name} · ${def.title}`, ubX + iconSize + 20, ubY + 28, '#fff', 18, true);
       r.drawTextScreen(def.tagline, ubX + iconSize + 20, ubY + 56, COLORS.textDim, 11);
       unlockBannerH += bannerSingleH + 8;
+      bannerY += bannerSingleH + 8;
+    }
+
+    // Achievement cards — rendered AS PART OF the end overlay (not as toasts)
+    // so they persist until the player dismisses the screen. Fixes the case
+    // where 3.5s toast faded behind the 88%-opaque victory wash before the
+    // player could read it.
+    if (this.unlockedThisLevel.length > 0) {
+      const cardH = 50;
+      const cardW = bannerW;
+      const cardX = 24;
+      const headerH = 18;
+      // Small header for the section
+      r.drawTextScreen('✦ 本場解鎖成就', cardX, bannerY + 2, '#6ee17a', 11, true);
+      bannerY += headerH;
+      unlockBannerH += headerH;
+      for (const ach of this.unlockedThisLevel) {
+        // Gold-ringed dark card — stays bright over the wash
+        r.drawScreenRoundedRect(cardX, bannerY, cardW, cardH, 9, '#141d17');
+        r.drawScreenRoundedRectOutline(cardX, bannerY, cardW, cardH, 9, '#ffd166', 1.8);
+        // Icon chip on the left
+        r.drawScreenRect(cardX + 8, bannerY + (cardH - 36) / 2, 36, 36, 'rgba(255,215,102,0.14)');
+        r.drawTextScreenCenter(ach.icon, cardX + 26, bannerY + cardH / 2, '#ffd166', 20, true);
+        // Title + description
+        r.drawTextScreen(ach.title, cardX + 54, bannerY + 14, '#ffd166', 14, true);
+        r.drawTextScreen(ach.description, cardX + 54, bannerY + 33, '#cbd2de', 10);
+        bannerY += cardH + 6;
+        unlockBannerH += cardH + 6;
+      }
     }
 
     const bw = 240, bh = 46, gap = 10;

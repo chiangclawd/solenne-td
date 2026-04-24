@@ -27,6 +27,7 @@ export function drawWorldSilhouette(ctx: Ctx, world: number, seed: number): void
     case 3: drawCapital(ctx, W, H, seed); break;
     case 4: drawFrozen(ctx, W, H, seed); break;
     case 5: drawVoid(ctx, W, H, seed); break;
+    case 6: drawUndersea(ctx, W, H, seed); break;
     default: drawFrontier(ctx, W, H, seed);
   }
   ctx.restore();
@@ -291,5 +292,112 @@ function drawVoid(ctx: Ctx, W: number, H: number, seed: number): void {
     ctx.beginPath();
     ctx.arc(r() * W, r() * H * 0.4, 0.8 + r() * 1.2, 0, Math.PI * 2);
     ctx.fill();
+  }
+}
+
+// World 6 — Seabed Fissure. Abyssal aftermath where the Iron Tide retreated.
+// Deep water gradient with god-rays streaming down, distant seamounts,
+// foreground kelp forest, drifting particulate + luminous fish flecks.
+function drawUndersea(ctx: Ctx, W: number, H: number, seed: number): void {
+  // Abyss water gradient — indigo at depth, teal near surface
+  const skyG = ctx.createLinearGradient(0, 0, 0, H * 0.45);
+  skyG.addColorStop(0, '#0a1a30');
+  skyG.addColorStop(0.5, '#0e2840');
+  skyG.addColorStop(1, '#184455');
+  ctx.fillStyle = skyG;
+  ctx.fillRect(0, 0, W, H * 0.45);
+
+  const r = rand(seed);
+
+  // God-ray shafts streaming from the surface — soft, diagonal
+  ctx.globalAlpha = 0.18;
+  for (let i = 0; i < 4; i++) {
+    const rayX = W * (0.15 + i * 0.22 + r() * 0.05);
+    const rayW = 20 + r() * 30;
+    const rg = ctx.createLinearGradient(rayX, 0, rayX + rayW * 0.4, H * 0.5);
+    rg.addColorStop(0, 'rgba(200, 240, 255, 0.55)');
+    rg.addColorStop(1, 'rgba(150, 220, 240, 0)');
+    ctx.fillStyle = rg;
+    ctx.beginPath();
+    ctx.moveTo(rayX, 0);
+    ctx.lineTo(rayX + rayW, 0);
+    ctx.lineTo(rayX + rayW + 30, H * 0.5);
+    ctx.lineTo(rayX + 10, H * 0.5);
+    ctx.closePath();
+    ctx.fill();
+  }
+  ctx.globalAlpha = 1;
+
+  // Distant seamount silhouettes (back layer)
+  ctx.fillStyle = 'rgba(10, 25, 40, 0.75)';
+  ctx.beginPath();
+  ctx.moveTo(0, H * 0.45);
+  const steps = 14;
+  for (let i = 0; i <= steps; i++) {
+    const x = (W * i) / steps;
+    const y = H * 0.4 - r() * 28 - Math.sin(i * 0.7) * 18;
+    ctx.lineTo(x, y);
+  }
+  ctx.lineTo(W, H * 0.45);
+  ctx.closePath();
+  ctx.fill();
+
+  // Closer ridge silhouette (mid layer, darker)
+  ctx.fillStyle = 'rgba(5, 15, 25, 0.85)';
+  ctx.beginPath();
+  ctx.moveTo(0, H * 0.45);
+  for (let i = 0; i <= 10; i++) {
+    const x = (W * i) / 10;
+    const y = H * 0.42 - r() * 15 - Math.sin(i * 1.2 + 1) * 10;
+    ctx.lineTo(x, y);
+  }
+  ctx.lineTo(W, H * 0.45);
+  ctx.closePath();
+  ctx.fill();
+
+  // Kelp forest — tall sway of flat dark strokes on left/right edges
+  ctx.strokeStyle = 'rgba(15, 55, 40, 0.75)';
+  ctx.lineWidth = 3;
+  for (let i = 0; i < 12; i++) {
+    const side = i < 6 ? 0 : 1;
+    const baseX = side === 0 ? r() * W * 0.28 : W * 0.72 + r() * W * 0.28;
+    const baseY = H * 0.45;
+    const tall = 55 + r() * 50;
+    ctx.beginPath();
+    ctx.moveTo(baseX, baseY);
+    // Two-control-point bezier so it sways
+    const cxOff = (r() - 0.5) * 30;
+    ctx.quadraticCurveTo(baseX + cxOff, baseY - tall * 0.6, baseX + cxOff * 0.3, baseY - tall);
+    ctx.stroke();
+  }
+
+  // Luminous plankton / fish flecks — small bright dots in the water column
+  for (let i = 0; i < 28; i++) {
+    const px = r() * W;
+    const py = r() * H * 0.42;
+    const glow = 0.35 + r() * 0.5;
+    // Outer halo
+    ctx.fillStyle = `rgba(120, 240, 220, ${glow * 0.25})`;
+    ctx.beginPath();
+    ctx.arc(px, py, 3.5, 0, Math.PI * 2);
+    ctx.fill();
+    // Core
+    ctx.fillStyle = `rgba(180, 255, 240, ${glow})`;
+    ctx.beginPath();
+    ctx.arc(px, py, 0.9 + r() * 0.6, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  // Foreground silt drift — subtle pale strokes near the floor
+  ctx.strokeStyle = 'rgba(170, 210, 220, 0.12)';
+  ctx.lineWidth = 0.6;
+  for (let i = 0; i < 6; i++) {
+    const sy = H * (0.3 + r() * 0.15);
+    ctx.beginPath();
+    ctx.moveTo(0, sy);
+    for (let x = 0; x <= W; x += 30) {
+      ctx.lineTo(x, sy + Math.sin(x * 0.04 + i) * 3);
+    }
+    ctx.stroke();
   }
 }
