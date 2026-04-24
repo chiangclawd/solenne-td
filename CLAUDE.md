@@ -53,3 +53,15 @@ The game is **indie polish tier** (剛好商業質感). Prioritize:
 readability on mobile → responsive HUD → art polish → new content.
 Do not add complex engine features (pathfinding AI, network, multiplayer)
 unless explicitly requested.
+
+## Required reading before non-trivial changes
+
+**Always consult `docs/DEV_NOTES.md`** before adding features or fixing
+bugs in any of: iOS safe-area, PWA update semantics, canvas tile art,
+save schema migration, hero combat, multi-path waves, or boss phases.
+That file catalogs every trap we've already hit and the verified
+solutions — checking it first saves re-debugging known issues.
+
+**After landing a new bug fix or architectural choice**, append a new
+entry to `docs/DEV_NOTES.md` in the matching section using the format:
+情境 / 根因 / 解法 / 教訓. Keep the file alive — terse notes beat none.
