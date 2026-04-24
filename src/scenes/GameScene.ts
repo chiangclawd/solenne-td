@@ -1077,14 +1077,15 @@ export class GameScene extends BaseScene {
     // Wave banner overlay
     renderBanner(r.ctx, this.banner, vw, vh);
 
-    // Achievement toasts
-    this.renderAchievementToasts(r, vw);
-
     // Pause overlay
     if (this.paused) this.renderPauseOverlay(r, vw, vh);
 
     // End overlay
     if (this.state.status === 'won' || this.state.status === 'lost') this.renderEndOverlay(r, vw, vh);
+
+    // Achievement toasts — drawn AFTER end overlay so they stay bright
+    // even when the 88%-opaque victory/defeat wash is covering the screen
+    this.renderAchievementToasts(r, vw);
 
     // Screen-space homing coins (render above HUD so they land on the counter)
     this.screenParticles.render(r.ctx);
@@ -1215,13 +1216,24 @@ export class GameScene extends BaseScene {
       r.ctx.globalAlpha = alpha;
       const w = 280, h = 52;
       const x = (vw - w) / 2;
-      r.drawScreenRoundedRect(x + 2, y + 3, w, h, 10, 'rgba(0,0,0,0.5)');
-      r.drawScreenRoundedRect(x, y, w, h, 10, '#1b2e22');
+      // Drop shadow
+      r.drawScreenRoundedRect(x + 2, y + 3, w, h, 10, 'rgba(0,0,0,0.6)');
+      // Stronger opaque panel — was rgba; use solid so it stays bright over the
+      // 88%-opaque end overlay and doesn't composite into mud.
+      r.drawScreenRoundedRect(x, y, w, h, 10, '#0f1a14');
       r.drawScreenRoundedRectOutline(x, y, w, h, 10, '#6ee17a', 2);
-      r.drawTextScreenCenter(t.achievement.icon, x + 26, y + h / 2, '#ffd166', 22, true);
-      r.drawTextScreen('✦ 成就解鎖', x + 52, y + 8, '#6ee17a', 9, true);
-      r.drawTextScreen(t.achievement.title, x + 52, y + 22, '#ffd166', 13, true);
-      r.drawTextScreen(t.achievement.description, x + 52, y + 38, COLORS.textDim, 9);
+      // Pulsing ring while fresh
+      if (t.time > 3.0) {
+        const pulse = 0.4 + Math.sin((3.5 - t.time) * 8) * 0.4;
+        r.ctx.save();
+        r.ctx.globalAlpha = alpha * pulse;
+        r.drawScreenRoundedRectOutline(x - 2, y - 2, w + 4, h + 4, 12, '#a8f0b5', 1.5);
+        r.ctx.restore();
+      }
+      r.drawTextScreenCenter(t.achievement.icon, x + 26, y + h / 2, '#ffd166', 24, true);
+      r.drawTextScreen('✦ 成就解鎖', x + 52, y + 7, '#6ee17a', 10, true);
+      r.drawTextScreen(t.achievement.title, x + 52, y + 22, '#ffd166', 14, true);
+      r.drawTextScreen(t.achievement.description, x + 52, y + 39, '#cbd2de', 10);
       r.ctx.globalAlpha = 1;
       y += h + 6;
     }
