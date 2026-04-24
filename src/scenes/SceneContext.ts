@@ -15,6 +15,7 @@ export interface SceneContext {
   readonly save: SaveData;
   readonly achievements: AchievementTracker;
   readonly version: string;
+  readonly buildDate: string;
   getFps(): number;
   getSpeed(): number;
   setSpeed(s: number): void;

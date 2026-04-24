@@ -194,20 +194,26 @@ export class MainMenuScene extends BaseScene {
 
     // iOS "add to home screen" hint — shown only when running in Safari (not
     // already standalone PWA) so players know how to get full-screen mode.
+    // Stacked bottom-up with safeBottom offset so nothing clips the home bar.
+    const sab = r.safeBottom();
     const isIosSafari = /iPhone|iPad|iPod/i.test(navigator.userAgent);
     const isStandalone = window.matchMedia?.('(display-mode: standalone)').matches
       || (navigator as unknown as { standalone?: boolean }).standalone === true;
     if (isIosSafari && !isStandalone) {
       r.drawTextScreenCenter(
         '📱 分享 → 加入主畫面 可全螢幕遊玩',
-        vw / 2, vh - 34, '#6ec8ff', 10, true,
+        vw / 2, vh - 50 - sab, '#6ec8ff', 10, true,
       );
     }
 
-    // Footer
+    // Footer — version is now prominent so players can verify they're on the
+    // latest deployment after a PWA auto-update. Build date makes it unambiguous
+    // even if the semver stayed the same across patch deploys.
+    const verLine = `v${this.ctx.version}  ·  build ${this.ctx.buildDate}`;
+    r.drawTextScreenCenter(verLine, vw / 2, vh - 32 - sab, '#ffd166', 12, true);
     r.drawTextScreenCenter(
-      `v${this.ctx.version}  ·  Made with Claude Code  ·  CC0 art by Kenney.nl`,
-      vw / 2, vh - 18, COLORS.textDim, 9,
+      'Made with Claude Code  ·  CC0 art by Kenney.nl',
+      vw / 2, vh - 16 - sab, COLORS.textDim, 9,
     );
   }
 

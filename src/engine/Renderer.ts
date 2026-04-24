@@ -41,6 +41,40 @@ export class Renderer {
     return this.canvas.clientHeight || window.innerHeight;
   }
 
+  /**
+   * Returns extra bottom offset (CSS px) that scenes should subtract from
+   * `vh()` when positioning bottom-anchored HUD (tower dock, Start Wave
+   * button). Adaptive: if CSS body `padding-bottom: env(safe-area-inset-bottom)`
+   * already shrinks the canvas below the home indicator, this returns 0.
+   * If the canvas renders edge-to-edge into the indicator area (some iOS
+   * PWA standalone combos do this despite CSS padding), returns the raw
+   * `env(safe-area-inset-bottom)` so the HUD lifts above the indicator.
+   */
+  safeBottom(): number {
+    const raw = getComputedStyle(document.documentElement).getPropertyValue('--sab').trim();
+    if (!raw) return 0;
+    const sab = parseFloat(raw);
+    if (!Number.isFinite(sab) || sab <= 0) return 0;
+    const canvasH = this.canvas.clientHeight || 0;
+    const windowH = window.innerHeight || 0;
+    // Canvas is at least `sab - 2` shorter than the window: CSS padding has
+    // already carved out the home-indicator region. No extra lift needed.
+    if (windowH - canvasH >= sab - 2) return 0;
+    return sab;
+  }
+
+  /** iOS notch / status-bar safe-area padding, adaptive like safeBottom. */
+  safeTop(): number {
+    const raw = getComputedStyle(document.documentElement).getPropertyValue('--sat').trim();
+    if (!raw) return 0;
+    const sat = parseFloat(raw);
+    if (!Number.isFinite(sat) || sat <= 0) return 0;
+    const canvasH = this.canvas.clientHeight || 0;
+    const windowH = window.innerHeight || 0;
+    if (windowH - canvasH >= sat - 2) return 0;
+    return sat;
+  }
+
   setShakeEnabled(on: boolean): void { this.shakeEnabled = on; }
 
   shake(duration: number, magnitude: number): void {

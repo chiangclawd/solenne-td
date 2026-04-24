@@ -1,12 +1,23 @@
 import { defineConfig } from 'vite';
 import { VitePWA } from 'vite-plugin-pwa';
+import { readFileSync } from 'node:fs';
 
 // GitHub Pages hosts under /<repo>/ by default. Pass VITE_BASE=/solenne-td/ via CI.
 // Locally defaults to '/'.
 const base = process.env.VITE_BASE || '/';
 
+// Inject version + build date so the Main Menu can display them — lets users
+// verify they're on the latest deployment after a PWA auto-update.
+const pkg = JSON.parse(readFileSync(new URL('./package.json', import.meta.url), 'utf-8')) as { version: string };
+const APP_VERSION = pkg.version;
+const BUILD_DATE = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
+
 export default defineConfig({
   base,
+  define: {
+    __APP_VERSION__: JSON.stringify(APP_VERSION),
+    __BUILD_DATE__: JSON.stringify(BUILD_DATE),
+  },
   plugins: [
     VitePWA({
       registerType: 'autoUpdate',

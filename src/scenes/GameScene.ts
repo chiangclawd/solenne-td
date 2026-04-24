@@ -1223,9 +1223,12 @@ export class GameScene extends BaseScene {
 
       if (this.state.status === 'idle' && this.state.waveIndex < this.waveMgr.totalWaves() && !this.selectedExisting) {
         const bw = 220, bh = 56;
-        // Place above the (now taller) tower selector bar
+        // Place above the tower selector bar, pushing further up when the
+        // iOS home indicator demands it. Tower dock's barH ≈ 94 incl. label;
+        // safeBottom is adaptive (0 when CSS padding already covered safe area).
         const selectorBarH = 94;
-        const bx = (vw - bw) / 2, by = vh - selectorBarH - bh - 10;
+        const sab = r.safeBottom();
+        const bx = (vw - bw) / 2, by = vh - selectorBarH - sab - bh - 10;
         this.nextWaveBtn = { x: bx, y: by, w: bw, h: bh };
         const pulse = 0.85 + Math.sin(this.elapsed * 3) * 0.15;
         r.ctx.globalAlpha = pulse;
@@ -1698,9 +1701,13 @@ export class GameScene extends BaseScene {
     const totalW = btnSize * n + gap * (n - 1);
     const startX = (vw - totalW) / 2;
     const barH = btnSize + 22; // extra vertical room for larger cost label
-    const selY = vh - barH;
+    // Lift the dock above the iOS home indicator if the canvas renders edge-
+    // to-edge into it. Adaptive — zero on platforms where CSS already handled
+    // safe area. Extra 4 CSS px of visual breathing room.
+    const sab = r.safeBottom();
+    const selY = vh - barH - sab - 4;
 
-    r.drawScreenRect(0, selY - 4, vw, barH + 4, 'rgba(8, 12, 22, 0.92)');
+    r.drawScreenRect(0, selY - 4, vw, barH + sab + 8, 'rgba(8, 12, 22, 0.92)');
 
     const costBandH = 18;
     const iconArea = btnSize - costBandH - 2;
@@ -1740,8 +1747,10 @@ export class GameScene extends BaseScene {
     if (!t) return;
     const vh = this.ctx.renderer.vh();
     const panelH = 128;
-    const panelY = vh - panelH - 8;
-    r.drawScreenRect(0, panelY, vw, panelH + 8, 'rgba(8, 12, 22, 0.95)');
+    // Lift above iOS home indicator when needed (same adaptive offset as tower dock)
+    const sab = r.safeBottom();
+    const panelY = vh - panelH - sab - 8;
+    r.drawScreenRect(0, panelY, vw, panelH + sab + 8, 'rgba(8, 12, 22, 0.95)');
     r.drawScreenRect(0, panelY, vw, 2, 'rgba(255,215,100,0.4)');
 
     const lv = t.currentLevel();

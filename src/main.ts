@@ -14,7 +14,12 @@ import { MainMenuScene } from './scenes/MainMenuScene.ts';
 import { AchievementTracker } from './game/Achievements.ts';
 import type { SceneContext } from './scenes/SceneContext.ts';
 
-const VERSION = '2.1.0';
+// Injected at build time by Vite `define` from package.json + build date.
+// See vite.config.ts. Fallback literals keep dev server happy.
+declare const __APP_VERSION__: string;
+declare const __BUILD_DATE__: string;
+const VERSION = typeof __APP_VERSION__ !== 'undefined' ? __APP_VERSION__ : '0.0.0-dev';
+const BUILD_DATE = typeof __BUILD_DATE__ !== 'undefined' ? __BUILD_DATE__ : 'dev';
 
 const canvas = document.getElementById('game-canvas') as HTMLCanvasElement | null;
 if (!canvas) throw new Error('#game-canvas element not found');
@@ -67,6 +72,7 @@ async function main(): Promise<void> {
     save,
     achievements,
     version: VERSION,
+    buildDate: BUILD_DATE,
     getFps: () => loop.getFps(),
     getSpeed: () => loop.getSpeed(),
     setSpeed: (s) => loop.setSpeed(s),
