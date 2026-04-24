@@ -29,6 +29,7 @@ import { getHero, heroUnlockTriggeredBy } from '../game/Heroes.ts';
 import type { HeroDef, HeroId, HeroSkill } from '../game/Heroes.ts';
 import { ARMOR_INFO } from '../game/ArmorTypes.ts';
 import { Hero, frontlineBuffForTileDist } from '../game/Hero.ts';
+import { resolveTalentMods } from '../game/HeroTalents.ts';
 import type { HeroImpactFx } from '../game/Hero.ts';
 import { drawHero, drawHeroIconScreen, drawSkillIconScreen } from '../graphics/HeroPainter.ts';
 import {
@@ -696,7 +697,7 @@ export class GameScene extends BaseScene {
               // Tick cap: a single 0.35s window can't take more than 40% of
               // max HP, so even a dense swarm can't delete a full-health hero
               // in one frame.
-              const capped = Math.min(accumulated, this.hero.def.maxHp * 0.4);
+              const capped = Math.min(accumulated, this.hero.effMaxHp * 0.4);
               this.hero.takeDamage(capped);
             }
           }
@@ -1731,7 +1732,7 @@ export class GameScene extends BaseScene {
     const hpW = panelW - 8;
     r.drawScreenRect(x + 4, hpY, hpW, 6, 'rgba(0,0,0,0.55)');
     if (hero) {
-      const pct = alive ? hero.hp / def.maxHp : 0;
+      const pct = alive ? hero.hp / hero.effMaxHp : 0;
       const color = pct > 0.6 ? '#6ee17a' : pct > 0.3 ? '#ffd166' : '#ff6b6b';
       r.drawScreenRect(x + 4, hpY, hpW * pct, 6, color);
       if (!alive) {
@@ -2169,7 +2170,9 @@ export class GameScene extends BaseScene {
       if (!blocked) {
         const distToPath = Path.tileDistanceToPath(tx, ty, this.pathTiles);
         const frontline = frontlineBuffForTileDist(distToPath);
-        this.hero = new Hero(this.heroDef, tx, ty, T, frontline);
+        // v2.5 C1 — resolve talent mods from save and pass to Hero.
+        const talentMods = resolveTalentMods(this.ctx.save, this.heroDef.id);
+        this.hero = new Hero(this.heroDef, tx, ty, T, frontline, talentMods);
         this.heroDeployMode = false;
         this.occupiedTiles.add(key);
         this.ctx.audio.heroDeploy();

@@ -5,6 +5,7 @@ import { SettingsScene } from './SettingsScene.ts';
 import { CodexScene } from './CodexScene.ts';
 import { CreditsScene } from './CreditsScene.ts';
 import { UpgradeScene } from './UpgradeScene.ts';
+import { HeroTalentsScene } from './HeroTalentsScene.ts';
 import { COLORS, TILE_SIZE, WORLD_WIDTH, WORLD_HEIGHT, GRID_COLS, GRID_ROWS } from '../config.ts';
 import { totalStars, countCompleted } from '../storage/SaveData.ts';
 import { ACHIEVEMENTS } from '../game/Achievements.ts';
@@ -45,6 +46,7 @@ export class MainMenuScene extends BaseScene {
   private levelsBtn: Rect | null = null;
   private endlessBtn: Rect | null = null;
   private upgradeBtn: Rect | null = null;
+  private talentsBtn: Rect | null = null;
   private codexBtn: Rect | null = null;
   private settingsBtn: Rect | null = null;
   private creditsBtn: Rect | null = null;
@@ -188,9 +190,14 @@ export class MainMenuScene extends BaseScene {
       avail > 0 ? `可用 ${avail} ★ · 永久強化` : '累積星星解鎖永久加成',
       baseY + (bh + gap) * 3,
     );
-    this.codexBtn = mkBtn('🛠 塔百科', '9 塔 · 17 敵', baseY + (bh + gap) * 4);
-    this.settingsBtn = mkBtn('⚙ 設定', '音量 · 難度 · 效果', baseY + (bh + gap) * 5);
-    this.creditsBtn = mkBtn('✦ 致謝', '製作團隊 / 資源', baseY + (bh + gap) * 6);
+    this.talentsBtn = mkBtn(
+      '⚔ 英雄天賦',
+      '為指揮官投資技能路線',
+      baseY + (bh + gap) * 4,
+    );
+    this.codexBtn = mkBtn('🛠 塔百科', '9 塔 · 17 敵', baseY + (bh + gap) * 5);
+    this.settingsBtn = mkBtn('⚙ 設定', '音量 · 難度 · 效果', baseY + (bh + gap) * 6);
+    this.creditsBtn = mkBtn('✦ 致謝', '製作團隊 / 資源', baseY + (bh + gap) * 7);
 
     // iOS "add to home screen" hint — shown only when running in Safari (not
     // already standalone PWA) so players know how to get full-screen mode.
@@ -244,6 +251,11 @@ export class MainMenuScene extends BaseScene {
     if (this.upgradeBtn && this.inside(screenX, screenY, this.upgradeBtn)) {
       this.ctx.audio.click();
       this.ctx.transition(new UpgradeScene(this.ctx));
+      return;
+    }
+    if (this.talentsBtn && this.inside(screenX, screenY, this.talentsBtn)) {
+      this.ctx.audio.click();
+      this.ctx.transition(new HeroTalentsScene(this.ctx));
       return;
     }
     if (this.codexBtn && this.inside(screenX, screenY, this.codexBtn)) {

@@ -56,6 +56,11 @@ export interface SaveData {
   selectedHero?: string;
   /** Map of hero id → list of levels cleared WITH that hero. Used by achievements. */
   heroLevelWins?: Record<string, string[]>;
+  /**
+   * v2.5 C1 — per-hero talent tree tiers. Shape: heroTalents[heroId][talentId] = tier (0..3).
+   * Stars budget is derived from heroLevelWins[hero].length, spent on tier unlocks.
+   */
+  heroTalents?: Record<string, Record<string, number>>;
 }
 
 const SAVE_KEY = 'td-solenne-save-v1';
@@ -130,6 +135,7 @@ function migrate(parsed: Partial<SaveData> & { version?: number }): SaveData {
   if (parsed.metaUpgrades) out.metaUpgrades = parsed.metaUpgrades;
   if (typeof parsed.selectedHero === 'string') out.selectedHero = parsed.selectedHero;
   if (parsed.heroLevelWins) out.heroLevelWins = parsed.heroLevelWins;
+  if (parsed.heroTalents) out.heroTalents = parsed.heroTalents;
   return out;
 }
 

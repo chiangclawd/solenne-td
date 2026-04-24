@@ -14,6 +14,7 @@ import type { Enemy } from './Enemy.ts';
 import { Projectile } from './Projectile.ts';
 import type { ChainSegment, ImpactEffect } from './Projectile.ts';
 import { counterMultiplier } from './ArmorTypes.ts';
+import type { HeroTalentMods } from './HeroTalents.ts';
 
 export interface HeroSkillState {
   id: string;
@@ -55,6 +56,12 @@ export function frontlineBuffForTileDist(d: number): FrontlineBuff {
   return { tier: 'rear', label: '後方指揮', radiusMul: 1.00, strengthMul: 1.00 };
 }
 
+/** Default multipliers used when no talents are applied (tests, endless, etc). */
+const NO_TALENT_MODS: HeroTalentMods = {
+  damageMul: 1, rateMul: 1, rangeMul: 1, hpMul: 1,
+  auraRadiusMul: 1, skillRadiusMul: 1, skillDurationMul: 1, skillDamageMul: 1,
+};
+
 export class Hero {
   readonly def: HeroDef;
   /** World-space deploy anchor (where the hero stands and respawns). */
@@ -64,6 +71,10 @@ export class Hero {
   readonly tileY: number;
   /** Frontline tier, set once at construction based on distance-to-path. */
   readonly frontline: FrontlineBuff;
+  /** v2.5 C1 — talent multipliers applied at construction. Immutable during run. */
+  readonly talentMods: HeroTalentMods;
+  /** Effective maxHp after talent bonus (capped against def.maxHp × hpMul). */
+  readonly effMaxHp: number;
   hp: number;
   alive: boolean;
   respawnRemaining: number;
@@ -87,6 +98,7 @@ export class Hero {
     tileY: number,
     tileSize: number,
     frontline: FrontlineBuff = { tier: 'rear', label: '後方指揮', radiusMul: 1, strengthMul: 1 },
+    talentMods: HeroTalentMods = NO_TALENT_MODS,
   ) {
     this.def = def;
     this.tileX = tileX;
@@ -94,7 +106,9 @@ export class Hero {
     this.x = tileX * tileSize + tileSize / 2;
     this.y = tileY * tileSize + tileSize / 2;
     this.frontline = frontline;
-    this.hp = def.maxHp;
+    this.talentMods = talentMods;
+    this.effMaxHp = Math.round(def.maxHp * talentMods.hpMul);
+    this.hp = this.effMaxHp;
     this.alive = true;
     this.respawnRemaining = 0;
     this.facing = -Math.PI / 2;
@@ -118,9 +132,9 @@ export class Hero {
     return 36 * this.frontline.radiusMul;
   }
 
-  /** Effective passive aura radius (accounting for frontline buff). */
+  /** Effective passive aura radius (accounting for frontline buff + talents). */
   auraRadius(): number {
-    return this.def.passive.auraRadius * this.frontline.radiusMul;
+    return this.def.passive.auraRadius * this.frontline.radiusMul * this.talentMods.auraRadiusMul;
   }
 
   position(): { x: number; y: number } {
@@ -165,14 +179,18 @@ export class Hero {
     if (!st || st.cooldown > 0) return false;
 
     st.cooldown = def.cooldown;
-    if (def.duration > 0) st.activeRemaining = def.duration;
+    // Talents can extend skill duration.
+    const effDuration = def.duration * this.talentMods.skillDurationMul;
+    if (def.duration > 0) st.activeRemaining = effDuration;
+    // Talents also scale all skill AOE radii — shared multiplier for simplicity.
+    const skRadiusMul = this.talentMods.skillRadiusMul;
 
     // Apply skill's instantaneous side-effects (damage, slow, FX)
     switch (skillId) {
       case 'rally': {
         fx.push({
           kind: 'heroRally', x: this.x, y: this.y,
-          radius: this.def.passive.auraRadius || 160,
+          radius: (this.def.passive.auraRadius || 160) * this.talentMods.auraRadiusMul,
           life: 0.9, maxLife: 0.9, color: this.def.color,
         });
         break;
@@ -181,13 +199,13 @@ export class Hero {
         // Royal Ward — defensive shield burst + visual ring
         fx.push({
           kind: 'heroRally', x: this.x, y: this.y,
-          radius: def.radius ?? 100,
+          radius: (def.radius ?? 100) * skRadiusMul,
           life: 1.0, maxLife: 1.0, color: '#ffd166',
         });
         break;
       }
       case 'grenade': {
-        const r = (def.radius ?? 64) * this.frontline.radiusMul;
+        const r = (def.radius ?? 64) * this.frontline.radiusMul * skRadiusMul;
         effects.push({
           x: this.x, y: this.y, radius: r,
           life: 0.35, maxLife: 0.35, color: '#ffb347',
@@ -197,7 +215,10 @@ export class Hero {
           life: 0.5, maxLife: 0.5, color: '#ff7a2e',
         });
         const r2 = r * r;
-        const dmg = this.def.attackDamage * 4 * this.frontline.strengthMul;
+        // Grenade damage scales with both the global damageMul AND the
+        // skill-specific skillDamageMul (pip's "能量電池" talent).
+        const dmg = this.def.attackDamage * 4 * this.frontline.strengthMul
+          * this.talentMods.damageMul * this.talentMods.skillDamageMul;
         for (const e of enemies) {
           if (!e.alive) continue;
           const p = e.position();
@@ -217,7 +238,7 @@ export class Hero {
         break;
       }
       case 'flash': {
-        const r = (def.radius ?? 96) * this.frontline.radiusMul;
+        const r = (def.radius ?? 96) * this.frontline.radiusMul * skRadiusMul;
         fx.push({
           kind: 'heroFlash', x: this.x, y: this.y, radius: r,
           life: 0.6, maxLife: 0.6, color: this.def.color,
@@ -227,7 +248,7 @@ export class Hero {
           if (!e.alive) continue;
           const p = e.position();
           if ((p.x - this.x) ** 2 + (p.y - this.y) ** 2 <= r2) {
-            e.applySlow(def.duration, 0.15);
+            e.applySlow(effDuration, 0.15);
           }
         }
         break;
@@ -235,7 +256,7 @@ export class Hero {
       case 'emergencyBuild': {
         fx.push({
           kind: 'heroBuild', x: this.x, y: this.y,
-          radius: (def.radius ?? 120) * this.frontline.radiusMul,
+          radius: (def.radius ?? 120) * this.frontline.radiusMul * skRadiusMul,
           life: 0.8, maxLife: 0.8, color: this.def.color,
         });
         break;
@@ -265,7 +286,7 @@ export class Hero {
         this.respawnRemaining = Math.max(0, this.respawnRemaining - dt);
         if (this.respawnRemaining === 0) {
           this.alive = true;
-          this.hp = this.def.maxHp;
+          this.hp = this.effMaxHp;
         }
       }
       return;
@@ -297,7 +318,7 @@ export class Hero {
         this.facing = Math.atan2(mp.y - this.y, mp.x - this.x);
         // Frontline tier amplifies both reach and strength; piercing shot
         // skill stacks too so an activated hero who melees feels punchy.
-        let mdmg = this.def.attackDamage * 0.7 * this.frontline.strengthMul;
+        let mdmg = this.def.attackDamage * 0.7 * this.frontline.strengthMul * this.talentMods.damageMul;
         if (this.isEffectActive('piercingShot')) mdmg *= 1.4;
         // Counter bonus applies — a sword-wielder still favors armor vs. light
         mdmg *= counterMultiplier(this.def.counters, melee.armorType);
@@ -309,8 +330,9 @@ export class Hero {
       }
     }
 
-    // Acquire target — highest progress in range
-    const r2 = this.def.attackRange * this.def.attackRange;
+    // Acquire target — highest progress in range (talent-scaled range).
+    const effRange = this.def.attackRange * this.talentMods.rangeMul;
+    const r2 = effRange * effRange;
     let target: Enemy | null = null;
     let best = -Infinity;
     for (const e of enemies) {
@@ -332,7 +354,7 @@ export class Hero {
 
     if (this.attackCooldown > 0) return;
 
-    let damage = this.def.attackDamage * this.frontline.strengthMul;
+    let damage = this.def.attackDamage * this.frontline.strengthMul * this.talentMods.damageMul;
     const piercing = this.isEffectActive('piercingShot');
     if (piercing) damage *= 1.8;
     // Vasya's passive: +5% crit damage average → just scale by 1.05
@@ -356,7 +378,7 @@ export class Hero {
       },
     ));
     void chainSegments; // not used for hero attacks currently
-    this.attackCooldown = 1 / this.def.attackRate;
+    this.attackCooldown = 1 / (this.def.attackRate * this.talentMods.rateMul);
     this.fireAnim = 1;
   }
 }
