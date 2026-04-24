@@ -14,6 +14,32 @@ export interface HealAura {
   radius: number;
 }
 
+/**
+ * One-shot mid-fight ability that triggers when an enemy's HP drops below a
+ * threshold (typically 0.5 = 50%). Used to give story bosses a phase-2
+ * behavior shift so the fight isn't just an HP-sponge.
+ */
+export interface PhaseAbility {
+  /** 0..1 — HP fraction at which this triggers. */
+  hpThreshold: number;
+  /** Instant heal as fraction of maxHp (0.2 = restore 20% max). */
+  heal?: number;
+  /** Temporary speed multiplier applied when phase fires. */
+  speedMul?: number;
+  /** Seconds the speedMul persists (default 6). */
+  speedDuration?: number;
+  /** Temporary extra damageResist (added to base, clamped to 0.85 max). */
+  resistBoost?: number;
+  /** Seconds the resistBoost persists. */
+  resistDuration?: number;
+  /** Instantaneous forward teleport along path (world units). */
+  teleportWorldUnits?: number;
+  /** Minions spawned at the boss's position when phase triggers. */
+  spawns?: readonly OnDeathSpawn[];
+  /** Short banner text shown at phase-transition (e.g. "激怒") */
+  banner?: string;
+}
+
 export interface EnemyConfig {
   hp: number;
   speed: number;
@@ -27,6 +53,8 @@ export interface EnemyConfig {
   armorType?: ArmorType;
   onDeathSpawn?: readonly OnDeathSpawn[];
   healsNearby?: HealAura;
+  /** Mid-fight ability triggered once when HP crosses a threshold. */
+  phase2?: PhaseAbility;
 }
 
 export class Enemy {
@@ -42,6 +70,7 @@ export class Enemy {
   readonly armorType: ArmorType;
   readonly onDeathSpawn: readonly OnDeathSpawn[];
   readonly healsNearby: HealAura | null;
+  readonly phase2: PhaseAbility | null;
   progress: number;
   alive: boolean;
   reachedGoal: boolean;
@@ -56,6 +85,18 @@ export class Enemy {
   processed: boolean;
   /** Damage accumulated this frame; GameScene reads & resets per tick for floaters. */
   damageTakenThisTick: number;
+  /** Flag set once the phase-2 ability has fired. One-shot. */
+  phaseTriggered: boolean;
+  /** Pulse 0→1 for phase-transition flash effect. Decays each frame. */
+  phaseFlash: number;
+  /** Queue of spawn requests emitted by phase trigger. GameScene drains this. */
+  pendingPhaseSpawns: OnDeathSpawn[];
+  /** Whether GameScene has consumed the spawn queue yet. Prevents double-spawn. */
+  phaseSpawnsConsumed: boolean;
+  private tempSpeedMul: number;
+  private tempSpeedRemaining: number;
+  private tempResistBoost: number;
+  private tempResistRemaining: number;
   private slowRemaining: number;
   private slowFactor: number;
   private healTimer: number;
@@ -73,16 +114,25 @@ export class Enemy {
     this.armorType = config.armorType ?? 'light';
     this.onDeathSpawn = config.onDeathSpawn ?? [];
     this.healsNearby = config.healsNearby ?? null;
+    this.phase2 = config.phase2 ?? null;
     this.progress = startProgress;
     this.alive = true;
     this.reachedGoal = false;
     this.rotation = 0;
     this.hitFlash = 0;
-    this.age = Math.random() * 2; // stagger wobble phase across units
+    this.age = Math.random() * 2;
     this.deathAnim = 0;
     this.deathKind = null;
     this.processed = false;
     this.damageTakenThisTick = 0;
+    this.phaseTriggered = false;
+    this.phaseFlash = 0;
+    this.pendingPhaseSpawns = [];
+    this.phaseSpawnsConsumed = false;
+    this.tempSpeedMul = 1;
+    this.tempSpeedRemaining = 0;
+    this.tempResistBoost = 0;
+    this.tempResistRemaining = 0;
     this.slowRemaining = 0;
     this.slowFactor = 1;
     this.healTimer = 0;
@@ -93,13 +143,48 @@ export class Enemy {
    * explicitly pierces armor (AP rounds, holy damage, etc.).
    */
   takeDamage(amount: number, armorPierce = false): void {
-    const effective = armorPierce ? amount : amount * (1 - this.damageResist);
+    // Effective resist = base + temp boost (from phase 2), clamped.
+    const effResist = Math.min(0.85, this.damageResist + this.tempResistBoost);
+    const effective = armorPierce ? amount : amount * (1 - effResist);
     this.hp -= effective;
     this.hitFlash = 0.12;
     this.damageTakenThisTick += effective;
+    // Trigger phase 2 when HP crosses threshold — one-shot.
+    if (!this.phaseTriggered && this.phase2 && this.alive
+        && this.hp > 0 && this.hp <= this.hpMax * this.phase2.hpThreshold) {
+      this.triggerPhase();
+    }
     if (this.hp <= 0 && this.alive) {
       this.alive = false;
       this.deathKind = 'killed';
+    }
+  }
+
+  /** Apply the phase-2 ability effects. Called exactly once. */
+  private triggerPhase(): void {
+    if (!this.phase2 || this.phaseTriggered) return;
+    this.phaseTriggered = true;
+    this.phaseFlash = 1;
+    const ab = this.phase2;
+    if (ab.heal) {
+      this.hp = Math.min(this.hpMax, this.hp + this.hpMax * ab.heal);
+    }
+    if (ab.speedMul && ab.speedMul !== 1) {
+      this.tempSpeedMul = ab.speedMul;
+      this.tempSpeedRemaining = ab.speedDuration ?? 6;
+    }
+    if (ab.resistBoost) {
+      this.tempResistBoost = ab.resistBoost;
+      this.tempResistRemaining = ab.resistDuration ?? 4;
+    }
+    if (ab.teleportWorldUnits) {
+      this.progress = Math.min(
+        this.path.totalLength - 1,
+        this.progress + ab.teleportWorldUnits,
+      );
+    }
+    if (ab.spawns) {
+      for (const s of ab.spawns) this.pendingPhaseSpawns.push(s);
     }
   }
 
@@ -126,6 +211,17 @@ export class Enemy {
     this.age += dt;
 
     if (this.hitFlash > 0) this.hitFlash = Math.max(0, this.hitFlash - dt);
+    if (this.phaseFlash > 0) this.phaseFlash = Math.max(0, this.phaseFlash - dt * 0.8);
+
+    // Temp buff timers (phase 2)
+    if (this.tempSpeedRemaining > 0) {
+      this.tempSpeedRemaining -= dt;
+      if (this.tempSpeedRemaining <= 0) { this.tempSpeedRemaining = 0; this.tempSpeedMul = 1; }
+    }
+    if (this.tempResistRemaining > 0) {
+      this.tempResistRemaining -= dt;
+      if (this.tempResistRemaining <= 0) { this.tempResistRemaining = 0; this.tempResistBoost = 0; }
+    }
 
     if (this.slowRemaining > 0) {
       this.slowRemaining -= dt;
@@ -134,7 +230,8 @@ export class Enemy {
         this.slowFactor = 1;
       }
     }
-    const effectiveSpeed = this.slowRemaining > 0 ? this.baseSpeed * this.slowFactor : this.baseSpeed;
+    let effectiveSpeed = this.slowRemaining > 0 ? this.baseSpeed * this.slowFactor : this.baseSpeed;
+    effectiveSpeed *= this.tempSpeedMul;
 
     // Heal aura
     if (this.healsNearby && nearby) {
