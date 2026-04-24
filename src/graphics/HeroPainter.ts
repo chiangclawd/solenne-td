@@ -70,11 +70,113 @@ export function drawHero(
   }
   ctx.restore();
 
+  // Melee slash FX — draws while meleeAnim is still decaying (either alive or dead)
+  if (hero.meleeAnim > 0) {
+    drawMeleeSlash(ctx, hero);
+  }
+
   if (hero.alive) {
     drawHpBar(ctx, x, y - BODY_RADIUS - 10, BODY_RADIUS * 2.2, hero.hp, def.maxHp, def.color);
   } else {
     drawRespawnTimer(ctx, x, y, hero.respawnRemaining, def.respawnSeconds, def.color);
   }
+}
+
+// ---------- Melee slash ----------
+
+function drawMeleeSlash(ctx: Ctx, hero: Hero): void {
+  const t = hero.meleeAnim;        // 1 → 0
+  const fade = Math.max(0, t);
+  const { x, y, meleeTargetX: tx, meleeTargetY: ty, def } = hero;
+  const dx = tx - x;
+  const dy = ty - y;
+  const dist = Math.max(12, Math.sqrt(dx * dx + dy * dy));
+  const ang = Math.atan2(dy, dx);
+
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.rotate(ang);
+
+  // Per-hero slash style
+  switch (def.id) {
+    case 'kieran': {
+      // Wide white sword arc sweeping from +60° to -60°
+      const arcR = dist * (0.75 + 0.25 * (1 - t));
+      const spread = Math.PI * 0.6 * fade + Math.PI * 0.15;
+      ctx.globalCompositeOperation = 'lighter';
+      ctx.strokeStyle = `rgba(255,255,255,${0.85 * fade})`;
+      ctx.lineWidth = 3.5 * fade + 1;
+      ctx.beginPath();
+      ctx.arc(0, 0, arcR, -spread / 2, spread / 2);
+      ctx.stroke();
+      // Gold inner highlight
+      ctx.strokeStyle = `rgba(255,209,102,${0.9 * fade})`;
+      ctx.lineWidth = 1.4;
+      ctx.beginPath();
+      ctx.arc(0, 0, arcR * 0.95, -spread / 2.2, spread / 2.2);
+      ctx.stroke();
+      ctx.globalCompositeOperation = 'source-over';
+      break;
+    }
+    case 'vasya': {
+      // Bayonet jab — short straight streak along facing
+      const reach = dist * (1.05 - 0.15 * (1 - t));
+      ctx.globalCompositeOperation = 'lighter';
+      ctx.strokeStyle = `rgba(255,230,180,${0.8 * fade})`;
+      ctx.lineWidth = 2.2 * fade + 0.8;
+      ctx.beginPath();
+      ctx.moveTo(6, 0);
+      ctx.lineTo(reach, 0);
+      ctx.stroke();
+      // Impact burst at target
+      const burstR = 5 + (1 - t) * 4;
+      const grad = ctx.createRadialGradient(reach, 0, 0, reach, 0, burstR);
+      grad.addColorStop(0, `rgba(255,255,220,${fade})`);
+      grad.addColorStop(1, 'rgba(255,120,40,0)');
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(reach, 0, burstR, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.globalCompositeOperation = 'source-over';
+      break;
+    }
+    case 'pip': {
+      // Arcane zap — crackling zig-zag from hero to target
+      const reach = dist;
+      ctx.globalCompositeOperation = 'lighter';
+      ctx.strokeStyle = `rgba(226,190,255,${0.9 * fade})`;
+      ctx.lineWidth = 1.8;
+      ctx.beginPath();
+      ctx.moveTo(6, 0);
+      const steps = 5;
+      for (let i = 1; i <= steps; i++) {
+        const px = 6 + (reach - 6) * (i / steps);
+        // Offsets shrink as fade→0, so final frames are a clean line
+        const jitter = (Math.random() - 0.5) * 6 * fade;
+        ctx.lineTo(px, jitter);
+      }
+      ctx.stroke();
+      // Outer glow
+      ctx.strokeStyle = `rgba(255,255,255,${0.6 * fade})`;
+      ctx.lineWidth = 0.8;
+      ctx.beginPath();
+      ctx.moveTo(6, 0);
+      ctx.lineTo(reach, 0);
+      ctx.stroke();
+      // Spark at target
+      const sparkR = 4 + fade * 3;
+      const g = ctx.createRadialGradient(reach, 0, 0, reach, 0, sparkR);
+      g.addColorStop(0, `rgba(255,230,255,${fade})`);
+      g.addColorStop(1, 'rgba(200,120,255,0)');
+      ctx.fillStyle = g;
+      ctx.beginPath();
+      ctx.arc(reach, 0, sparkR, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.globalCompositeOperation = 'source-over';
+      break;
+    }
+  }
+  ctx.restore();
 }
 
 // ---------- Cached hero-body icons (HUD) ----------

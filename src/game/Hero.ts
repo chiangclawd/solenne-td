@@ -72,6 +72,13 @@ export class Hero {
   fireAnim: number;
   /** Cooldown before next auto-attack (s). */
   private attackCooldown: number;
+  /** Cooldown before next melee swing (s). */
+  private meleeCooldown: number;
+  /** Animation timer for melee slash (1 → 0). Renderer draws a slash arc. */
+  meleeAnim: number;
+  /** World-space coord of the last melee target (drives the slash arc endpoint). */
+  meleeTargetX: number;
+  meleeTargetY: number;
   readonly skills: HeroSkillState[];
 
   constructor(
@@ -93,11 +100,22 @@ export class Hero {
     this.facing = -Math.PI / 2;
     this.fireAnim = 0;
     this.attackCooldown = 0;
+    this.meleeCooldown = 0;
+    this.meleeAnim = 0;
+    this.meleeTargetX = 0;
+    this.meleeTargetY = 0;
     this.skills = def.skills.map((s) => ({
       id: s.id,
       cooldown: 0,
       activeRemaining: 0,
     }));
+  }
+
+  /** Effective melee reach in world units. Grows with frontline tier. */
+  meleeRange(): number {
+    // 1 tile ≈ 40px. Rear heroes still need a small touch reach so they can
+    // defend themselves; frontline heroes sweep a wider arc.
+    return 36 * this.frontline.radiusMul;
   }
 
   /** Effective passive aura radius (accounting for frontline buff). */
@@ -238,6 +256,10 @@ export class Hero {
       if (s.activeRemaining > 0) s.activeRemaining = Math.max(0, s.activeRemaining - dt);
     }
 
+    // Animations decay even while dead so a swing finishes cleanly on KO.
+    if (this.fireAnim > 0) this.fireAnim = Math.max(0, this.fireAnim - dt * 6);
+    if (this.meleeAnim > 0) this.meleeAnim = Math.max(0, this.meleeAnim - dt * 5);
+
     if (!this.alive) {
       if (this.respawnRemaining > 0) {
         this.respawnRemaining = Math.max(0, this.respawnRemaining - dt);
@@ -249,8 +271,43 @@ export class Hero {
       return;
     }
 
-    if (this.fireAnim > 0) this.fireAnim = Math.max(0, this.fireAnim - dt * 6);
     this.attackCooldown = Math.max(0, this.attackCooldown - dt);
+    this.meleeCooldown = Math.max(0, this.meleeCooldown - dt);
+
+    // Melee swing — scans for the closest enemy inside meleeRange().
+    // Priority over ranged so a hero being swarmed always fights back.
+    // Damage is a fraction of attackDamage, armor-pierces (close-quarters),
+    // and off-cooldown roughly 2.5×/sec.
+    if (this.meleeCooldown <= 0) {
+      const mr = this.meleeRange();
+      const mr2 = mr * mr;
+      let melee: Enemy | null = null;
+      let bestD2 = Infinity;
+      for (const e of enemies) {
+        if (!e.alive) continue;
+        const p = e.position();
+        const dx = p.x - this.x;
+        const dy = p.y - this.y;
+        const d2 = dx * dx + dy * dy;
+        if (d2 > mr2) continue;
+        if (d2 < bestD2) { bestD2 = d2; melee = e; }
+      }
+      if (melee) {
+        const mp = melee.position();
+        this.facing = Math.atan2(mp.y - this.y, mp.x - this.x);
+        // Frontline tier amplifies both reach and strength; piercing shot
+        // skill stacks too so an activated hero who melees feels punchy.
+        let mdmg = this.def.attackDamage * 0.7 * this.frontline.strengthMul;
+        if (this.isEffectActive('piercingShot')) mdmg *= 1.4;
+        // Counter bonus applies — a sword-wielder still favors armor vs. light
+        mdmg *= counterMultiplier(this.def.counters, melee.armorType);
+        melee.takeDamage(mdmg, true);
+        this.meleeTargetX = mp.x;
+        this.meleeTargetY = mp.y;
+        this.meleeAnim = 1;
+        this.meleeCooldown = 0.4;
+      }
+    }
 
     // Acquire target — highest progress in range
     const r2 = this.def.attackRange * this.def.attackRange;
