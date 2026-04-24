@@ -251,7 +251,11 @@ export class GameScene extends BaseScene {
   override onEnter(): void {
     this.ctx.playBgm(bgmForWorld(this.level.world));
     this.ctx.setSpeed(SPEEDS[this.speedIdx]);
-    this.ctx.renderer.setShakeEnabled(this.ctx.save.settings.screenShake);
+    const lowAnim = this.ctx.save.settings.lowAnimation === true;
+    this.ctx.renderer.setShakeEnabled(this.ctx.save.settings.screenShake && !lowAnim);
+    this.particles.enabled = !lowAnim;
+    this.screenParticles.enabled = !lowAnim;
+    this.weather.enabled = !lowAnim;
     if (this.level.intro && this.level.intro.length > 0) {
       this.state.status = 'intro';
       this.dialogue.show(this.level.intro, () => {

@@ -183,11 +183,40 @@ export class Renderer {
     ctx.stroke();
   }
 
+  /**
+   * v2.5.1 D2 — UI scale multiplier. Set via Settings; multiplies every
+   * drawTextScreen* call's size. Does NOT affect world-space or positional
+   * math (HUD layout still uses the raw coordinates you pass in).
+   * Clamped to [0.9, 1.5] to avoid UI breaking.
+   */
+  uiTextScale = 1.0;
+
+  /**
+   * v2.5.1 D2 — color-blind hue override. Maps red/green tokens to a
+   * protanopia-safe amber/blue palette. Bypassed when false.
+   */
+  private cbPalette: Readonly<Record<string, string>> | null = null;
+
+  setAccessibility(opts: { uiScale?: number; colorBlindPalette?: Record<string, string> | null }): void {
+    if (typeof opts.uiScale === 'number') {
+      this.uiTextScale = Math.max(0.9, Math.min(1.5, opts.uiScale));
+    }
+    if (opts.colorBlindPalette === undefined) return;
+    this.cbPalette = opts.colorBlindPalette;
+  }
+
+  private cbResolve(color: string): string {
+    if (!this.cbPalette) return color;
+    const mapped = this.cbPalette[color.toLowerCase()];
+    return mapped ?? color;
+  }
+
   drawTextScreen(text: string, x: number, y: number, color: string = COLORS.text, size = 14, bold = false): void {
     const { ctx } = this;
     const dpr = window.devicePixelRatio || 1;
-    ctx.fillStyle = color;
-    ctx.font = `${bold ? 'bold ' : ''}${size * dpr}px system-ui, -apple-system, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', sans-serif`;
+    const scaled = size * this.uiTextScale;
+    ctx.fillStyle = this.cbResolve(color);
+    ctx.font = `${bold ? 'bold ' : ''}${scaled * dpr}px system-ui, -apple-system, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', sans-serif`;
     ctx.textBaseline = 'top';
     ctx.fillText(text, x * dpr, y * dpr);
   }
@@ -195,8 +224,9 @@ export class Renderer {
   drawTextScreenCenter(text: string, cx: number, cy: number, color: string = COLORS.text, size = 14, bold = false): void {
     const { ctx } = this;
     const dpr = window.devicePixelRatio || 1;
-    ctx.fillStyle = color;
-    ctx.font = `${bold ? 'bold ' : ''}${size * dpr}px system-ui, -apple-system, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', sans-serif`;
+    const scaled = size * this.uiTextScale;
+    ctx.fillStyle = this.cbResolve(color);
+    ctx.font = `${bold ? 'bold ' : ''}${scaled * dpr}px system-ui, -apple-system, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', sans-serif`;
     ctx.textBaseline = 'middle';
     ctx.textAlign = 'center';
     ctx.fillText(text, cx * dpr, cy * dpr);
@@ -207,8 +237,9 @@ export class Renderer {
   measureTextScreen(text: string, size: number, bold = false): number {
     const { ctx } = this;
     const dpr = window.devicePixelRatio || 1;
+    const scaled = size * this.uiTextScale;
     ctx.save();
-    ctx.font = `${bold ? 'bold ' : ''}${size * dpr}px system-ui, -apple-system, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', sans-serif`;
+    ctx.font = `${bold ? 'bold ' : ''}${scaled * dpr}px system-ui, -apple-system, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', sans-serif`;
     const w = ctx.measureText(text).width / dpr;
     ctx.restore();
     return w;

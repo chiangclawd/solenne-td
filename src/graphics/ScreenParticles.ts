@@ -17,8 +17,11 @@ export interface HomingCoin {
 
 export class ScreenParticleSystem {
   private readonly coins: HomingCoin[] = [];
+  /** v2.5.1 D2 — short-circuit spawns when low-animation mode is on. */
+  enabled = true;
 
   spawnCoins(startX: number, startY: number, targetX: number, targetY: number, count: number): void {
+    if (!this.enabled) return;
     for (let i = 0; i < count; i++) {
       const angle = -Math.PI / 2 + (Math.random() - 0.5) * Math.PI;
       const launchSpeed = 40 + Math.random() * 60;
