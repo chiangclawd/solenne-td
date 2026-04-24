@@ -192,6 +192,18 @@ export class MainMenuScene extends BaseScene {
     this.settingsBtn = mkBtn('⚙ 設定', '音量 · 難度 · 效果', baseY + (bh + gap) * 5);
     this.creditsBtn = mkBtn('✦ 致謝', '製作團隊 / 資源', baseY + (bh + gap) * 6);
 
+    // iOS "add to home screen" hint — shown only when running in Safari (not
+    // already standalone PWA) so players know how to get full-screen mode.
+    const isIosSafari = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+    const isStandalone = window.matchMedia?.('(display-mode: standalone)').matches
+      || (navigator as unknown as { standalone?: boolean }).standalone === true;
+    if (isIosSafari && !isStandalone) {
+      r.drawTextScreenCenter(
+        '📱 分享 → 加入主畫面 可全螢幕遊玩',
+        vw / 2, vh - 34, '#6ec8ff', 10, true,
+      );
+    }
+
     // Footer
     r.drawTextScreenCenter(
       `v${this.ctx.version}  ·  Made with Claude Code  ·  CC0 art by Kenney.nl`,
