@@ -34,7 +34,8 @@ import {
 import { ParticleSystem } from '../graphics/Particles.ts';
 import { ScreenParticleSystem } from '../graphics/ScreenParticles.ts';
 import { drawGrassTile, drawPathTile, themeForWorld } from '../graphics/UIPainter.ts';
-import { drawObstacle } from '../graphics/ObstaclePainter.ts';
+import { drawObstacle, drawCrackOverlay, drawHitFlash } from '../graphics/ObstaclePainter.ts';
+import { Destructible } from '../game/Destructible.ts';
 import { makeBanner, showBanner, updateBanner, renderBanner } from '../graphics/WaveBanner.ts';
 import { Weather } from '../graphics/Weather.ts';
 
@@ -63,6 +64,7 @@ export class GameScene extends BaseScene {
   private readonly path: Path;
   private readonly pathTiles: Set<string>;
   private readonly obstacleTiles: Set<string>;
+  private readonly destructibles: Destructible[] = [];
   private waves: Wave[];
   private readonly isEndless: boolean;
   private readonly availableTowers: string[];
@@ -166,6 +168,9 @@ export class GameScene extends BaseScene {
     this.obstacleTiles = new Set<string>();
     for (const ob of level.obstacles ?? []) {
       this.obstacleTiles.add(`${ob.x},${ob.y}`);
+      if (ob.destructible) {
+        this.destructibles.push(new Destructible(ob));
+      }
     }
     this.waves = level.waves.map((wave) => this.buildWave(wave));
     if (this.isEndless) {
@@ -285,6 +290,12 @@ export class GameScene extends BaseScene {
     this.hero = null;
     this.heroFx.length = 0;
     this.heroDeployMode = this.heroDef !== null;
+    // Rebuild destructibles + obstacleTiles from level definition
+    this.destructibles.length = 0;
+    for (const ob of this.level.obstacles ?? []) {
+      this.obstacleTiles.add(`${ob.x},${ob.y}`);
+      if (ob.destructible) this.destructibles.push(new Destructible(ob));
+    }
     if (this.isEndless) {
       // Regenerate starting wave
       this.waves.length = 0;
@@ -406,6 +417,17 @@ export class GameScene extends BaseScene {
     return this.ctx.levels[idx + 1] ?? null;
   }
 
+  /** Damage every destructible whose tile center is within `radius` of (x, y). */
+  private damageDestructiblesInRadius(x: number, y: number, radius: number, dmg: number): void {
+    const r2 = radius * radius;
+    for (const d of this.destructibles) {
+      const cx = d.tileX * T + T / 2;
+      const cy = d.tileY * T + T / 2;
+      const dist2 = (cx - x) ** 2 + (cy - y) ** 2;
+      if (dist2 <= r2) d.takeDamage(dmg);
+    }
+  }
+
   /**
    * Merge base (meta upgrade) buffs with hero-driven per-tower buffs:
    *   - Kieran passive aura (in range): +15% damage, +10% fire rate
@@ -479,6 +501,7 @@ export class GameScene extends BaseScene {
           this.bossSeen.add(e.sprite + e.hpMax);
           this.bossEntranceFlash = 1;
           this.ctx.renderer.shake(0.5, 8);
+          this.ctx.audio.bossStinger();
         }
       });
       // Process pending spawns (from splitters etc.)
@@ -580,9 +603,36 @@ export class GameScene extends BaseScene {
           this.ctx.audio.explosion();
           this.ctx.renderer.shake(0.3, 5);
           this.particles.explosion(fx.x, fx.y, Math.min(1.5, fx.radius / 40));
+          // AOE ALSO damages nearby destructible obstacles
+          this.damageDestructiblesInRadius(fx.x, fx.y, fx.radius, 20);
         } else if (fx.color === '#6ec8ff') {
           this.ctx.audio.frost();
           this.particles.frostBurst(fx.x, fx.y);
+        } else if (fx.color === '#ffb347') {
+          // Hero grenade explosion color — also breaks obstacles
+          this.damageDestructiblesInRadius(fx.x, fx.y, fx.radius, 30);
+        }
+      }
+
+      // Tick + cleanup destructibles
+      for (let i = this.destructibles.length - 1; i >= 0; i--) {
+        const d = this.destructibles[i];
+        d.update(dt);
+        if (d.destroyed) {
+          // Drop gold + dust burst + free the tile
+          this.state.gold += d.reward;
+          this.ctx.save.stats.totalGoldEarned += d.reward;
+          const cx = d.tileX * T + T / 2;
+          const cy = d.tileY * T + T / 2;
+          this.particles.explosion(cx, cy, 0.7);
+          this.floaters.push({
+            x: cx, y: cy, vx: 0, vy: -30,
+            text: `+${d.reward}`, color: '#ffd166',
+            life: 1.1, maxLife: 1.1, size: 14,
+          });
+          this.obstacleTiles.delete(`${d.tileX},${d.tileY}`);
+          this.destructibles.splice(i, 1);
+          this.ctx.audio.explosion();
         }
       }
 
@@ -744,11 +794,34 @@ export class GameScene extends BaseScene {
       drawPathTile(r.ctx, tx * T, ty * T, T, theme);
     }
 
-    // Obstacles (decorative + block tower placement)
+    // Obstacles (decorative + block tower placement). Destructible variants
+    // are filtered out once destroyed (tile freed & entry removed from
+    // this.destructibles), so they stop rendering automatically.
+    const destructibleByKey = new Map<string, Destructible>();
+    for (const d of this.destructibles) {
+      destructibleByKey.set(`${d.tileX},${d.tileY}`, d);
+    }
     for (const ob of this.level.obstacles ?? []) {
+      const key = `${ob.x},${ob.y}`;
+      // Skip if this was a destructible that's already destroyed
+      if (ob.destructible && !destructibleByKey.has(key)) continue;
       const cx = ob.x * T + T / 2;
       const cy = ob.y * T + T / 2;
       drawObstacle(r.ctx, ob.kind, cx, cy, T, this.elapsed);
+      const d = destructibleByKey.get(key);
+      if (d) {
+        drawCrackOverlay(r.ctx, cx, cy, T, d.damagePct());
+        drawHitFlash(r.ctx, cx, cy, T, d.hitFlash);
+        // HP bar if damaged
+        if (d.hp < d.maxHp) {
+          const bw = T * 0.7;
+          const pct = d.hp / d.maxHp;
+          r.ctx.fillStyle = 'rgba(0,0,0,0.6)';
+          r.ctx.fillRect(cx - bw / 2, cy - T * 0.35, bw, 3);
+          r.ctx.fillStyle = pct > 0.5 ? '#ffd166' : '#ff6b6b';
+          r.ctx.fillRect(cx - bw / 2, cy - T * 0.35, bw * pct, 3);
+        }
+      }
     }
 
     // Flowing path indicators — dots slide along path showing direction
@@ -1751,7 +1824,7 @@ export class GameScene extends BaseScene {
         this.hero = new Hero(this.heroDef, tx, ty, T, frontline);
         this.heroDeployMode = false;
         this.occupiedTiles.add(key);
-        this.ctx.audio.place();
+        this.ctx.audio.heroDeploy();
         // Fire hero-deployed achievement event
         const unlocked = this.ctx.achievements.check(this.ctx.save, {
           type: 'heroDeployed', heroId: this.heroDef.id,

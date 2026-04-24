@@ -171,6 +171,23 @@ export class AudioManager {
   achievement(): void {
     [784, 988, 1175, 1568].forEach((f, i) => this.beep(f, 0.14, 'triangle', 0.25, undefined, i * 0.06));
   }
+  /** Ominous two-chord stinger for boss entrance. */
+  bossStinger(): void {
+    // Low sustained drone
+    this.beep(73, 1.6, 'sawtooth', 0.35, 55);
+    // Higher tense minor chord slightly delayed
+    this.beep(147, 1.2, 'sawtooth', 0.28, 110, 0.15);
+    this.beep(220, 0.9, 'triangle', 0.22, undefined, 0.3);
+    // Noise swell
+    this.noise(0.6, 1.2, 200, 0.1);
+  }
+  /** Triumphant rising mini-jingle when a hero is deployed. */
+  heroDeploy(): void {
+    [392, 523, 659, 784].forEach((f, i) =>
+      this.beep(f, 0.18, 'triangle', 0.3, undefined, i * 0.05),
+    );
+    this.noise(0.1, 0.18, 1200, 0.05);
+  }
 
   // ---------------- BGM ----------------
 

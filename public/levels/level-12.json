@@ -625,6 +625,22 @@
       "x": 5,
       "y": 1,
       "kind": "ruin"
+    },
+    {
+      "x": 5,
+      "y": 5,
+      "kind": "column",
+      "destructible": true,
+      "hp": 55,
+      "reward": 25
+    },
+    {
+      "x": 4,
+      "y": 12,
+      "kind": "ruin",
+      "destructible": true,
+      "hp": 50,
+      "reward": 25
     }
   ]
 }

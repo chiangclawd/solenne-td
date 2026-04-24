@@ -492,6 +492,22 @@
       "x": 0,
       "y": 7,
       "kind": "rock"
+    },
+    {
+      "x": 4,
+      "y": 5,
+      "kind": "rock",
+      "destructible": true,
+      "hp": 40,
+      "reward": 15
+    },
+    {
+      "x": 6,
+      "y": 10,
+      "kind": "rock",
+      "destructible": true,
+      "hp": 40,
+      "reward": 15
     }
   ]
 }

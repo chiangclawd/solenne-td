@@ -14,15 +14,19 @@ interface WeatherParticle {
   size: number;
   life: number; maxLife: number;
   hue: string;
-  kind: 'snow' | 'ember' | 'rain' | 'mist' | 'leaf';
+  kind: 'snow' | 'ember' | 'rain' | 'mist' | 'leaf' | 'lightning' | 'aurora';
   rot?: number;
   vrot?: number;
+  /** Lightning segments — pre-computed zig-zag polyline. */
+  path?: { x: number; y: number }[];
 }
 
 export class Weather {
   private readonly particles: WeatherParticle[] = [];
   private spawnAccum = 0;
   private readonly world: number;
+  /** Used by world-5 to pace occasional lightning bolts. */
+  private eventAccum = 0;
 
   constructor(worldId: number) {
     this.world = worldId;
@@ -30,11 +34,17 @@ export class Weather {
 
   update(dt: number): void {
     const rate = this.spawnRate();
-    this.spawnAccum += dt;
-    while (this.spawnAccum > 1 / rate) {
-      this.spawnAccum -= 1 / rate;
-      this.spawn();
+    if (rate > 0) {
+      this.spawnAccum += dt;
+      while (this.spawnAccum > 1 / rate) {
+        this.spawnAccum -= 1 / rate;
+        this.spawn();
+      }
     }
+    // Occasional events per-world (lightning, aurora wave, etc.)
+    this.eventAccum += dt;
+    this.maybeFireEvent();
+
     for (let i = this.particles.length - 1; i >= 0; i--) {
       const p = this.particles[i];
       p.x += p.vx * dt;
@@ -48,6 +58,58 @@ export class Weather {
         this.particles.splice(i, 1);
       }
     }
+  }
+
+  /**
+   * Fires an occasional dramatic atmospheric effect — purple lightning in W5,
+   * an aurora wave in W4. Gated by a randomized timer so it doesn't feel spammy.
+   */
+  private maybeFireEvent(): void {
+    if (this.world === 5 && this.eventAccum > 4 + Math.random() * 3) {
+      this.eventAccum = 0;
+      this.spawnLightning();
+    }
+    if (this.world === 4 && this.eventAccum > 6 + Math.random() * 4) {
+      this.eventAccum = 0;
+      this.spawnAurora();
+    }
+  }
+
+  private spawnLightning(): void {
+    // Pre-compute jagged zig-zag polyline
+    const startX = 30 + Math.random() * (WORLD_WIDTH - 60);
+    const path: { x: number; y: number }[] = [];
+    let x = startX;
+    let y = -6;
+    const target = WORLD_HEIGHT * 0.35;
+    while (y < target) {
+      path.push({ x, y });
+      x += (Math.random() - 0.5) * 18;
+      y += 10 + Math.random() * 10;
+    }
+    path.push({ x, y });
+    this.particles.push({
+      x: startX, y: 0,
+      vx: 0, vy: 0,
+      size: 0, life: 0.35, maxLife: 0.35,
+      hue: 'rgba(220, 160, 255, 1)',
+      kind: 'lightning',
+      path,
+    });
+  }
+
+  private spawnAurora(): void {
+    // Horizontal sweep band at the top of the world
+    const bandY = 20 + Math.random() * 60;
+    this.particles.push({
+      x: -80, y: bandY,
+      vx: 60 + Math.random() * 30,
+      vy: 0,
+      size: 40 + Math.random() * 20,
+      life: 8, maxLife: 8,
+      hue: Math.random() > 0.5 ? 'rgba(140, 220, 180, 0.4)' : 'rgba(180, 140, 220, 0.35)',
+      kind: 'aurora',
+    });
   }
 
   private spawnRate(): number {
@@ -174,6 +236,52 @@ export class Weather {
           ctx.fillStyle = p.hue;
           ctx.beginPath();
           ctx.ellipse(0, 0, p.size, p.size * 0.5, 0, 0, Math.PI * 2);
+          ctx.fill();
+          break;
+        }
+        case 'lightning': {
+          if (!p.path || p.path.length < 2) break;
+          // Outer glow halo
+          ctx.globalCompositeOperation = 'lighter';
+          ctx.globalAlpha = a * 0.4;
+          ctx.strokeStyle = p.hue;
+          ctx.lineWidth = 6;
+          ctx.lineCap = 'round';
+          ctx.lineJoin = 'round';
+          ctx.beginPath();
+          ctx.moveTo(p.path[0].x, p.path[0].y);
+          for (let i = 1; i < p.path.length; i++) ctx.lineTo(p.path[i].x, p.path[i].y);
+          ctx.stroke();
+          // Main bright bolt
+          ctx.globalAlpha = a;
+          ctx.strokeStyle = '#e8d0ff';
+          ctx.lineWidth = 2.2;
+          ctx.stroke();
+          // Super-bright core
+          ctx.strokeStyle = '#ffffff';
+          ctx.lineWidth = 1;
+          ctx.stroke();
+          break;
+        }
+        case 'aurora': {
+          // Soft horizontal sweep band
+          const grad = ctx.createLinearGradient(p.x, p.y - p.size * 0.5, p.x, p.y + p.size * 0.5);
+          grad.addColorStop(0, 'rgba(0,0,0,0)');
+          grad.addColorStop(0.5, p.hue);
+          grad.addColorStop(1, 'rgba(0,0,0,0)');
+          ctx.fillStyle = grad;
+          // Wave-shaped band
+          ctx.beginPath();
+          ctx.moveTo(p.x - 150, p.y + p.size * 0.5);
+          for (let dx = -150; dx <= 150; dx += 20) {
+            const wy = p.y + Math.sin((p.x + dx) * 0.04 + p.life) * 4;
+            ctx.lineTo(p.x + dx, wy - p.size * 0.5);
+          }
+          for (let dx = 150; dx >= -150; dx -= 20) {
+            const wy = p.y + Math.sin((p.x + dx) * 0.04 + p.life + 1) * 4;
+            ctx.lineTo(p.x + dx, wy + p.size * 0.5);
+          }
+          ctx.closePath();
           ctx.fill();
           break;
         }

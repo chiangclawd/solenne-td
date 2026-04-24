@@ -577,6 +577,22 @@
       "x": 9,
       "y": 2,
       "kind": "rock"
+    },
+    {
+      "x": 3,
+      "y": 7,
+      "kind": "iceRock",
+      "destructible": true,
+      "hp": 60,
+      "reward": 20
+    },
+    {
+      "x": 8,
+      "y": 10,
+      "kind": "iceRock",
+      "destructible": true,
+      "hp": 60,
+      "reward": 20
     }
   ]
 }

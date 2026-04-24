@@ -22,6 +22,15 @@ export interface Obstacle {
   y: number;
   /** 'tree' | 'rock' | 'barrel' | 'column' | 'crystal' | 'totem' | 'ruin' — kind of decoration. */
   kind: string;
+  /**
+   * Optional — if truthy, this obstacle can be broken by tower AOE / hero
+   * skills. Destroying it frees the tile and drops gold.
+   */
+  destructible?: boolean;
+  /** Custom HP (default 40). */
+  hp?: number;
+  /** Gold dropped on destruction (default 15). */
+  reward?: number;
 }
 
 export interface LevelData {

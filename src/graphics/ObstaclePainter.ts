@@ -20,6 +20,56 @@ export function drawObstacle(ctx: Ctx, kind: string, cx: number, cy: number, siz
   }
 }
 
+/**
+ * Overlay crack lines on a destructible obstacle. `pct` is 0..1 damage ratio.
+ * Pairs with drawObstacle — call after.
+ */
+export function drawCrackOverlay(ctx: Ctx, cx: number, cy: number, size: number, pct: number): void {
+  if (pct <= 0) return;
+  ctx.save();
+  ctx.globalAlpha = Math.min(1, pct * 1.4);
+  ctx.strokeStyle = 'rgba(20, 20, 20, 0.85)';
+  ctx.lineWidth = 1.2;
+  ctx.lineCap = 'round';
+  const r = size * 0.3;
+  const crackCount = Math.floor(2 + pct * 4);
+  for (let i = 0; i < crackCount; i++) {
+    const angle = (i / crackCount) * Math.PI * 2 + 0.5;
+    const x1 = cx + Math.cos(angle) * r * 0.2;
+    const y1 = cy + Math.sin(angle) * r * 0.2;
+    const x2 = cx + Math.cos(angle) * r;
+    const y2 = cy + Math.sin(angle) * r;
+    // Main crack line
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.lineTo((x1 + x2) / 2 + Math.cos(angle + 0.5) * 2, (y1 + y2) / 2 + Math.sin(angle + 0.5) * 2);
+    ctx.lineTo(x2, y2);
+    ctx.stroke();
+    // Small branch
+    if (pct > 0.5) {
+      const midX = (x1 + x2) / 2;
+      const midY = (y1 + y2) / 2;
+      ctx.beginPath();
+      ctx.moveTo(midX, midY);
+      ctx.lineTo(midX + Math.cos(angle + 1.2) * 3, midY + Math.sin(angle + 1.2) * 3);
+      ctx.stroke();
+    }
+  }
+  ctx.restore();
+}
+
+/** White flash overlay for damage hits, alpha = intensity 0..1. */
+export function drawHitFlash(ctx: Ctx, cx: number, cy: number, size: number, intensity: number): void {
+  if (intensity <= 0) return;
+  ctx.save();
+  ctx.globalAlpha = intensity * 0.7;
+  ctx.fillStyle = '#fff';
+  ctx.beginPath();
+  ctx.arc(cx, cy, size * 0.35, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+}
+
 // ---- Tree (grass world) ----
 function paintTree(ctx: Ctx, cx: number, cy: number, T: number, age: number): void {
   // Shadow

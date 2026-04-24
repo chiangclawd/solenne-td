@@ -560,6 +560,22 @@
       "x": 9,
       "y": 9,
       "kind": "crystal"
+    },
+    {
+      "x": 4,
+      "y": 5,
+      "kind": "crystal",
+      "destructible": true,
+      "hp": 80,
+      "reward": 35
+    },
+    {
+      "x": 6,
+      "y": 11,
+      "kind": "totem",
+      "destructible": true,
+      "hp": 70,
+      "reward": 30
     }
   ]
 }
