@@ -33,6 +33,37 @@ export function drawWorldSilhouette(ctx: Ctx, world: number, seed: number): void
   ctx.restore();
 }
 
+/**
+ * v2.7.0 D1 — Paint a world's silhouette into an arbitrary screen-space
+ * rectangle (CSS px, dpr-aware). Used by WorldMapScene to render each
+ * world card as a miniature vista. Coordinates are in **screen** space,
+ * NOT world space — caller passes screen px and the function multiplies
+ * by dpr internally.
+ */
+export function drawWorldThumbnailScreen(
+  ctx: Ctx,
+  screenX: number,
+  screenY: number,
+  screenW: number,
+  screenH: number,
+  world: number,
+  seed: number,
+): void {
+  const dpr = window.devicePixelRatio || 1;
+  ctx.save();
+  // Clip to the card region in dpr space
+  ctx.beginPath();
+  ctx.rect(screenX * dpr, screenY * dpr, screenW * dpr, screenH * dpr);
+  ctx.clip();
+  // Translate + scale so drawing in WORLD coords falls inside the card
+  ctx.translate(screenX * dpr, screenY * dpr);
+  const sx = (screenW * dpr) / WORLD_WIDTH;
+  const sy = (screenH * dpr) / WORLD_HEIGHT;
+  ctx.scale(sx, sy);
+  drawWorldSilhouette(ctx, world, seed);
+  ctx.restore();
+}
+
 function drawFrontier(ctx: Ctx, W: number, H: number, seed: number): void {
   // Sky gradient (top 30%)
   const skyG = ctx.createLinearGradient(0, 0, 0, H * 0.35);

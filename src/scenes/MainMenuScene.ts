@@ -1,5 +1,5 @@
 import { BaseScene } from '../ui/Scene.ts';
-import { LevelSelectScene } from './LevelSelectScene.ts';
+import { WorldMapScene } from './WorldMapScene.ts';
 import { HeroSelectScene } from './HeroSelectScene.ts';
 import { SettingsScene } from './SettingsScene.ts';
 import { CodexScene } from './CodexScene.ts';
@@ -251,12 +251,12 @@ export class MainMenuScene extends BaseScene {
   onTap(screenX: number, screenY: number): void {
     if (this.playBtn && this.inside(screenX, screenY, this.playBtn)) {
       this.ctx.audio.click();
-      this.ctx.transition(new LevelSelectScene(this.ctx));
+      this.ctx.transition(new WorldMapScene(this.ctx));
       return;
     }
     if (this.levelsBtn && this.inside(screenX, screenY, this.levelsBtn)) {
       this.ctx.audio.click();
-      this.ctx.transition(new LevelSelectScene(this.ctx));
+      this.ctx.transition(new WorldMapScene(this.ctx));
       return;
     }
     if (this.endlessBtn && this.inside(screenX, screenY, this.endlessBtn)) {
