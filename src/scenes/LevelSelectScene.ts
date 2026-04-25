@@ -77,6 +77,17 @@ export class LevelSelectScene extends BaseScene {
   private isDragging = false;
   /** performance.now() at last inertia step — used for rAF-rate inertia updates. */
   private lastInertiaT = 0;
+  /**
+   * v2.7.0 D1 — when set, only show levels of the matching world.
+   * Otherwise, render all worlds in the original list-mode.
+   * Set by WorldMapScene when player drills into a world.
+   */
+  private readonly worldFilter: number | null;
+
+  constructor(ctx: import('./SceneContext.ts').SceneContext, worldFilter?: number) {
+    super(ctx);
+    this.worldFilter = worldFilter ?? null;
+  }
 
   override onEnter(): void {
     this.ctx.playBgm('menu');
@@ -181,7 +192,9 @@ export class LevelSelectScene extends BaseScene {
     r.ctx.clip();
 
     let y = contentTop - this.scrollY;
-    const worlds = [1, 2, 3, 4, 5, 6];
+    // v2.7.0 D1 — when worldFilter is set (entered via WorldMap), narrow
+    // the loop to a single world so the screen is dedicated to it.
+    const worlds = this.worldFilter ? [this.worldFilter] : [1, 2, 3, 4, 5, 6];
     const base = import.meta.env.BASE_URL;
     // Viewport-culling Y bounds (in CSS coord; same space as running y cursor)
     const viewTop = contentTop;
@@ -304,7 +317,15 @@ export class LevelSelectScene extends BaseScene {
     // Fixed-position controls (header) fire immediately since they don't scroll
     if (this.backBtn && this.inside(screenX, screenY, this.backBtn)) {
       this.ctx.audio.click();
-      this.ctx.transition(new MainMenuScene(this.ctx));
+      // v2.7.0 D1 — if we entered via WorldMap (worldFilter set), pop back
+      // to the world map; otherwise straight to main menu.
+      if (this.worldFilter) {
+        import('./WorldMapScene.ts').then(({ WorldMapScene }) => {
+          this.ctx.transition(new WorldMapScene(this.ctx));
+        });
+      } else {
+        this.ctx.transition(new MainMenuScene(this.ctx));
+      }
       return;
     }
     if (this.settingsBtn && this.inside(screenX, screenY, this.settingsBtn)) {
