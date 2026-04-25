@@ -247,7 +247,7 @@ LevelSelect 目前是方格列表 → 改成手繪風世界地圖：
 | ✅ **v2.3.0** | A1 Challenge stars | 立刻 28 → 84 挑戰，壽命最直接 |
 | ✅ **v2.3.1** | A2 Tower branching | 同時擴展核心策略深度 |
 | **v2.4** | B1 Daily Challenge | 有每日回流動機 |
-| **v2.4** | C2 Codex 擴充 | 低工程高體驗，夾在 A2 後做 |
+| ✅ **v2.8.0** | C2 Codex 擴充 | 低工程高體驗，夾在 A2 後做 |
 | ✅ **v2.5.0** | C1 Hero talents | 英雄系統深度 + new game+ 感 |
 | ✅ **v2.5.1** | D2 無障礙 | 色盲模式 / 字級 / 低動畫 |
 | ✅ **v2.6.0** | B2 Trial mode | post-game 延長壽命 |
