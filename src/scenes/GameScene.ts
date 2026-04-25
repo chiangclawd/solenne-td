@@ -246,7 +246,11 @@ export class GameScene extends BaseScene {
         speed: Math.round(cfg.speed * this.diffMod.speed),
         reward: Math.max(1, Math.round(cfg.reward * this.diffMod.reward)),
       };
-      return { delay: entry.delay, enemy: modified };
+      // CRITICAL: forward the per-entry `path` index. Earlier this method
+      // dropped it on the floor, so every enemy ended up on path 0
+      // regardless of what the JSON said — making multi-path levels look
+      // single-path. Fixed in v2.8.1.
+      return { delay: entry.delay, enemy: modified, path: entry.path };
     });
   }
 
