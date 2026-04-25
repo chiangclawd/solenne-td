@@ -526,6 +526,788 @@
         "enemy": "armoredBoss",
         "path": 1
       }
+    ],
+    [
+      {
+        "delay": 0.3,
+        "enemy": "scout"
+      },
+      {
+        "delay": 0.3,
+        "enemy": "soldier",
+        "path": 1
+      },
+      {
+        "delay": 0.3,
+        "enemy": "runner"
+      },
+      {
+        "delay": 0.3,
+        "enemy": "scout",
+        "path": 1
+      },
+      {
+        "delay": 0.3,
+        "enemy": "soldier"
+      },
+      {
+        "delay": 0.3,
+        "enemy": "runner",
+        "path": 1
+      },
+      {
+        "delay": 0.3,
+        "enemy": "scout"
+      },
+      {
+        "delay": 0.5,
+        "enemy": "tank"
+      },
+      {
+        "delay": 0.5,
+        "enemy": "armored",
+        "path": 1
+      },
+      {
+        "delay": 0.5,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 0.5,
+        "enemy": "heavyTank",
+        "path": 1
+      },
+      {
+        "delay": 0.5,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 0.5,
+        "enemy": "heavyTank",
+        "path": 1
+      },
+      {
+        "delay": 0.5,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 0.5,
+        "enemy": "heavyTank",
+        "path": 1
+      },
+      {
+        "delay": 0.5,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 0.5,
+        "enemy": "heavyTank",
+        "path": 1
+      },
+      {
+        "delay": 0.5,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 0.79,
+        "enemy": "plane",
+        "path": 1
+      },
+      {
+        "delay": 0.79,
+        "enemy": "plane"
+      },
+      {
+        "delay": 0.79,
+        "enemy": "plane",
+        "path": 1
+      },
+      {
+        "delay": 1.42,
+        "enemy": "boss"
+      },
+      {
+        "delay": 1.42,
+        "enemy": "armoredBoss",
+        "path": 1
+      }
+    ],
+    [
+      {
+        "delay": 0.29,
+        "enemy": "scout"
+      },
+      {
+        "delay": 0.29,
+        "enemy": "soldier",
+        "path": 1
+      },
+      {
+        "delay": 0.29,
+        "enemy": "runner"
+      },
+      {
+        "delay": 0.29,
+        "enemy": "scout",
+        "path": 1
+      },
+      {
+        "delay": 0.29,
+        "enemy": "soldier"
+      },
+      {
+        "delay": 0.29,
+        "enemy": "runner",
+        "path": 1
+      },
+      {
+        "delay": 0.29,
+        "enemy": "scout"
+      },
+      {
+        "delay": 0.49,
+        "enemy": "tank"
+      },
+      {
+        "delay": 0.49,
+        "enemy": "armored",
+        "path": 1
+      },
+      {
+        "delay": 0.49,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 0.49,
+        "enemy": "heavyTank",
+        "path": 1
+      },
+      {
+        "delay": 0.49,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 0.49,
+        "enemy": "heavyTank",
+        "path": 1
+      },
+      {
+        "delay": 0.49,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 0.49,
+        "enemy": "heavyTank",
+        "path": 1
+      },
+      {
+        "delay": 0.49,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 0.49,
+        "enemy": "heavyTank",
+        "path": 1
+      },
+      {
+        "delay": 0.49,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 0.49,
+        "enemy": "heavyTank",
+        "path": 1
+      },
+      {
+        "delay": 0.78,
+        "enemy": "plane",
+        "path": 1
+      },
+      {
+        "delay": 0.78,
+        "enemy": "plane"
+      },
+      {
+        "delay": 0.78,
+        "enemy": "plane",
+        "path": 1
+      },
+      {
+        "delay": 0.78,
+        "enemy": "plane"
+      },
+      {
+        "delay": 1.41,
+        "enemy": "boss"
+      },
+      {
+        "delay": 1.41,
+        "enemy": "armoredBoss",
+        "path": 1
+      }
+    ],
+    [
+      {
+        "delay": 0.28,
+        "enemy": "scout"
+      },
+      {
+        "delay": 0.28,
+        "enemy": "soldier",
+        "path": 1
+      },
+      {
+        "delay": 0.28,
+        "enemy": "runner"
+      },
+      {
+        "delay": 0.28,
+        "enemy": "scout",
+        "path": 1
+      },
+      {
+        "delay": 0.28,
+        "enemy": "soldier"
+      },
+      {
+        "delay": 0.28,
+        "enemy": "runner",
+        "path": 1
+      },
+      {
+        "delay": 0.28,
+        "enemy": "scout"
+      },
+      {
+        "delay": 0.28,
+        "enemy": "soldier",
+        "path": 1
+      },
+      {
+        "delay": 0.48,
+        "enemy": "tank"
+      },
+      {
+        "delay": 0.48,
+        "enemy": "armored",
+        "path": 1
+      },
+      {
+        "delay": 0.48,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 0.48,
+        "enemy": "heavyTank",
+        "path": 1
+      },
+      {
+        "delay": 0.48,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 0.48,
+        "enemy": "heavyTank",
+        "path": 1
+      },
+      {
+        "delay": 0.48,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 0.48,
+        "enemy": "heavyTank",
+        "path": 1
+      },
+      {
+        "delay": 0.48,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 0.48,
+        "enemy": "heavyTank",
+        "path": 1
+      },
+      {
+        "delay": 0.48,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 0.48,
+        "enemy": "heavyTank",
+        "path": 1
+      },
+      {
+        "delay": 0.48,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 0.77,
+        "enemy": "plane",
+        "path": 1
+      },
+      {
+        "delay": 0.77,
+        "enemy": "plane"
+      },
+      {
+        "delay": 0.77,
+        "enemy": "plane",
+        "path": 1
+      },
+      {
+        "delay": 0.77,
+        "enemy": "plane"
+      },
+      {
+        "delay": 1.39,
+        "enemy": "boss"
+      },
+      {
+        "delay": 1.39,
+        "enemy": "armoredBoss",
+        "path": 1
+      },
+      {
+        "delay": 1.39,
+        "enemy": "armoredBoss"
+      }
+    ],
+    [
+      {
+        "delay": 0.27,
+        "enemy": "scout"
+      },
+      {
+        "delay": 0.27,
+        "enemy": "soldier",
+        "path": 1
+      },
+      {
+        "delay": 0.27,
+        "enemy": "runner"
+      },
+      {
+        "delay": 0.27,
+        "enemy": "scout",
+        "path": 1
+      },
+      {
+        "delay": 0.27,
+        "enemy": "soldier"
+      },
+      {
+        "delay": 0.27,
+        "enemy": "runner",
+        "path": 1
+      },
+      {
+        "delay": 0.27,
+        "enemy": "scout"
+      },
+      {
+        "delay": 0.47,
+        "enemy": "tank"
+      },
+      {
+        "delay": 0.47,
+        "enemy": "armored",
+        "path": 1
+      },
+      {
+        "delay": 0.47,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 0.47,
+        "enemy": "heavyTank",
+        "path": 1
+      },
+      {
+        "delay": 0.47,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 0.47,
+        "enemy": "heavyTank",
+        "path": 1
+      },
+      {
+        "delay": 0.47,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 0.47,
+        "enemy": "heavyTank",
+        "path": 1
+      },
+      {
+        "delay": 0.47,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 0.47,
+        "enemy": "heavyTank",
+        "path": 1
+      },
+      {
+        "delay": 0.47,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 0.47,
+        "enemy": "heavyTank",
+        "path": 1
+      },
+      {
+        "delay": 0.47,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 0.47,
+        "enemy": "heavyTank",
+        "path": 1
+      },
+      {
+        "delay": 0.47,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 0.77,
+        "enemy": "plane",
+        "path": 1
+      },
+      {
+        "delay": 0.77,
+        "enemy": "plane"
+      },
+      {
+        "delay": 0.77,
+        "enemy": "plane",
+        "path": 1
+      },
+      {
+        "delay": 0.77,
+        "enemy": "plane"
+      },
+      {
+        "delay": 0.77,
+        "enemy": "plane",
+        "path": 1
+      },
+      {
+        "delay": 1.38,
+        "enemy": "boss"
+      },
+      {
+        "delay": 1.38,
+        "enemy": "armoredBoss",
+        "path": 1
+      },
+      {
+        "delay": 1.38,
+        "enemy": "armoredBoss"
+      }
+    ],
+    [
+      {
+        "delay": 0.26,
+        "enemy": "scout"
+      },
+      {
+        "delay": 0.26,
+        "enemy": "soldier",
+        "path": 1
+      },
+      {
+        "delay": 0.26,
+        "enemy": "runner"
+      },
+      {
+        "delay": 0.26,
+        "enemy": "scout",
+        "path": 1
+      },
+      {
+        "delay": 0.26,
+        "enemy": "soldier"
+      },
+      {
+        "delay": 0.26,
+        "enemy": "runner",
+        "path": 1
+      },
+      {
+        "delay": 0.26,
+        "enemy": "scout"
+      },
+      {
+        "delay": 0.26,
+        "enemy": "soldier",
+        "path": 1
+      },
+      {
+        "delay": 0.46,
+        "enemy": "tank"
+      },
+      {
+        "delay": 0.46,
+        "enemy": "armored",
+        "path": 1
+      },
+      {
+        "delay": 0.46,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 0.46,
+        "enemy": "heavyTank",
+        "path": 1
+      },
+      {
+        "delay": 0.46,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 0.46,
+        "enemy": "heavyTank",
+        "path": 1
+      },
+      {
+        "delay": 0.46,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 0.46,
+        "enemy": "heavyTank",
+        "path": 1
+      },
+      {
+        "delay": 0.46,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 0.46,
+        "enemy": "heavyTank",
+        "path": 1
+      },
+      {
+        "delay": 0.46,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 0.46,
+        "enemy": "heavyTank",
+        "path": 1
+      },
+      {
+        "delay": 0.46,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 0.46,
+        "enemy": "heavyTank",
+        "path": 1
+      },
+      {
+        "delay": 0.46,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 0.46,
+        "enemy": "heavyTank",
+        "path": 1
+      },
+      {
+        "delay": 0.76,
+        "enemy": "plane",
+        "path": 1
+      },
+      {
+        "delay": 0.76,
+        "enemy": "plane"
+      },
+      {
+        "delay": 0.76,
+        "enemy": "plane",
+        "path": 1
+      },
+      {
+        "delay": 0.76,
+        "enemy": "plane"
+      },
+      {
+        "delay": 0.76,
+        "enemy": "plane",
+        "path": 1
+      },
+      {
+        "delay": 1.36,
+        "enemy": "boss"
+      },
+      {
+        "delay": 1.36,
+        "enemy": "armoredBoss",
+        "path": 1
+      },
+      {
+        "delay": 1.36,
+        "enemy": "armoredBoss"
+      }
+    ],
+    [
+      {
+        "delay": 0.25,
+        "enemy": "scout"
+      },
+      {
+        "delay": 0.25,
+        "enemy": "soldier",
+        "path": 1
+      },
+      {
+        "delay": 0.25,
+        "enemy": "runner"
+      },
+      {
+        "delay": 0.25,
+        "enemy": "scout",
+        "path": 1
+      },
+      {
+        "delay": 0.25,
+        "enemy": "soldier"
+      },
+      {
+        "delay": 0.25,
+        "enemy": "runner",
+        "path": 1
+      },
+      {
+        "delay": 0.25,
+        "enemy": "scout"
+      },
+      {
+        "delay": 0.25,
+        "enemy": "soldier",
+        "path": 1
+      },
+      {
+        "delay": 0.25,
+        "enemy": "runner"
+      },
+      {
+        "delay": 0.45,
+        "enemy": "tank"
+      },
+      {
+        "delay": 0.45,
+        "enemy": "armored",
+        "path": 1
+      },
+      {
+        "delay": 0.45,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 0.45,
+        "enemy": "heavyTank",
+        "path": 1
+      },
+      {
+        "delay": 0.45,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 0.45,
+        "enemy": "heavyTank",
+        "path": 1
+      },
+      {
+        "delay": 0.45,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 0.45,
+        "enemy": "heavyTank",
+        "path": 1
+      },
+      {
+        "delay": 0.45,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 0.45,
+        "enemy": "heavyTank",
+        "path": 1
+      },
+      {
+        "delay": 0.45,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 0.45,
+        "enemy": "heavyTank",
+        "path": 1
+      },
+      {
+        "delay": 0.45,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 0.45,
+        "enemy": "heavyTank",
+        "path": 1
+      },
+      {
+        "delay": 0.45,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 0.45,
+        "enemy": "heavyTank",
+        "path": 1
+      },
+      {
+        "delay": 0.45,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 0.75,
+        "enemy": "plane",
+        "path": 1
+      },
+      {
+        "delay": 0.75,
+        "enemy": "plane"
+      },
+      {
+        "delay": 0.75,
+        "enemy": "plane",
+        "path": 1
+      },
+      {
+        "delay": 0.75,
+        "enemy": "plane"
+      },
+      {
+        "delay": 0.75,
+        "enemy": "plane",
+        "path": 1
+      },
+      {
+        "delay": 1.35,
+        "enemy": "armoredBoss"
+      },
+      {
+        "delay": 1.35,
+        "enemy": "armoredBoss",
+        "path": 1
+      },
+      {
+        "delay": 1.35,
+        "enemy": "armoredBoss"
+      }
     ]
   ],
   "obstacles": [

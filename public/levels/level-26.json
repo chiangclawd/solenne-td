@@ -145,6 +145,20 @@
   "waves": [
     [
       {
+        "delay": 0.45,
+        "enemy": "swimmerShoal",
+        "path": 2
+      },
+      {
+        "delay": 0.45,
+        "enemy": "swimmerShoal",
+        "path": 1
+      },
+      {
+        "delay": 0.45,
+        "enemy": "swimmerShoal"
+      },
+      {
         "delay": 0.5,
         "enemy": "tentacle",
         "path": 0
@@ -537,6 +551,508 @@
       {
         "delay": 0.12,
         "enemy": "swimmerShoal",
+        "path": 2
+      }
+    ],
+    [
+      {
+        "delay": 0.29,
+        "enemy": "runner"
+      },
+      {
+        "delay": 0.29,
+        "enemy": "wraith",
+        "path": 1
+      },
+      {
+        "delay": 0.29,
+        "enemy": "swimmerShoal",
+        "path": 2
+      },
+      {
+        "delay": 0.29,
+        "enemy": "runner"
+      },
+      {
+        "delay": 0.29,
+        "enemy": "wraith",
+        "path": 1
+      },
+      {
+        "delay": 0.29,
+        "enemy": "swimmerShoal",
+        "path": 2
+      },
+      {
+        "delay": 0.49,
+        "enemy": "tentacle"
+      },
+      {
+        "delay": 0.49,
+        "enemy": "splitter",
+        "path": 1
+      },
+      {
+        "delay": 0.49,
+        "enemy": "heavyTank",
+        "path": 2
+      },
+      {
+        "delay": 0.49,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 0.49,
+        "enemy": "heavyTank",
+        "path": 1
+      },
+      {
+        "delay": 0.49,
+        "enemy": "heavyTank",
+        "path": 2
+      },
+      {
+        "delay": 0.49,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 0.49,
+        "enemy": "heavyTank",
+        "path": 1
+      },
+      {
+        "delay": 0.49,
+        "enemy": "heavyTank",
+        "path": 2
+      },
+      {
+        "delay": 0.49,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 0.49,
+        "enemy": "heavyTank",
+        "path": 1
+      },
+      {
+        "delay": 0.78,
+        "enemy": "plane",
+        "path": 1
+      },
+      {
+        "delay": 0.78,
+        "enemy": "plane",
+        "path": 2
+      },
+      {
+        "delay": 0.78,
+        "enemy": "plane"
+      },
+      {
+        "delay": 1.4,
+        "enemy": "abyssalBoss"
+      },
+      {
+        "delay": 1.4,
+        "enemy": "finalBoss",
+        "path": 1
+      },
+      {
+        "delay": 1.4,
+        "enemy": "finalBoss",
+        "path": 2
+      }
+    ],
+    [
+      {
+        "delay": 0.27,
+        "enemy": "runner"
+      },
+      {
+        "delay": 0.27,
+        "enemy": "wraith",
+        "path": 1
+      },
+      {
+        "delay": 0.27,
+        "enemy": "swimmerShoal",
+        "path": 2
+      },
+      {
+        "delay": 0.27,
+        "enemy": "runner"
+      },
+      {
+        "delay": 0.27,
+        "enemy": "wraith",
+        "path": 1
+      },
+      {
+        "delay": 0.27,
+        "enemy": "swimmerShoal",
+        "path": 2
+      },
+      {
+        "delay": 0.47,
+        "enemy": "tentacle"
+      },
+      {
+        "delay": 0.47,
+        "enemy": "splitter",
+        "path": 1
+      },
+      {
+        "delay": 0.47,
+        "enemy": "heavyTank",
+        "path": 2
+      },
+      {
+        "delay": 0.47,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 0.47,
+        "enemy": "heavyTank",
+        "path": 1
+      },
+      {
+        "delay": 0.47,
+        "enemy": "heavyTank",
+        "path": 2
+      },
+      {
+        "delay": 0.47,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 0.47,
+        "enemy": "heavyTank",
+        "path": 1
+      },
+      {
+        "delay": 0.47,
+        "enemy": "heavyTank",
+        "path": 2
+      },
+      {
+        "delay": 0.47,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 0.47,
+        "enemy": "heavyTank",
+        "path": 1
+      },
+      {
+        "delay": 0.47,
+        "enemy": "heavyTank",
+        "path": 2
+      },
+      {
+        "delay": 0.77,
+        "enemy": "plane",
+        "path": 1
+      },
+      {
+        "delay": 0.77,
+        "enemy": "plane",
+        "path": 2
+      },
+      {
+        "delay": 0.77,
+        "enemy": "plane"
+      },
+      {
+        "delay": 0.77,
+        "enemy": "plane",
+        "path": 1
+      },
+      {
+        "delay": 1.39,
+        "enemy": "abyssalBoss"
+      },
+      {
+        "delay": 1.39,
+        "enemy": "finalBoss",
+        "path": 1
+      },
+      {
+        "delay": 1.39,
+        "enemy": "finalBoss",
+        "path": 2
+      }
+    ],
+    [
+      {
+        "delay": 0.26,
+        "enemy": "runner"
+      },
+      {
+        "delay": 0.26,
+        "enemy": "wraith",
+        "path": 1
+      },
+      {
+        "delay": 0.26,
+        "enemy": "swimmerShoal",
+        "path": 2
+      },
+      {
+        "delay": 0.26,
+        "enemy": "runner"
+      },
+      {
+        "delay": 0.26,
+        "enemy": "wraith",
+        "path": 1
+      },
+      {
+        "delay": 0.26,
+        "enemy": "swimmerShoal",
+        "path": 2
+      },
+      {
+        "delay": 0.26,
+        "enemy": "runner"
+      },
+      {
+        "delay": 0.46,
+        "enemy": "tentacle"
+      },
+      {
+        "delay": 0.46,
+        "enemy": "splitter",
+        "path": 1
+      },
+      {
+        "delay": 0.46,
+        "enemy": "heavyTank",
+        "path": 2
+      },
+      {
+        "delay": 0.46,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 0.46,
+        "enemy": "heavyTank",
+        "path": 1
+      },
+      {
+        "delay": 0.46,
+        "enemy": "heavyTank",
+        "path": 2
+      },
+      {
+        "delay": 0.46,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 0.46,
+        "enemy": "heavyTank",
+        "path": 1
+      },
+      {
+        "delay": 0.46,
+        "enemy": "heavyTank",
+        "path": 2
+      },
+      {
+        "delay": 0.46,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 0.46,
+        "enemy": "heavyTank",
+        "path": 1
+      },
+      {
+        "delay": 0.46,
+        "enemy": "heavyTank",
+        "path": 2
+      },
+      {
+        "delay": 0.46,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 0.46,
+        "enemy": "heavyTank",
+        "path": 1
+      },
+      {
+        "delay": 0.76,
+        "enemy": "plane",
+        "path": 1
+      },
+      {
+        "delay": 0.76,
+        "enemy": "plane",
+        "path": 2
+      },
+      {
+        "delay": 0.76,
+        "enemy": "plane"
+      },
+      {
+        "delay": 0.76,
+        "enemy": "plane",
+        "path": 1
+      },
+      {
+        "delay": 1.37,
+        "enemy": "abyssalBoss"
+      },
+      {
+        "delay": 1.37,
+        "enemy": "finalBoss",
+        "path": 1
+      },
+      {
+        "delay": 1.37,
+        "enemy": "finalBoss",
+        "path": 2
+      }
+    ],
+    [
+      {
+        "delay": 0.25,
+        "enemy": "runner"
+      },
+      {
+        "delay": 0.25,
+        "enemy": "wraith",
+        "path": 1
+      },
+      {
+        "delay": 0.25,
+        "enemy": "swimmerShoal",
+        "path": 2
+      },
+      {
+        "delay": 0.25,
+        "enemy": "runner"
+      },
+      {
+        "delay": 0.25,
+        "enemy": "wraith",
+        "path": 1
+      },
+      {
+        "delay": 0.25,
+        "enemy": "swimmerShoal",
+        "path": 2
+      },
+      {
+        "delay": 0.25,
+        "enemy": "runner"
+      },
+      {
+        "delay": 0.45,
+        "enemy": "tentacle"
+      },
+      {
+        "delay": 0.45,
+        "enemy": "splitter",
+        "path": 1
+      },
+      {
+        "delay": 0.45,
+        "enemy": "heavyTank",
+        "path": 2
+      },
+      {
+        "delay": 0.45,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 0.45,
+        "enemy": "heavyTank",
+        "path": 1
+      },
+      {
+        "delay": 0.45,
+        "enemy": "heavyTank",
+        "path": 2
+      },
+      {
+        "delay": 0.45,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 0.45,
+        "enemy": "heavyTank",
+        "path": 1
+      },
+      {
+        "delay": 0.45,
+        "enemy": "heavyTank",
+        "path": 2
+      },
+      {
+        "delay": 0.45,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 0.45,
+        "enemy": "heavyTank",
+        "path": 1
+      },
+      {
+        "delay": 0.45,
+        "enemy": "heavyTank",
+        "path": 2
+      },
+      {
+        "delay": 0.45,
+        "enemy": "heavyTank"
+      },
+      {
+        "delay": 0.45,
+        "enemy": "heavyTank",
+        "path": 1
+      },
+      {
+        "delay": 0.45,
+        "enemy": "heavyTank",
+        "path": 2
+      },
+      {
+        "delay": 0.75,
+        "enemy": "plane",
+        "path": 1
+      },
+      {
+        "delay": 0.75,
+        "enemy": "plane",
+        "path": 2
+      },
+      {
+        "delay": 0.75,
+        "enemy": "plane"
+      },
+      {
+        "delay": 0.75,
+        "enemy": "plane",
+        "path": 1
+      },
+      {
+        "delay": 0.75,
+        "enemy": "plane",
+        "path": 2
+      },
+      {
+        "delay": 1.35,
+        "enemy": "finalBoss"
+      },
+      {
+        "delay": 1.35,
+        "enemy": "finalBoss",
+        "path": 1
+      },
+      {
+        "delay": 1.35,
+        "enemy": "finalBoss",
         "path": 2
       }
     ]
