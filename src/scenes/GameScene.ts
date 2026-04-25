@@ -48,7 +48,9 @@ interface Rect { x: number; y: number; w: number; h: number }
 interface Floater { x: number; y: number; vx: number; vy: number; text: string; color: string; life: number; maxLife: number; size: number }
 
 const T = TILE_SIZE;
-const SPEEDS: readonly number[] = [1, 2, 3];
+// v2.6.2 — default pace halved (0.5x) per playtest feedback.
+// Players can still upspeed to 1x/2x/3x via the speed button.
+const SPEEDS: readonly number[] = [0.5, 1, 2, 3];
 
 // v2.2 difficulty re-balance — baseline levels were too soft, so we push every
 // tier harder. Normal now gets a ~12% HP / 6% speed bump; Hard and Heroic
@@ -1422,9 +1424,13 @@ export class GameScene extends BaseScene {
     const sbW = 52;
     this.speedBtn = { x: rightX - pbW - 6 - sbW, y: 10, w: sbW, h: pbH };
     const speed = SPEEDS[this.speedIdx];
-    const speedColor = speed === 1 ? '#22304a' : speed === 2 ? '#2c8cc7' : '#c74e2c';
+    // Color escalates with speed: muted for slow defaults, blue for normal,
+    // amber for fast, red for max.
+    const speedColor = speed <= 0.5 ? '#1c2839' : speed <= 1 ? '#22304a' : speed <= 2 ? '#2c8cc7' : '#c74e2c';
     r.drawScreenRoundedRect(this.speedBtn.x, this.speedBtn.y, sbW, pbH, 7, speedColor);
-    r.drawTextScreenCenter(`▶ ${speed}×`, this.speedBtn.x + sbW / 2, this.speedBtn.y + pbH / 2, '#fff', 13, true);
+    // Show as integer or 0.5×; avoid "1×" rendering as "1x" with float.
+    const speedLabel = Number.isInteger(speed) ? `${speed}×` : `${speed}×`;
+    r.drawTextScreenCenter(`▶ ${speedLabel}`, this.speedBtn.x + sbW / 2, this.speedBtn.y + pbH / 2, '#fff', 13, true);
 
     // Difficulty badge (only if not normal)
     if (this.difficulty !== 'normal') {
